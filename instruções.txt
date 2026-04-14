@@ -6,4 +6,5 @@ Copie e cole o seguintes comanados (UM DE CADA VEZ e EM ORDEM) no terminal do se
 - copy .env.example .env
 - php artisan key:generate
 - php artisan migrate
+    ---> Após executar o comando, você deve escrever YES no terminal para autorizar a criação do arquivo database.sqlite
 - php artisan serve
