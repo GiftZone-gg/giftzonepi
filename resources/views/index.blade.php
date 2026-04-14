@@ -74,9 +74,14 @@
             font-family: 'Gasoek One', sans-serif;
             font-size: 16px;
             margin-bottom: 20px;
-            font-weight: 400; /* Menos bold */
+            font-weight: 400;
             transition: color 0.3s;
             text-transform: uppercase;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
         }
 
         .menu-item:hover { color: #FFDC74; }
@@ -135,17 +140,34 @@
             width: auto;
         }
 
+        .user-auth-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-name-display {
+            font-family: 'Gasoek One';
+            color: #FFDC74;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
         .btn-entrar {
             border: 1px solid rgba(255, 255, 255, 0.3);
             padding: 12px 36px;
             border-radius: 8px;
             color: white;
             text-decoration: none;
-            font-weight: 500; /* Reduzido de 600 */
+            font-weight: 500;
             font-size: 18px;
             transition: all 0.3s ease;
             background: transparent;
             cursor: pointer;
+        }
+
+        .btn-entrar:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         /* --- Banner Hero --- */
@@ -258,7 +280,7 @@
     </div>
     
     <nav class="menu-group">
-        <a href="#" class="menu-item">Início</a>
+        <a href="{{ route('home') }}" class="menu-item">Início</a>
         <a href="#" class="menu-item">Catálogo</a>
         <a href="#" class="menu-item">Ofertas</a>
     </nav>
@@ -271,7 +293,14 @@
     </nav>
 
     <nav class="menu-group">
-        <a href="#" class="menu-item">Entrar</a>
+        @auth
+            <form action="{{ route('logout') }}" method="POST" id="logout-form-side">
+                @csrf
+                <button type="submit" class="menu-item">Sair ({{ Auth::user()->name }})</button>
+            </form>
+        @else
+            <a href="{{ route('login') }}" class="menu-item">Entrar</a>
+        @endauth
     </nav>
 </aside>
 
@@ -284,10 +313,23 @@
                 <span></span>
             </button>
             <div class="logo-box">
-                <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
+                <a href="{{ route('home') }}">
+                    <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
+                </a>
             </div>
         </div>
-        <a href="#" class="btn-entrar">Entrar</a>
+        
+        <div class="user-auth-area">
+            @auth
+                <span class="user-name-display">{{ Auth::user()->name }}</span>
+                <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="btn-entrar">Sair</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
+            @endauth
+        </div>
     </header>
 
     <div class="hero-banner">
@@ -364,27 +406,6 @@
             <div class="card">
                 <div class="card-header bg-ps">PLAYSTATION STORE</div>
                 <div class="card-img" style="background-image: url('{{ asset('images/gow.png') }}');"></div>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <div class="section-header">
-            <h2 class="section-title">Jogos Steam</h2>
-            <a href="#" class="ver-mais">Ver Mais →</a>
-        </div>
-        <div class="grid-games">
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/tlou.png') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/hunt.png') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/hogleg.png') }}');"></div>
             </div>
         </div>
     </section>

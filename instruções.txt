@@ -10,3 +10,11 @@ Copie e cole o seguintes comanados (UM DE CADA VEZ e EM ORDEM) no terminal do se
 - php artisan migrate
     ---> Após executar o comando, você deve escrever YES no terminal para autorizar a criação do arquivo database.sqlite
 - php artisan serve
+
+====================
+
+
+PS C:\Users\junior\giftzonepi> php artisan tinker --execute="App\Models\User::create(['name'=>'Junior Admin', 'email'=>'junior@admin.com', 'cpf'=>'12345678901', 'password'=>bcrypt('123456'), 'is_admin'=>1])"
+PS C:\Users\junior\giftzonepi> php artisan tinker --execute="App\Models\User::create(['name' => 'Bruno', 'email' => 'bruno@admin.com', 'cpf' => '12445678901', 'password' => bcrypt('senha123'), 'is_admin' => 1])"
+PS C:\Users\junior\giftzonepi> php artisan tinker --execute="App\Models\User::create(['name' => 'Lissandra', 'email' => 'lissandra@admin.com', 'cpf' => '12555678901', 'password' => bcrypt('senha123'), 'is_admin' => 1])"
+PS C:\Users\junior\giftzonepi> 
