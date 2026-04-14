@@ -1,0 +1,8 @@
+Ao clonar o repositório do github em uma nova máquina, é provável que você não consiga iniciar o artisan server corretamente. 
+
+Copie e cole o seguintes comanados (UM DE CADA VEZ e EM ORDEM) no terminal do seu projeto:
+ 
+- composer install
+- copy .env.example .env
+- php artisan key:generate
+- php artisan server
