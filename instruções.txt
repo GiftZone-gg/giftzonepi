@@ -8,10 +8,12 @@ Copie e cole o seguintes comanados (UM DE CADA VEZ e EM ORDEM) no terminal do se
 - copy .env.example .env
 - php artisan key:generate
 - php artisan migrate
-    ---> Após executar o comando, você deve escrever YES no terminal para autorizar a criação do arquivo database.sqlite
+    ---> Após executar o comando, você deve escrever NO no terminal para autorizar a criação do arquivo database.sqlite
 - php artisan serve
 
 ====================
+
+Para editar o dbsqlite, use Dbeaver
 
 
 PS C:\Users\junior\giftzonepi> php artisan tinker --execute="App\Models\User::create(['name'=>'Junior Admin', 'email'=>'junior@admin.com', 'cpf'=>'12345678901', 'password'=>bcrypt('123456'), 'is_admin'=>1])"
