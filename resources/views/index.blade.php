@@ -409,6 +409,48 @@
             </div>
         </div>
     </section>
+
+    <section>
+        <div class="section-header">
+            <h2 class="section-title">Jogos Steam</h2>
+            <a href="#" class="ver-mais">Ver Mais →</a>
+        </div>
+        <div class="grid-games">
+            <div class="card">
+                <div class="card-header bg-steam">STEAM</div>
+                <div class="card-img" style="background-image: url('{{ asset('images/tlou.png') }}');"></div>
+            </div>
+            <div class="card">
+                <div class="card-header bg-steam">STEAM</div>
+                <div class="card-img" style="background-image: url('{{ asset('images/hunt.png') }}');"></div>
+            </div>
+            <div class="card">
+                <div class="card-header bg-steam">STEAM</div>
+                <div class="card-img" style="background-image: url('{{ asset('images/hogleg.png') }}');"></div>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <div class="section-header">
+            <h2 class="section-title">Universo Nintendo</h2>
+            <a href="#" class="ver-mais">Ver Mais →</a>
+        </div>
+        <div class="grid-games">
+            <div class="card">
+                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
+                <div class="card-img" style="background-image: url('{{ asset('images/pokemon.png') }}');"></div>
+            </div>
+            <div class="card">
+                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
+                <div class="card-img" style="background-image: url('{{ asset('images/mario.png') }}');"></div>
+            </div>
+            <div class="card">
+                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
+                <div class="card-img" style="background-image: url('{{ asset('images/zelda.png') }}');"></div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <footer>
@@ -447,6 +489,7 @@
 
     function showSlide(index) {
         if (index >= slides.length) index = 0;
+        if (index < 0) index = slides.length - 1;
         slides.forEach(s => s.classList.remove('active'));
         thumbnails.forEach(t => t.classList.remove('active'));
         slides[index].classList.add('active');
