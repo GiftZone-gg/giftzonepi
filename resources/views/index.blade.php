@@ -335,7 +335,7 @@
     <div class="hero-banner">
         <div class="carousel-container">
             <div class="carousel-slides">
-                <div class="carousel-slide active" style="background-image: url('{{ asset('images/deathstran2.png') }}');">
+                <div class="carousel-slide active" style="background-image: url('{{ asset('images/deathstran2.webp') }}');">
                     <div class="slide-content">
                         <div class="slide-platform">PS5</div>
                         <div class="slide-title">DEATH STRANDING 2</div>
@@ -343,7 +343,7 @@
                         <div class="slide-badge">JÁ DISPONÍVEL</div>
                     </div>
                 </div>
-                <div class="carousel-slide" style="background-image: url('{{ asset('images/sillenthillF.png') }}');">
+                <div class="carousel-slide" style="background-image: url('{{ asset('images/sillenthillF.webp') }}');">
                     <div class="slide-content">
                         <div class="slide-platform">PS5 / PC</div>
                         <div class="slide-title">SILENT HILL</div>
@@ -351,7 +351,7 @@
                         <div class="slide-badge">EM BREVE</div>
                     </div>
                 </div>
-                <div class="carousel-slide" style="background-image: url('{{ asset('images/exped33.png') }}');">
+                <div class="carousel-slide" style="background-image: url('{{ asset('images/exped33.webp') }}');">
                     <div class="slide-content">
                         <div class="slide-platform">XBOX / PC</div>
                         <div class="slide-title">EXPEDIÇÃO</div>
@@ -361,9 +361,9 @@
                 </div>
             </div>
             <div class="carousel-thumbnails">
-                <div class="thumbnail active" style="background-image: url('{{ asset('images/deathstran2.png') }}');" onclick="currentSlide(0)"></div>
-                <div class="thumbnail" style="background-image: url('{{ asset('images/sillenthillF.png') }}');" onclick="currentSlide(1)"></div>
-                <div class="thumbnail" style="background-image: url('{{ asset('images/exped33.png') }}');" onclick="currentSlide(2)"></div>
+                <div class="thumbnail active" style="background-image: url('{{ asset('images/deathstran2.webp') }}');" onclick="currentSlide(0)"></div>
+                <div class="thumbnail" style="background-image: url('{{ asset('images/sillenthillF.webp') }}');" onclick="currentSlide(1)"></div>
+                <div class="thumbnail" style="background-image: url('{{ asset('images/exped33.webp') }}');" onclick="currentSlide(2)"></div>
             </div>
         </div>
     </div>
@@ -376,15 +376,15 @@
         <div class="grid-games">
             <div class="card">
                 <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/deathstra.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/deathstra.webp') }}');"></div>
             </div>
             <div class="card">
                 <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/bf6.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/bf6.webp') }}');"></div>
             </div>
             <div class="card">
                 <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/pokemon.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/pokemon.webp') }}');"></div>
             </div>
         </div>
     </section>
@@ -397,15 +397,15 @@
         <div class="grid-games">
             <div class="card">
                 <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/ghost.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/ghost.webp') }}');"></div>
             </div>
             <div class="card">
                 <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/resevil.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/resevil.webp') }}');"></div>
             </div>
             <div class="card">
                 <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/gow.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/gow.webp') }}');"></div>
             </div>
         </div>
     </section>
@@ -418,15 +418,15 @@
         <div class="grid-games">
             <div class="card">
                 <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/tlou.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/tlou.webp') }}');"></div>
             </div>
             <div class="card">
                 <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/hunt.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/hunt.webp') }}');"></div>
             </div>
             <div class="card">
                 <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/hogleg.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/hogleg.webp') }}');"></div>
             </div>
         </div>
     </section>
@@ -439,15 +439,15 @@
         <div class="grid-games">
             <div class="card">
                 <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/pokemon.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/pokemon.webp') }}');"></div>
             </div>
             <div class="card">
                 <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/mario.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/mario.webp') }}');"></div>
             </div>
             <div class="card">
                 <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/zelda.png') }}');"></div>
+                <div class="card-img" style="background-image: url('{{ asset('images/zelda.webp') }}');"></div>
             </div>
         </div>
     </section>
@@ -458,9 +458,9 @@
         <div class="footer-info">
             <p>© 2026 GiftZone Todos direitos Reservados</p>
             <div class="social-links">
-                <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384063.png" alt="IG"></a>
-                <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/733/733579.png" alt="X"></a>
-                <a href="#"><img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YT"></a>
+                <a href="#"><img src="https://cdn-icons-webp.flaticon.com/512/1384/1384063.webp" alt="IG"></a>
+                <a href="#"><img src="https://cdn-icons-webp.flaticon.com/512/733/733579.webp" alt="X"></a>
+                <a href="#"><img src="https://cdn-icons-webp.flaticon.com/512/1384/1384060.webp" alt="YT"></a>
             </div>
         </div>
     </div>
