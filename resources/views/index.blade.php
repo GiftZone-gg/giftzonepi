@@ -434,7 +434,7 @@
     <section>
         <div class="section-header">
             <h2 class="section-title">Universo Nintendo</h2>
-            <a href="#" class="ver-mais">Ver Mais →</a>
+            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
         </div>
         <div class="grid-games">
             <div class="card">

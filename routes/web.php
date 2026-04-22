@@ -11,6 +11,10 @@ Route::get('/login', function () {
     return view('login');
 })->name('login');
 
+Route::get('/catalogo', function () {
+return view('catalogo');
+})->name('catalogo');
+
 Route::post('/login-action', [AuthController::class, 'login'])->name('login.auth');
 Route::post('/register-action', [AuthController::class, 'register'])->name('register.auth');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
