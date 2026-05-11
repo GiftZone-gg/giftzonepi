@@ -1,0 +1,117 @@
+@extends('usuario.layout')
+
+@section('title', 'Favoritos')
+
+@section('extra-styles')
+<style>
+    .page-title {
+        font-family: 'Gasoek One', sans-serif;
+        font-size: 28px;
+        color: var(--yellow-gold);
+        font-style: italic;
+        text-decoration: underline;
+        margin-bottom: 28px;
+    }
+
+    .favorites-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+    }
+
+    .fav-card {
+        background: rgba(0, 26, 32, 0.6);
+        border: 1px solid rgba(253,233,162,0.15);
+        border-radius: 16px;
+        overflow: hidden;
+        transition: transform 0.25s, border-color 0.25s;
+        cursor: pointer;
+        position: relative;
+    }
+    .fav-card:hover { transform: translateY(-4px); border-color: rgba(253,233,162,0.45); }
+
+    .fav-thumb { width: 100%; height: 140px; object-fit: cover; display: block; background: #1F6D7E; }
+
+    .fav-heart {
+        position: absolute; top: 10px; right: 12px;
+        color: #ff5f5f; font-size: 20px;
+        text-shadow: 0 0 8px rgba(255,80,80,0.6);
+        cursor: pointer; transition: transform 0.2s;
+    }
+    .fav-heart:hover { transform: scale(1.2); }
+
+    .fav-body { padding: 16px; }
+
+    .fav-name      { font-family: 'Gasoek One', sans-serif; font-size: 15px; color: var(--white); display: block; margin-bottom: 6px; }
+    .fav-publisher { font-family: 'Inter', sans-serif; font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 12px; display: block; }
+    .fav-price     { font-family: 'Inria Sans', sans-serif; font-weight: 700; font-size: 18px; color: var(--yellow-gold); }
+
+    .fav-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+    .fav-btn-buy {
+        flex: 1; padding: 9px;
+        background: var(--yellow-main); color: #001A20;
+        border: none; border-radius: 8px;
+        font-family: 'Gasoek One', sans-serif; font-size: 13px;
+        cursor: pointer; transition: background 0.2s;
+        text-align: center; text-decoration: none;
+    }
+    .fav-btn-buy:hover { background: var(--yellow-light); }
+
+    /* Estado vazio */
+    .empty-state {
+        text-align: center;
+        padding: 80px 20px;
+        color: rgba(255,255,255,0.25);
+        grid-column: 1 / -1;
+    }
+    .empty-state i { font-size: 64px; margin-bottom: 20px; display: block; color: rgba(253,233,162,0.1); }
+    .empty-state p { font-family: 'Inter', sans-serif; font-size: 15px; }
+</style>
+@endsection
+
+@section('content')
+
+<p class="page-title">Favoritos</p>
+
+<div class="favorites-grid">
+
+    {{-- Aqui virão os favoritos do banco de dados --}}
+    {{-- Exemplo de como ficará o loop quando integrar:
+    @foreach($favoritos as $item)
+    <div class="fav-card">
+        <img class="fav-thumb" src="{{ asset('images/' . $item->imagem) }}" alt="{{ $item->nome }}">
+        <i class="fa-solid fa-heart fav-heart" title="Remover dos favoritos"></i>
+        <div class="fav-body">
+            <span class="fav-name">{{ $item->nome }}</span>
+            <span class="fav-publisher">{{ $item->publisher }}</span>
+            <span class="fav-price">A partir de R${{ $item->preco }}</span>
+            <div class="fav-actions">
+                <a href="#" class="fav-btn-buy">Comprar</a>
+            </div>
+        </div>
+    </div>
+    @endforeach
+    --}}
+
+    <div class="empty-state">
+        <i class="fa-regular fa-heart"></i>
+        <p>Você ainda não adicionou nenhum favorito.</p>
+    </div>
+
+</div>
+
+<script>
+    document.querySelectorAll('.fav-heart').forEach(heart => {
+        heart.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const card = this.closest('.fav-card');
+            card.style.transition = 'opacity 0.3s, transform 0.3s';
+            card.style.opacity = '0';
+            card.style.transform = 'scale(0.9)';
+            setTimeout(() => card.remove(), 300);
+        });
+    });
+</script>
+
+@endsection
