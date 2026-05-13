@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\ProdutoController;
+
+Route::get('/produto/{slug}', [ProdutoController::class, 'show'])->name('produto.show');
 
 Route::get('/', function () {
     return view('index');
