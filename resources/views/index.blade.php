@@ -281,7 +281,7 @@
     
     <nav class="menu-group">
         <a href="{{ route('home') }}" class="menu-item">Início</a>
-        <a href="#" class="menu-item">Catálogo</a>
+        <a href="{{ route('catalogo') }}" class="menu-item">Catálogo</a>
         <a href="#" class="menu-item">Ofertas</a>
     </nav>
 
