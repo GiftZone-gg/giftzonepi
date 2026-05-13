@@ -4,458 +4,157 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $produto->nome }} – GiftZone</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Gasoek+One&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg:        #0f2a2a;
-            --bg2:       #162e2e;
-            --card:      #1a1008;
-            --gold:      #e8b820;
-            --gold2:     #c89a10;
-            --teal:      #2a7070;
-            --teal2:     #1e5555;
-            --cyan:      #3ab8c8;
-            --text:      #e0eeee;
-            --muted:     #8aabab;
-            --danger:    #e85020;
-            --gradient:  linear-gradient(160deg, #1a4a4a 0%, #2a6a5a 35%, #3a7a60 55%, #b8b860 100%);
+            --dark:   #002830;
+            --mid:    #005363;
+            --accent: #FDE9A2;
+            --white:  #ffffff;
+            --radius: 9999px;
+            --danger: #e85020;
+            --cyan:   #3ab8c8;
         }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: #002830; color: white; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        /* NAVBAR */
+        nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 32px; background: rgba(0,40,48,0.85); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(253,233,162,0.12); }
+        .nav-left { display: flex; align-items: center; gap: 16px; }
+        .hamburger { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
+        .hamburger span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: background .2s; }
+        .hamburger:hover span { background: var(--accent); }
+        .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .logo img { height: 36px; width: auto; }
+        .logo-text { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.6rem; color: var(--accent); letter-spacing: 1px; }
+        .btn-entrar { border: 1px solid rgba(255,255,255,0.3); padding: 12px 36px; border-radius: 8px; color: white; text-decoration: none; font-weight: 500; font-size: 18px; transition: all 0.3s ease; background: transparent; cursor: pointer; }
+        .btn-entrar:hover { background: rgba(255,255,255,0.1); }
 
-        body {
-            font-family: 'Nunito', sans-serif;
-            background: var(--gradient);
-            min-height: 100vh;
-            color: var(--text);
-        }
+        /* HERO */
+        .hero { position: relative; overflow: hidden; padding: 48px 24px 40px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: linear-gradient(160deg, var(--dark) 0%, var(--mid) 60%, #003d4a 100%); }
+        .hero::before { content: ''; position: absolute; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(0,83,99,.55) 0%, transparent 70%); top: -120px; right: -100px; pointer-events: none; }
+        .hero::after { content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(253,233,162,.06) 0%, transparent 70%); bottom: -80px; left: -60px; pointer-events: none; }
+        .hero-breadcrumb { font-size: .82rem; color: rgba(253,233,162,.5); letter-spacing: .06em; text-transform: uppercase; animation: fadeDown .4s ease both; }
+        .hero-breadcrumb a { color: rgba(253,233,162,.5); text-decoration: none; transition: color .2s; }
+        .hero-breadcrumb a:hover { color: var(--accent); }
+        .hero-title { font-family: 'Gasoek One', sans-serif; font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 400; color: var(--accent); letter-spacing: 4px; text-align: center; line-height: 1.1; animation: fadeDown .5s ease both; }
 
-        /* ── NAVBAR ── */
-        nav {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 14px 28px;
-            background: rgba(15,30,30,0.55);
-            backdrop-filter: blur(10px);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        /* MAIN */
+        main { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
+        .product-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: start; }
+        @media (max-width: 760px) { .product-grid { grid-template-columns: 1fr; } }
 
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-        }
+        /* LEFT */
+        .platform-badge { display: inline-block; background: var(--cyan); color: #fff; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 4px 14px; border-radius: 4px 4px 0 0; }
+        .main-image-wrap { width: 100%; aspect-ratio: 16/9; border-radius: 0 12px 12px 12px; overflow: hidden; background: var(--mid); }
+        .main-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
+        .main-image-wrap:hover img { transform: scale(1.03); }
+        .gallery { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+        .gallery-btn { background: none; border: none; color: var(--accent); font-size: 1.4rem; cursor: pointer; padding: 4px 6px; flex-shrink: 0; transition: opacity .2s; }
+        .gallery-btn:hover { opacity: .7; }
+        .gallery-thumbs { display: flex; gap: 8px; overflow: hidden; flex: 1; }
+        .gallery-thumb { width: 82px; height: 54px; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; transition: border-color .2s, transform .2s; }
+        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-thumb.active, .gallery-thumb:hover { border-color: var(--accent); transform: scale(1.05); }
+        .desc-box { margin-top: 16px; background: rgba(0,83,99,.35); border: 1px solid rgba(253,233,162,.1); border-radius: 12px; padding: 18px 20px; animation: fadeUp .5s .1s ease both; }
+        .desc-box h3 { font-size: .75rem; font-weight: 700; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
+        .desc-box p { font-size: .88rem; color: rgba(255,255,255,.65); line-height: 1.65; }
 
-        .nav-logo svg { width: 30px; height: 30px; }
-
-        .logo-text { font-family: 'Rajdhani', sans-serif; font-size: 1.5rem; font-weight: 700; }
-        .logo-text .gift { color: #fff; }
-        .logo-text .zone { color: var(--gold); }
-
-        .nav-avatar {
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            border: 2px solid var(--gold);
-            overflow: hidden;
-            background: var(--teal);
-            display: flex; align-items: center; justify-content: center;
-        }
-
-        .nav-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* ── MAIN LAYOUT ── */
-        main {
-            max-width: 960px;
-            margin: 32px auto;
-            padding: 0 20px 60px;
-        }
-
-        /* ── PRODUCT GRID ── */
-        .product-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-            align-items: start;
-        }
-
-        @media (max-width: 700px) {
-            .product-grid { grid-template-columns: 1fr; }
-        }
-
-        /* ── LEFT COLUMN ── */
-        .left-col {}
-
-        /* Platform badge */
-        .platform-badge {
-            background: var(--cyan);
-            color: #fff;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            padding: 4px 14px;
-            border-radius: 4px 4px 0 0;
-            display: inline-block;
-            text-transform: uppercase;
-        }
-
-        /* Main image */
-        .main-image-wrap {
-            width: 100%;
-            aspect-ratio: 16/9;
-            border-radius: 0 8px 8px 8px;
-            overflow: hidden;
-            background: var(--teal2);
-            position: relative;
-        }
-
-        .main-image-wrap img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-
-        /* Gallery */
-        .gallery {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-            align-items: center;
-        }
-
-        .gallery-btn {
-            background: none;
-            border: none;
-            color: var(--gold);
-            font-size: 1.3rem;
-            cursor: pointer;
-            padding: 4px;
-            flex-shrink: 0;
-        }
-
-        .gallery-thumbs {
-            display: flex;
-            gap: 6px;
-            overflow: hidden;
-            flex: 1;
-        }
-
-        .gallery-thumb {
-            width: 80px;
-            height: 52px;
-            border-radius: 6px;
-            overflow: hidden;
-            cursor: pointer;
-            border: 2px solid transparent;
-            flex-shrink: 0;
-            transition: border-color 0.2s, transform 0.2s;
-        }
-
-        .gallery-thumb img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-        }
-
-        .gallery-thumb.active,
-        .gallery-thumb:hover {
-            border-color: var(--gold);
-            transform: scale(1.05);
-        }
-
-        /* Description */
-        .desc-box {
-            margin-top: 16px;
-            background: rgba(15,30,30,0.6);
-            border-radius: 10px;
-            padding: 16px;
-        }
-
-        .desc-box h3 {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.95rem;
-            color: var(--gold);
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 8px;
-        }
-
-        .desc-box p {
-            font-size: 0.85rem;
-            color: var(--muted);
-            line-height: 1.6;
-        }
-
-        /* ── RIGHT COLUMN ── */
-        .right-col {}
-
-        .product-title {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 1.9rem;
-            font-weight: 700;
-            line-height: 1.15;
-            color: #fff;
-            margin-bottom: 16px;
-        }
-
-        /* Price card */
-        .price-card {
-            background: rgba(15,30,30,0.7);
-            border: 1.5px solid rgba(232,184,32,0.3);
-            border-radius: 12px;
-            padding: 18px 20px;
-            margin-bottom: 16px;
-        }
-
-        .price-value {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--gold);
-        }
-
-        .price-sub {
-            font-size: 0.78rem;
-            color: var(--muted);
-            margin-top: 2px;
-            margin-bottom: 14px;
-        }
-
-        /* Platform selector */
-        .selector-label {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 6px;
-        }
-
-        .selector-pills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 14px;
-        }
-
-        .pill {
-            padding: 5px 14px;
-            border-radius: 20px;
-            border: 1.5px solid var(--teal);
-            background: transparent;
-            color: var(--text);
-            font-size: 0.82rem;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .pill:hover { border-color: var(--gold); color: var(--gold); }
-        .pill.active { border-color: var(--gold); background: rgba(232,184,32,0.15); color: var(--gold); }
-
-        /* Edition selector */
-        .edition-select {
-            width: 100%;
-            background: var(--teal2);
-            border: 1.5px solid var(--teal);
-            border-radius: 8px;
-            color: var(--text);
-            font-family: 'Nunito', sans-serif;
-            font-size: 0.9rem;
-            padding: 9px 12px;
-            margin-bottom: 16px;
-            outline: none;
-            cursor: pointer;
-            transition: border-color 0.2s;
-        }
-
-        .edition-select:focus { border-color: var(--gold); }
-
-        /* Action buttons */
-        .actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn-fav {
-            flex: 1;
-            padding: 11px;
-            border-radius: 8px;
-            border: 1.5px solid var(--danger);
-            background: transparent;
-            color: var(--danger);
-            font-family: 'Nunito', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-fav:hover { background: rgba(232,80,32,0.15); }
-        .btn-fav.faved { background: rgba(232,80,32,0.2); }
-
-        .btn-buy {
-            flex: 1;
-            padding: 11px;
-            border-radius: 8px;
-            border: none;
-            background: var(--cyan);
-            color: #fff;
-            font-family: 'Nunito', sans-serif;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-        }
-
-        .btn-buy:hover { background: #2fa8b8; }
+        /* RIGHT */
+        .product-title { font-family: 'Gasoek One', sans-serif; font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 400; color: var(--accent); letter-spacing: 2px; line-height: 1.15; margin-bottom: 20px; animation: fadeDown .45s ease both; }
+        .price-card { background: rgba(0,83,99,.4); border: 1px solid rgba(253,233,162,.18); border-radius: 16px; padding: 22px 24px; margin-bottom: 16px; animation: fadeUp .5s ease both; }
+        .price-value { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 2.2rem; color: var(--accent); letter-spacing: 1px; }
+        .price-sub { font-size: .78rem; color: rgba(255,255,255,.45); margin-top: 3px; margin-bottom: 18px; }
+        .selector-label { font-size: .72rem; font-weight: 700; color: rgba(253,233,162,.6); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 8px; }
+        .selector-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+        .pill { padding: 6px 16px; border-radius: var(--radius); border: 1.5px solid rgba(0,83,99,1); background: transparent; color: rgba(255,255,255,.7); font-family: 'Inter', sans-serif; font-weight: 600; font-size: .82rem; cursor: pointer; transition: all .2s; }
+        .pill:hover { border-color: var(--accent); color: var(--accent); }
+        .pill.active { border-color: var(--accent); background: rgba(253,233,162,.12); color: var(--accent); }
+        .edition-select { width: 100%; background: rgba(0,40,48,.7); border: 1.5px solid rgba(0,83,99,1); border-radius: 10px; color: var(--white); font-family: 'Inter', sans-serif; font-size: .9rem; padding: 10px 14px; margin-bottom: 18px; outline: none; cursor: pointer; transition: border-color .2s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23FDE9A2' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+        .edition-select:focus { border-color: var(--accent); }
+        .edition-select option { background: #002830; }
+        .actions { display: flex; gap: 10px; }
+        .btn-fav { flex: 1; padding: 12px; border-radius: 10px; border: 1.5px solid var(--danger); background: transparent; color: var(--danger); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-fav:hover { background: rgba(232,80,32,.15); }
+        .btn-fav.faved { background: rgba(232,80,32,.2); }
+        .btn-buy { flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--accent); color: var(--dark); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: opacity .2s, transform .1s; }
+        .btn-buy:hover { opacity: .88; }
         .btn-buy:active { transform: scale(0.97); }
+        .req-box { margin-top: 16px; background: rgba(0,83,99,.4); border: 1px solid rgba(253,233,162,.18); border-radius: 16px; overflow: hidden; animation: fadeUp .5s .15s ease both; }
+        .req-title { background: rgba(253,233,162,.12); color: var(--accent); font-family: 'Inter', sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 10px 18px; border-bottom: 1px solid rgba(253,233,162,.1); }
+        .req-cols { display: grid; grid-template-columns: 1fr 1fr; }
+        .req-col { padding: 14px 18px; }
+        .req-col:first-child { border-right: 1px solid rgba(255,255,255,.06); }
+        .req-col h4 { font-size: .72rem; font-weight: 700; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+        .req-col p { font-size: .78rem; color: rgba(255,255,255,.55); line-height: 1.75; }
 
-        /* Requirements */
-        .req-box {
-            margin-top: 16px;
-            background: rgba(15,30,30,0.7);
-            border: 1.5px solid rgba(232,184,32,0.25);
-            border-radius: 12px;
-            overflow: hidden;
-        }
+        /* FOOTER */
+        footer { background: #001e25; border-top: 1px solid rgba(253,233,162,.1); padding: 28px 32px; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+        .footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+        .footer-logo img { height: 30px; }
+        .footer-logo span { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--accent); }
+        .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+        .footer-copy { font-size: .78rem; color: #6a9a94; }
+        .social-links { display: flex; gap: 14px; }
+        .social-links a { color: #6a9a94; text-decoration: none; transition: color .2s; }
+        .social-links a:hover { color: var(--accent); }
 
-        .req-title {
-            background: var(--gold2);
-            color: #1a1008;
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            padding: 8px 16px;
-            text-align: center;
-        }
-
-        .req-cols {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-        }
-
-        .req-col {
-            padding: 12px 14px;
-        }
-
-        .req-col:first-child {
-            border-right: 1px solid rgba(255,255,255,0.07);
-        }
-
-        .req-col h4 {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 0.82rem;
-            color: var(--gold);
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            margin-bottom: 6px;
-        }
-
-        .req-col p {
-            font-size: 0.78rem;
-            color: var(--muted);
-            line-height: 1.7;
-        }
-
-        /* ── FOOTER ── */
-        footer {
-            background: #0d1f1f;
-            padding: 24px 28px;
-            margin-top: 40px;
-        }
-
-        .footer-inner {
-            max-width: 960px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .footer-copy {
-            font-size: 0.8rem;
-            color: var(--muted);
-        }
-
-        .footer-social {
-            display: flex;
-            gap: 14px;
-        }
-
-        .footer-social a {
-            color: var(--muted);
-            font-size: 1.1rem;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-
-        .footer-social a:hover { color: var(--gold); }
+        @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 600px) { nav { padding: 12px 16px; } main { padding: 28px 16px 60px; } footer { padding: 24px 16px; } .footer-bottom { flex-direction: column; align-items: flex-start; } }
     </style>
 </head>
 <body>
 
-{{-- ── NAVBAR ── --}}
+{{-- NAVBAR --}}
 <nav>
-    <a href="{{ url('/') }}" class="nav-logo">
-        <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="4" y="16" width="28" height="16" rx="2" fill="#e8b820"/>
-            <rect x="4" y="10" width="28" height="7" rx="1.5" fill="#c89a10"/>
-            <rect x="15.5" y="10" width="5" height="22" fill="#0f2a2a"/>
-            <path d="M18 10 Q13 4 9 6 Q5 8 9 11 Q13 13 18 10Z" fill="#e8b820"/>
-            <path d="M18 10 Q23 4 27 6 Q31 8 27 11 Q23 13 18 10Z" fill="#c89a10"/>
-        </svg>
-        <div class="logo-text"><span class="gift">Gift</span><span class="zone">Zone</span></div>
-    </a>
-    <div class="nav-avatar">
-        @auth
-            <img src="{{ Auth::user()->avatar ?? 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name).'&background=2a7070&color=fff' }}" alt="Avatar">
-        @else
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="4" fill="#e8b820"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" stroke="#e8b820" stroke-width="2" stroke-linecap="round"/></svg>
-        @endauth
+    <div class="nav-left">
+        <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+        <a href="/" class="logo">
+            <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
+            <span class="logo-text" style="display:none">GiftZone</span>
+        </a>
     </div>
+    @auth
+        <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:.85rem;color:rgba(255,255,255,.6)">{{ Auth::user()->name }}</span>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="btn-entrar" style="font-size:14px;padding:8px 20px;">Sair</button>
+            </form>
+        </div>
+    @else
+        <a href="{{ route('login') }}"><button class="btn-entrar">Entrar</button></a>
+    @endauth
 </nav>
 
-{{-- ── MAIN ── --}}
+{{-- HERO --}}
+<section class="hero">
+    <div class="hero-breadcrumb">
+        <a href="{{ url('/catalogo') }}">Catálogo</a> &rsaquo; {{ $produto->nome }}
+    </div>
+    <h1 class="hero-title">{{ strtoupper($produto->nome) }}</h1>
+</section>
+
+{{-- MAIN --}}
 <main>
     <div class="product-grid">
 
-        {{-- ── LEFT ── --}}
+        {{-- LEFT --}}
         <div class="left-col">
-
-            {{-- Platform badge (primeira plataforma selecionada) --}}
-            <span class="platform-badge" id="badge-platform">
-                {{ $produto->plataformas[0] ?? '' }}
-            </span>
-
-            {{-- Main image --}}
+            <span class="platform-badge" id="badge-platform">{{ $produto->plataformas[0] ?? '' }}</span>
             <div class="main-image-wrap">
-                <img id="main-image"
-                     src="{{ asset('images/' . $produto->imagem_principal) }}"
-                     alt="{{ $produto->nome }}">
+                <img id="main-image" src="{{ asset('images/' . $produto->imagem_principal) }}" alt="{{ $produto->nome }}">
             </div>
 
-            {{-- Gallery --}}
             @if($produto->galeria && count($produto->galeria) > 0)
             <div class="gallery">
                 <button class="gallery-btn" onclick="galleryPrev()">&#8249;</button>
                 <div class="gallery-thumbs" id="gallery-thumbs">
-                    {{-- Thumb da imagem principal --}}
                     <div class="gallery-thumb active" onclick="selectThumb(this, '{{ asset('images/' . $produto->imagem_principal) }}')">
-                        <img src="{{ asset('images/' . $produto->imagem_principal) }}" alt="Thumb principal">
+                        <img src="{{ asset('images/' . $produto->imagem_principal) }}" alt="Principal">
                     </div>
-                    {{-- Thumbs da galeria --}}
                     @foreach($produto->galeria as $img)
                     <div class="gallery-thumb" onclick="selectThumb(this, '{{ asset('images/' . $img) }}')">
                         <img src="{{ asset('images/' . $img) }}" alt="Thumb">
@@ -466,42 +165,31 @@
             </div>
             @endif
 
-            {{-- Description --}}
             <div class="desc-box">
                 <h3>Descrição</h3>
                 <p>{{ $produto->descricao }}</p>
             </div>
-
         </div>
 
-        {{-- ── RIGHT ── --}}
+        {{-- RIGHT --}}
         <div class="right-col">
-
-            <h1 class="product-title">{{ $produto->nome }}</h1>
+            <h2 class="product-title">{{ $produto->nome }}</h2>
 
             <div class="price-card">
-
-                {{-- Price --}}
                 <div class="price-value" id="price-display">
                     R$ {{ number_format($produto->edicoes[0]['preco'] ?? 0, 2, ',', '.') }}
                 </div>
                 <div class="price-sub" id="edition-label">
-                    {{ $produto->edicoes[0]['nome'] ?? '' }} —
-                    {{ $produto->plataformas[0] ?? '' }}
+                    {{ $produto->edicoes[0]['nome'] ?? '' }} — {{ $produto->plataformas[0] ?? '' }}
                 </div>
 
-                {{-- Platform selector --}}
                 <div class="selector-label">Plataforma</div>
                 <div class="selector-pills" id="platform-pills">
                     @foreach($produto->plataformas as $i => $plat)
-                    <button class="pill {{ $i === 0 ? 'active' : '' }}"
-                            onclick="selectPlataforma(this, '{{ $plat }}')">
-                        {{ $plat }}
-                    </button>
+                    <button class="pill {{ $i === 0 ? 'active' : '' }}" onclick="selectPlataforma(this, '{{ $plat }}')">{{ $plat }}</button>
                     @endforeach
                 </div>
 
-                {{-- Edition selector --}}
                 <div class="selector-label">Edição</div>
                 <select class="edition-select" id="edition-select" onchange="selectEdicao(this)">
                     @foreach($produto->edicoes as $ed)
@@ -511,17 +199,12 @@
                     @endforeach
                 </select>
 
-                {{-- Actions --}}
                 <div class="actions">
-                    <button class="btn-fav" id="btn-fav" onclick="toggleFav(this)">
-                        Favoritar ♡
-                    </button>
+                    <button class="btn-fav" id="btn-fav" onclick="toggleFav(this)">Favoritar ♡</button>
                     <button class="btn-buy">Comprar</button>
                 </div>
-
             </div>
 
-            {{-- Requirements --}}
             @if($produto->requisitos)
             <div class="req-box">
                 <div class="req-title">Requisitos do Sistema</div>
@@ -545,57 +228,47 @@
                 </div>
             </div>
             @endif
-
         </div>
+
     </div>
 </main>
 
-{{-- ── FOOTER ── --}}
+{{-- FOOTER --}}
 <footer>
     <div class="footer-inner">
-        <a href="{{ url('/') }}" class="nav-logo">
-            <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-                <rect x="4" y="16" width="28" height="16" rx="2" fill="#e8b820"/>
-                <rect x="4" y="10" width="28" height="7" rx="1.5" fill="#c89a10"/>
-                <rect x="15.5" y="10" width="5" height="22" fill="#0d1f1f"/>
-                <path d="M18 10 Q13 4 9 6 Q5 8 9 11 Q13 13 18 10Z" fill="#e8b820"/>
-                <path d="M18 10 Q23 4 27 6 Q31 8 27 11 Q23 13 18 10Z" fill="#c89a10"/>
-            </svg>
-            <div class="logo-text" style="font-size:1.1rem"><span class="gift">Gift</span><span class="zone">Zone</span></div>
+        <a href="/" class="footer-logo">
+            <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone" onerror="this.style.display='none'">
+            <span>GiftZone</span>
         </a>
-        <span class="footer-copy">© {{ date('Y') }} GiftZone Todos os direitos Reservados</span>
-        <div class="footer-social">
-            <a href="#" title="Instagram">&#9400;</a>
-            <a href="#" title="Twitter">&#120143;</a>
-            <a href="#" title="Facebook">&#9993;</a>
+        <div class="footer-bottom">
+            <span class="footer-copy">© {{ date('Y') }} GiftZone Todos direitos Reservados</span>
+            <div class="social-links">
+                <a href="#" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608C4.519 2.567 5.786 2.293 7.152 2.231 8.418 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.332.014 7.052.072 5.197.157 3.355.673 2.014 2.014.673 3.355.157 5.197.072 7.052.014 8.332 0 8.741 0 12c0 3.259.014 3.668.072 4.948.085 1.855.601 3.697 1.942 5.038 1.341 1.341 3.183 1.857 5.038 1.942C8.332 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.855-.085 3.697-.601 5.038-1.942 1.341-1.341 1.857-3.183 1.942-5.038C23.986 15.668 24 15.259 24 12c0-3.259-.014-3.668-.072-4.948-.085-1.855-.601-3.697-1.942-5.038C20.645.673 18.803.157 16.948.072 15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+                <a href="#" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
+                <a href="#" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073c0 6.031 4.388 11.031 10.125 11.927v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796v8.437C19.612 23.104 24 18.104 24 12.073z"/></svg></a>
+                <a href="#" aria-label="Discord"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+            </div>
         </div>
     </div>
 </footer>
 
 <script>
-    // ── Galeria ──
     let thumbOffset = 0;
-
     function selectThumb(el, src) {
         document.getElementById('main-image').src = src;
         document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
     }
-
     function galleryNext() {
         const wrap = document.getElementById('gallery-thumbs');
-        thumbOffset = Math.min(thumbOffset + 88, wrap.scrollWidth - wrap.clientWidth);
+        thumbOffset = Math.min(thumbOffset + 90, wrap.scrollWidth - wrap.clientWidth);
         wrap.scrollTo({ left: thumbOffset, behavior: 'smooth' });
     }
-
     function galleryPrev() {
-        thumbOffset = Math.max(thumbOffset - 88, 0);
+        thumbOffset = Math.max(thumbOffset - 90, 0);
         document.getElementById('gallery-thumbs').scrollTo({ left: thumbOffset, behavior: 'smooth' });
     }
-
-    // ── Plataforma ──
     let plataformaSelecionada = document.querySelector('.pill.active')?.textContent.trim() || '';
-
     function selectPlataforma(el, plat) {
         document.querySelectorAll('#platform-pills .pill').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
@@ -603,26 +276,20 @@
         document.getElementById('badge-platform').textContent = plat;
         atualizarLabel();
     }
-
-    // ── Edição / Preço ──
     function selectEdicao(sel) {
-        const preco = parseFloat(sel.value).toFixed(2).replace('.', ',');
+        const preco = parseFloat(sel.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
         document.getElementById('price-display').textContent = 'R$ ' + preco;
         atualizarLabel();
     }
-
     function atualizarLabel() {
         const sel = document.getElementById('edition-select');
         const nomeEd = sel.options[sel.selectedIndex]?.dataset.nome || '';
         document.getElementById('edition-label').textContent = nomeEd + ' — ' + plataformaSelecionada;
     }
-
-    // ── Favoritar ──
     function toggleFav(btn) {
         btn.classList.toggle('faved');
         btn.textContent = btn.classList.contains('faved') ? 'Favoritado ♥' : 'Favoritar ♡';
     }
 </script>
-
 </body>
 </html>
