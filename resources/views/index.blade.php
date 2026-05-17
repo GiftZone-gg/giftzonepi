@@ -371,7 +371,7 @@
     <section>
         <div class="section-header">
             <h2 class="section-title">Mais Procurados</h2>
-            <a href="#" class="ver-mais">Ver Mais →</a>
+            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
         </div>
         <div class="grid-games">
             <div class="card">
@@ -392,7 +392,7 @@
     <section>
         <div class="section-header">
             <h2 class="section-title">Jogos PlayStation</h2>
-            <a href="#" class="ver-mais">Ver Mais →</a>
+            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
         </div>
         <div class="grid-games">
             <div class="card">
@@ -413,7 +413,7 @@
     <section>
         <div class="section-header">
             <h2 class="section-title">Jogos Steam</h2>
-            <a href="#" class="ver-mais">Ver Mais →</a>
+            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
         </div>
         <div class="grid-games">
             <div class="card">

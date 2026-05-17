@@ -8,7 +8,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
@@ -19,10 +18,7 @@
             --teal-light:    #90DDE8;
             --black:         #000000;
             --white:         #FFFFFF;
-
-   
-            --sidebar-w: 280px;
-
+            --sidebar-w:     280px;
             --bg-from: #01313A;
             --bg-mid:  #0C4F58;
             --bg-to:   #CCCA95;
@@ -36,7 +32,7 @@
             display: flex;
         }
 
-
+        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-w);
             min-height: 100vh;
@@ -59,36 +55,17 @@
             border-bottom: 1px solid rgba(255,255,255,0.07);
         }
 
-        .hamburger {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            cursor: pointer;
-        }
-        .hamburger span {
-            display: block;
-            width: 26px;
-            height: 2px;
-            background: var(--white);
-            border-radius: 2px;
-        }
+        .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
+        .hamburger span { display: block; width: 26px; height: 2px; background: var(--white); border-radius: 2px; }
 
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: var(--yellow-main);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            color: #001A20;
-            font-family: 'Gasoek One', sans-serif;
-        }
+        .logo-box { height: 44px; display: flex; align-items: center; }
+        .logo-box img { height: 100%; width: auto; }
 
         .sidebar-nav {
             flex: 1;
             padding: 30px 0;
+            display: flex;
+            flex-direction: column;
         }
 
         .nav-item {
@@ -101,7 +78,6 @@
             font-weight: 500;
             transition: all 0.25s ease;
             border-left: 3px solid transparent;
-            position: relative;
         }
 
         .nav-item:hover {
@@ -117,14 +93,47 @@
             border-left: 4px solid var(--yellow-gold);
         }
 
+        /* Links de navegação agrupados */
+        .nav-group { flex: 1; }
 
+        /* Separador antes dos botões de fundo */
+        .nav-footer {
+            border-top: 1px solid rgba(255,255,255,0.07);
+            padding: 16px 0;
+        }
+
+        /* Botão de Logout — mesmo estilo do nav-item mas com form */
+        .btn-logout {
+            width: 100%;
+            padding: 16px 28px;
+            background: transparent;
+            border: none;
+            border-left: 3px solid transparent;
+            color: rgba(255,100,100,0.7);
+            font-family: 'Inter', sans-serif;
+            font-size: 17px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-logout:hover {
+            color: #ff6b6b;
+            background: rgba(255,80,80,0.06);
+            border-left-color: #ff6b6b;
+        }
+
+        /* ===== CONTEÚDO ===== */
         .main-content {
             flex: 1;
             padding: 36px 40px;
             overflow-y: auto;
         }
 
-
+        /* ===== COMPONENTES GLOBAIS ===== */
         .card {
             background: rgba(0, 26, 32, 0.6);
             border: 1px solid rgba(253, 233, 162, 0.2);
@@ -132,7 +141,6 @@
             padding: 30px;
         }
 
-    
         .btn-main {
             display: inline-block;
             padding: 12px 28px;
@@ -177,11 +185,9 @@
         .tag-pendente  { background: rgba(144,221,232,0.25); color: var(--teal-light); border: 1px solid var(--teal-light); }
         .tag-cancelado { background: rgba(255,80,80,0.2); color: #ff6b6b; border: 1px solid #ff6b6b; }
 
-
         .badge-cashback {
             position: absolute;
-            top: 8px;
-            right: 8px;
+            top: 8px; right: 8px;
             background: var(--yellow-gold);
             color: #001A20;
             font-family: 'Inria Sans', sans-serif;
@@ -202,43 +208,56 @@
 </head>
 <body>
 
-    <!-- ======= SIDEBAR ======= -->
     <aside class="sidebar">
         <div class="sidebar-header">
             <div class="hamburger">
                 <span></span><span></span><span></span>
             </div>
-            <!--  COLOCAR LOGO!!! -->
-            <div class="logo-icon">GZ</div>
+            <div class="logo-box">
+                <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
+            </div>
         </div>
 
         <nav class="sidebar-nav">
-            <a href="{{ route('usuario.perfil') }}"
-               class="nav-item {{ request()->routeIs('usuario.perfil') ? 'active' : '' }}">
-                Meu Perfil
-            </a>
-            <a href="{{ route('usuario.pedidos') }}"
-               class="nav-item {{ request()->routeIs('usuario.pedidos') ? 'active' : '' }}">
-                Pedidos
-            </a>
-            <a href="{{ route('usuario.pagamentos') }}"
-               class="nav-item {{ request()->routeIs('usuario.pagamentos') ? 'active' : '' }}">
-                Pagamentos
-            </a>
-            <a href="{{ route('usuario.favoritos') }}"
-               class="nav-item {{ request()->routeIs('usuario.favoritos') ? 'active' : '' }}">
-                Favoritos
-            </a>
-            <a href="{{ route('usuario.editar') }}"
-               class="nav-item {{ request()->routeIs('usuario.editar') ? 'active' : '' }}">
-                Editar Perfil
-            </a>
-            <a href="#" class="nav-item">Logout/Sair</a>
-            <a href="/" class="nav-item">Início</a>
+            <div class="nav-group">
+                <a href="{{ route('usuario.perfil') }}"
+                   class="nav-item {{ request()->routeIs('usuario.perfil') ? 'active' : '' }}">
+                    Meu Perfil
+                </a>
+                <a href="{{ route('usuario.pedidos') }}"
+                   class="nav-item {{ request()->routeIs('usuario.pedidos') ? 'active' : '' }}">
+                    Pedidos
+                </a>
+                <a href="{{ route('usuario.pagamentos') }}"
+                   class="nav-item {{ request()->routeIs('usuario.pagamentos') ? 'active' : '' }}">
+                    Pagamentos
+                </a>
+                <a href="{{ route('usuario.favoritos') }}"
+                   class="nav-item {{ request()->routeIs('usuario.favoritos') ? 'active' : '' }}">
+                    Favoritos
+                </a>
+                <a href="{{ route('usuario.editar') }}"
+                   class="nav-item {{ request()->routeIs('usuario.editar') ? 'active' : '' }}">
+                    Editar Perfil
+                </a>
+                <a href="{{ route('home') }}" class="nav-item">
+                    Início
+                </a>
+            </div>
+
+            {{-- Botão de logout no fundo da sidebar --}}
+            <div class="nav-footer">
+                <form action="{{ route('home') }}" method="">
+                    @csrf
+                    <button type="submit" class="btn-logout">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Sair da conta
+                    </button>
+                </form>
+            </div>
         </nav>
     </aside>
 
-    <!-- ======= CONTEÚDO ======= -->
     <main class="main-content">
         @yield('content')
     </main>
