@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GiftZone | Home</title>
+    <title>GiftZone | Meus Pagamentos</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Gasoek+One&family=Inria+Sans:ital,wght@1,700&display=swap" rel="stylesheet">
     <style>
         /* --- Reset e Base --- */
@@ -170,7 +170,7 @@
             background: rgba(255, 255, 255, 0.1);
         }
 
-        /* --- Banner Hero --- */
+        /* --- Banner Hero (mantido para consistência, mas não usado nessa página) --- */
         .hero-banner {
             width: 100%;
             aspect-ratio: 1688 / 803;
@@ -247,6 +247,27 @@
         .bg-steam { background-color: #1B4F5E; }
         .bg-nintendo { background-color: #E60012; }
 
+        /* --- Estilos específicos para a página de pagamentos --- */
+        .pagamentos-container {
+            background: #001A20;
+            border-radius: 24px;
+            padding: 40px;
+            margin: 30px 0;
+        }
+
+        .pagamentos-titulo {
+            font-family: 'Gasoek One', sans-serif;
+            font-size: 28px;
+            color: #FFDC74;
+            margin-bottom: 24px;
+        }
+
+        .pagamentos-subtitulo {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
         /* --- Footer --- */
         footer { border-top: 1px solid #FFDC74; padding: 60px 0 30px 0; margin-top: 40px; }
 
@@ -286,11 +307,11 @@
     </nav>
 
     <nav class="menu-group">
-    <a href="{{ route('catalogo', ['plataforma' => 'PlayStation 5']) }}" class="menu-item">Playstation</a>
-    <a href="{{ route('catalogo', ['plataforma' => 'Xbox']) }}" class="menu-item">Xbox</a>
-    <a href="{{ route('catalogo', ['plataforma' => 'Nintendo Switch']) }}" class="menu-item">Nintendo</a>
-    <a href="{{ route('catalogo', ['plataforma' => 'PC']) }}" class="menu-item">Steam</a>
-</nav>
+        <a href="#" class="menu-item">Playstation</a>
+        <a href="#" class="menu-item">Xbox</a>
+        <a href="#" class="menu-item">Nintendo</a>
+        <a href="#" class="menu-item">Steam</a>
+    </nav>
 
     <nav class="menu-group">
         @auth
@@ -332,125 +353,26 @@
         </div>
     </header>
 
-    <div class="hero-banner">
-        <div class="carousel-container">
-            <div class="carousel-slides">
-                <div class="carousel-slide active" style="background-image: url('{{ asset('images/deathstran2.webp') }}');">
-                    <div class="slide-content">
-                        <div class="slide-platform">PS5</div>
-                        <div class="slide-title">DEATH STRANDING 2</div>
-                        <div class="slide-subtitle">ON THE BEACH</div>
-                        <div class="slide-badge">JÁ DISPONÍVEL</div>
-                    </div>
-                </div>
-                <div class="carousel-slide" style="background-image: url('{{ asset('images/sillenthillF.webp') }}');">
-                    <div class="slide-content">
-                        <div class="slide-platform">PS5 / PC</div>
-                        <div class="slide-title">SILENT HILL</div>
-                        <div class="slide-subtitle">RETORNO AO PESADELO</div>
-                        <div class="slide-badge">EM BREVE</div>
-                    </div>
-                </div>
-                <div class="carousel-slide" style="background-image: url('{{ asset('images/exped33.webp') }}');">
-                    <div class="slide-content">
-                        <div class="slide-platform">XBOX / PC</div>
-                        <div class="slide-title">EXPEDIÇÃO</div>
-                        <div class="slide-subtitle">A GRANDE AVENTURA</div>
-                        <div class="slide-badge">PRÉ-VENDA AGORA</div>
-                    </div>
-                </div>
-            </div>
-            <div class="carousel-thumbnails">
-                <div class="thumbnail active" style="background-image: url('{{ asset('images/deathstran2.webp') }}');" onclick="currentSlide(0)"></div>
-                <div class="thumbnail" style="background-image: url('{{ asset('images/sillenthillF.webp') }}');" onclick="currentSlide(1)"></div>
-                <div class="thumbnail" style="background-image: url('{{ asset('images/exped33.webp') }}');" onclick="currentSlide(2)"></div>
-            </div>
-        </div>
-    </div>
+    <!-- PÁGINA DE PAGAMENTOS (conteúdo principal) -->
+    <div class="pagamentos-container">
+    <h1 class="pagamentos-titulo">Meus Métodos de Pagamento</h1>
+    <p class="pagamentos-subtitulo">Gerencie seus cartões e formas de pagamento.</p>
 
-    <section>
-        <div class="section-header">
-            <h2 class="section-title">Mais Procurados</h2>
-            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
-        </div>
-        <div class="grid-games">
-            <div class="card">
-                <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/deathstra.webp') }}');"></div>
+    @if($metodos->count() > 0)
+        @foreach($metodos as $metodo)
+            <div style="background: #002830; padding: 15px; border-radius: 12px; margin-bottom: 10px;">
+                <strong>{{ $metodo->card_brand }}</strong> - Final {{ $metodo->card_last_digits }}
+                @if($metodo->is_default)
+                    <span style="background: #FFDC74; color: #002830; padding: 2px 8px; border-radius: 20px; font-size: 12px;">Padrão</span>
+                @endif
             </div>
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/bf6.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/pokemon.webp') }}');"></div>
-            </div>
-        </div>
-    </section>
+        @endforeach
+    @else
+        <p style="margin-top: 20px; color: #bbb;">Nenhum método de pagamento cadastrado ainda.</p>
+    @endif
+</div>
 
-    <section>
-        <div class="section-header">
-            <h2 class="section-title">Jogos PlayStation</h2>
-            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
-        </div>
-        <div class="grid-games">
-            <div class="card">
-                <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/ghost.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/resevil.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/gow.webp') }}');"></div>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <div class="section-header">
-            <h2 class="section-title">Jogos Steam</h2>
-            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
-        </div>
-        <div class="grid-games">
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/tlou.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/hunt.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/hogleg.webp') }}');"></div>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <div class="section-header">
-            <h2 class="section-title">Universo Nintendo</h2>
-            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
-        </div>
-        <div class="grid-games">
-            <div class="card">
-                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/pokemon.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/mario.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/zelda.webp') }}');"></div>
-            </div>
-        </div>
-    </section>
+    <!-- Você pode adicionar mais seções conforme evoluir -->
 </div>
 
 <footer>
@@ -481,24 +403,6 @@
     menuBtn.addEventListener('click', toggleMenu);
     closeBtn.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', toggleMenu);
-
-    // Carrossel
-    let currentIndex = 0;
-    const slides = document.querySelectorAll('.carousel-slide');
-    const thumbnails = document.querySelectorAll('.thumbnail');
-
-    function showSlide(index) {
-        if (index >= slides.length) index = 0;
-        if (index < 0) index = slides.length - 1;
-        slides.forEach(s => s.classList.remove('active'));
-        thumbnails.forEach(t => t.classList.remove('active'));
-        slides[index].classList.add('active');
-        thumbnails[index].classList.add('active');
-        currentIndex = index;
-    }
-
-    function currentSlide(index) { showSlide(index); }
-    setInterval(() => showSlide(currentIndex + 1), 6000);
 </script>
 
 </body>

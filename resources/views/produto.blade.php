@@ -73,13 +73,16 @@
         .edition-select { width: 100%; background: rgba(0,40,48,.7); border: 1.5px solid rgba(0,83,99,1); border-radius: 10px; color: var(--white); font-family: 'Inter', sans-serif; font-size: .9rem; padding: 10px 14px; margin-bottom: 18px; outline: none; cursor: pointer; transition: border-color .2s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23FDE9A2' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
         .edition-select:focus { border-color: var(--accent); }
         .edition-select option { background: #002830; }
-        .actions { display: flex; gap: 10px; }
+        .actions { display: flex; gap: 10px; margin-bottom: 16px; }
         .btn-fav { flex: 1; padding: 12px; border-radius: 10px; border: 1.5px solid var(--danger); background: transparent; color: var(--danger); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
         .btn-fav:hover { background: rgba(232,80,32,.15); }
-        .btn-fav.faved { background: rgba(232,80,32,.2); }
         .btn-buy { flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--accent); color: var(--dark); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: opacity .2s, transform .1s; }
         .btn-buy:hover { opacity: .88; }
         .btn-buy:active { transform: scale(0.97); }
+        .flash-message { padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9rem; }
+        .flash-success { background: #2e7d32; color: white; }
+        .flash-error { background: #c62828; color: white; }
+        .flash-info { background: #ff9800; color: white; }
         .req-box { margin-top: 16px; background: rgba(0,83,99,.4); border: 1px solid rgba(253,233,162,.18); border-radius: 16px; overflow: hidden; animation: fadeUp .5s .15s ease both; }
         .req-title { background: rgba(253,233,162,.12); color: var(--accent); font-family: 'Inter', sans-serif; font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 10px 18px; border-bottom: 1px solid rgba(253,233,162,.1); }
         .req-cols { display: grid; grid-template-columns: 1fr 1fr; }
@@ -110,6 +113,9 @@
 {{-- NAVBAR --}}
 <nav>
     <div class="nav-left">
+        <a href="{{ route('carrinho.index') }}" style="color: white; margin-right: 15px;">
+    🛒 Carrinho
+</a>
         <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
         <a href="/" class="logo">
             <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
@@ -118,7 +124,7 @@
     </div>
     @auth
         <div style="display:flex;align-items:center;gap:12px;">
-            <span style="font-size:.85rem;color:rgba(255,255,255,.6)">{{ Auth::user()->name }}</span>
+            <span style="font-size:.85rem;color:rgba(255,255,255,.6)">{{ Auth::user()->nickname ?? Auth::user()->name }}</span>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="btn-entrar" style="font-size:14px;padding:8px 20px;">Sair</button>
@@ -143,19 +149,22 @@
 
         {{-- LEFT --}}
         <div class="left-col">
-            <span class="platform-badge" id="badge-platform">{{ $produto->plataformas[0] ?? '' }}</span>
+            <span class="platform-badge" id="badge-platform">{{ is_array($produto->plataformas) ? ($produto->plataformas[0] ?? '') : '' }}</span>
             <div class="main-image-wrap">
                 <img id="main-image" src="{{ asset('images/' . $produto->imagem_principal) }}" alt="{{ $produto->nome }}">
             </div>
 
-            @if($produto->galeria && count($produto->galeria) > 0)
+            @php
+                $galeria = is_array($produto->galeria) ? $produto->galeria : [];
+            @endphp
+            @if(count($galeria) > 0)
             <div class="gallery">
                 <button class="gallery-btn" onclick="galleryPrev()">&#8249;</button>
                 <div class="gallery-thumbs" id="gallery-thumbs">
                     <div class="gallery-thumb active" onclick="selectThumb(this, '{{ asset('images/' . $produto->imagem_principal) }}')">
                         <img src="{{ asset('images/' . $produto->imagem_principal) }}" alt="Principal">
                     </div>
-                    @foreach($produto->galeria as $img)
+                    @foreach($galeria as $img)
                     <div class="gallery-thumb" onclick="selectThumb(this, '{{ asset('images/' . $img) }}')">
                         <img src="{{ asset('images/' . $img) }}" alt="Thumb">
                     </div>
@@ -177,22 +186,22 @@
 
             <div class="price-card">
                 <div class="price-value" id="price-display">
-                    R$ {{ number_format($produto->edicoes[0]['preco'] ?? 0, 2, ',', '.') }}
+                    R$ {{ number_format(is_array($produto->edicoes) ? ($produto->edicoes[0]['preco'] ?? 0) : 0, 2, ',', '.') }}
                 </div>
                 <div class="price-sub" id="edition-label">
-                    {{ $produto->edicoes[0]['nome'] ?? '' }} — {{ $produto->plataformas[0] ?? '' }}
+                    {{ is_array($produto->edicoes) ? ($produto->edicoes[0]['nome'] ?? '') : '' }} — {{ is_array($produto->plataformas) ? ($produto->plataformas[0] ?? '') : '' }}
                 </div>
 
                 <div class="selector-label">Plataforma</div>
                 <div class="selector-pills" id="platform-pills">
-                    @foreach($produto->plataformas as $i => $plat)
+                    @foreach(is_array($produto->plataformas) ? $produto->plataformas : [] as $i => $plat)
                     <button class="pill {{ $i === 0 ? 'active' : '' }}" onclick="selectPlataforma(this, '{{ $plat }}')">{{ $plat }}</button>
                     @endforeach
                 </div>
 
                 <div class="selector-label">Edição</div>
                 <select class="edition-select" id="edition-select" onchange="selectEdicao(this)">
-                    @foreach($produto->edicoes as $ed)
+                    @foreach(is_array($produto->edicoes) ? $produto->edicoes : [] as $ed)
                     <option value="{{ $ed['preco'] }}" data-nome="{{ $ed['nome'] }}">
                         {{ $ed['nome'] }} — R$ {{ number_format($ed['preco'], 2, ',', '.') }}
                     </option>
@@ -200,19 +209,48 @@
                 </select>
 
                 <div class="actions">
-                    <button class="btn-fav" id="btn-fav" onclick="toggleFav(this)">Favoritar ♡</button>
-                    <button class="btn-buy">Comprar</button>
-                </div>
+    @if(auth()->check())
+        <form action="{{ route('favoritos.adicionar', $produto->id) }}" method="POST" style="flex:1">
+            @csrf
+            <button type="submit" class="btn-fav" id="btn-fav" style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+                @if($isFavorited)
+                    ❤️ Favoritado
+                @else
+                    ♡ Favoritar
+                @endif
+            </button>
+        </form>
+    @else
+        <a href="{{ route('login') }}" style="flex:1">
+            <button class="btn-fav" style="width:100%">♡ Favoritar</button>
+        </a>
+    @endif
+    <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST" style="flex:1">
+        @csrf
+        <button type="submit" class="btn-buy">Comprar</button>
+    </form>
+</div>
+
+                {{-- Mensagens flash --}}
+                @if(session('success'))
+                    <div class="flash-message flash-success">{{ session('success') }}</div>
+                @endif
+                @if(session('error'))
+                    <div class="flash-message flash-error">{{ session('error') }}</div>
+                @endif
+                @if(session('info'))
+                    <div class="flash-message flash-info">{{ session('info') }}</div>
+                @endif
             </div>
 
-            @if($produto->requisitos)
+            @if($produto->requisitos && is_array($produto->requisitos))
             <div class="req-box">
                 <div class="req-title">Requisitos do Sistema</div>
                 <div class="req-cols">
                     <div class="req-col">
                         <h4>Mínimos</h4>
                         <p>
-                            @foreach($produto->requisitos['minimo'] ?? [] as $key => $val)
+                            @foreach(($produto->requisitos['minimo'] ?? []) as $key => $val)
                                 <strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>
                             @endforeach
                         </p>
@@ -220,7 +258,7 @@
                     <div class="req-col">
                         <h4>Recomendados</h4>
                         <p>
-                            @foreach($produto->requisitos['recomendado'] ?? [] as $key => $val)
+                            @foreach(($produto->requisitos['recomendado'] ?? []) as $key => $val)
                                 <strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>
                             @endforeach
                         </p>
@@ -285,10 +323,6 @@
         const sel = document.getElementById('edition-select');
         const nomeEd = sel.options[sel.selectedIndex]?.dataset.nome || '';
         document.getElementById('edition-label').textContent = nomeEd + ' — ' + plataformaSelecionada;
-    }
-    function toggleFav(btn) {
-        btn.classList.toggle('faved');
-        btn.textContent = btn.classList.contains('faved') ? 'Favoritado ♥' : 'Favoritar ♡';
     }
 </script>
 </body>

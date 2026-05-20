@@ -58,7 +58,6 @@
     }
     .fav-btn-buy:hover { background: var(--yellow-light); }
 
-    /* Estado vazio */
     .empty-state {
         text-align: center;
         padding: 80px 20px;
@@ -75,43 +74,40 @@
 <p class="page-title">Favoritos</p>
 
 <div class="favorites-grid">
+    @forelse($favoritos as $item)
+    @php
+        // Decodifica JSON dos campos (caso venham como string)
+        $edicoes = is_array($item->produto->edicoes) ? $item->produto->edicoes : json_decode($item->produto->edicoes, true);
+        $primeiraEdicao = $edicoes[0] ?? null;
+        $preco = $primeiraEdicao ? $primeiraEdicao['preco'] : 0;
 
-    {{-- Aqui virão os favoritos do banco de dados --}}
-    {{-- Exemplo de como ficará o loop quando integrar:
-    @foreach($favoritos as $item)
+        $plataformas = is_array($item->produto->plataformas) ? $item->produto->plataformas : json_decode($item->produto->plataformas, true);
+        $plataforma = $plataformas[0] ?? 'Multi';
+
+        $imagem = $item->produto->imagem_principal ?? 'default.jpg';
+    @endphp
     <div class="fav-card">
-        <img class="fav-thumb" src="{{ asset('images/' . $item->imagem) }}" alt="{{ $item->nome }}">
-        <i class="fa-solid fa-heart fav-heart" title="Remover dos favoritos"></i>
+        <img class="fav-thumb" src="{{ asset('images/' . $imagem) }}" alt="{{ $item->produto->nome }}">
+        <form action="{{ route('usuario.favoritos.remover', $item->id) }}" method="POST" style="position: absolute; top: 10px; right: 12px;">
+            @csrf
+            @method('DELETE')
+            <button type="submit" style="background: none; border: none; cursor: pointer; color: #ff5f5f; font-size: 20px; text-shadow: 0 0 8px rgba(255,80,80,0.6);">❤️</button>
+        </form>
         <div class="fav-body">
-            <span class="fav-name">{{ $item->nome }}</span>
-            <span class="fav-publisher">{{ $item->publisher }}</span>
-            <span class="fav-price">A partir de R${{ $item->preco }}</span>
+            <span class="fav-name">{{ $item->produto->nome }}</span>
+            <span class="fav-publisher">{{ $item->produto->publisher ?? '—' }}</span>
+            <span class="fav-price">A partir de R$ {{ number_format($preco, 2, ',', '.') }}</span>
             <div class="fav-actions">
-                <a href="#" class="fav-btn-buy">Comprar</a>
+                <a href="{{ route('produto.show', $item->produto->slug) }}" class="fav-btn-buy">Comprar</a>
             </div>
         </div>
     </div>
-    @endforeach
-    --}}
-
+    @empty
     <div class="empty-state">
         <i class="fa-regular fa-heart"></i>
         <p>Você ainda não adicionou nenhum favorito.</p>
     </div>
-
+    @endforelse
 </div>
-
-<script>
-    document.querySelectorAll('.fav-heart').forEach(heart => {
-        heart.addEventListener('click', function (e) {
-            e.stopPropagation();
-            const card = this.closest('.fav-card');
-            card.style.transition = 'opacity 0.3s, transform 0.3s';
-            card.style.opacity = '0';
-            card.style.transform = 'scale(0.9)';
-            setTimeout(() => card.remove(), 300);
-        });
-    });
-</script>
 
 @endsection

@@ -6,12 +6,12 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        // 1. Validação (Se falhar aqui, ele volta para a página e não salva)
         $request->validate([
             'name'     => 'required|string|max:255',
             'email'    => 'required|string|email|max:255|unique:users',
@@ -19,19 +19,23 @@ class AuthController extends Controller
             'password' => 'required|string|min:8',
         ]);
 
-        // 2. Criação (O comando que manda pro database.sqlite)
+        // Gera nickname único (ex: joaosilva123)
+        $baseNick = Str::slug($request->name, '');
+        $nickname = $baseNick . rand(100, 999);
+        while (User::where('nickname', $nickname)->exists()) {
+            $nickname = $baseNick . rand(100, 999);
+        }
+
         $user = User::create([
             'name'     => $request->name,
+            'nickname' => $nickname,
             'email'    => $request->email,
             'cpf'      => $request->cpf,
             'password' => Hash::make($request->password),
         ]);
 
-        // 3. Logar o usuário recém-criado
         Auth::login($user);
-
-        // 4. Redirecionar para a home
-        return redirect()->route('home');
+        return redirect()->route('usuario.perfil');
     }
 
     public function login(Request $request)

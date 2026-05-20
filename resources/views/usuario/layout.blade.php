@@ -19,6 +19,7 @@
             --black:         #000000;
             --white:         #FFFFFF;
             --sidebar-w:     280px;
+            --sidebar-w-collapsed: 80px;
             --bg-from: #01313A;
             --bg-mid:  #0C4F58;
             --bg-to:   #CCCA95;
@@ -45,6 +46,11 @@
             top: 0;
             height: 100vh;
             overflow-y: auto;
+            transition: width 0.3s ease;
+        }
+
+        .sidebar.collapsed {
+            width: var(--sidebar-w-collapsed);
         }
 
         .sidebar-header {
@@ -55,11 +61,36 @@
             border-bottom: 1px solid rgba(255,255,255,0.07);
         }
 
-        .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
-        .hamburger span { display: block; width: 26px; height: 2px; background: var(--white); border-radius: 2px; }
+        .hamburger { 
+            display: flex; 
+            flex-direction: column; 
+            gap: 5px; 
+            cursor: pointer; 
+            background: none; 
+            border: none;
+        }
+        .hamburger span { 
+            display: block; 
+            width: 26px; 
+            height: 2px; 
+            background: var(--white); 
+            border-radius: 2px; 
+            transition: 0.2s;
+        }
 
-        .logo-box { height: 44px; display: flex; align-items: center; }
-        .logo-box img { height: 100%; width: auto; }
+        .logo-box { 
+            height: 44px; 
+            display: flex; 
+            align-items: center; 
+        }
+        .logo-box a {
+            display: flex;
+            align-items: center;
+        }
+        .logo-box img { 
+            height: 100%; 
+            width: auto; 
+        }
 
         .sidebar-nav {
             flex: 1;
@@ -78,6 +109,18 @@
             font-weight: 500;
             transition: all 0.25s ease;
             border-left: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .sidebar.collapsed .nav-item span,
+        .sidebar.collapsed .btn-logout span {
+            display: none;
+        }
+        .sidebar.collapsed .nav-item,
+        .sidebar.collapsed .btn-logout {
+            text-align: center;
+            padding-left: 0;
+            padding-right: 0;
         }
 
         .nav-item:hover {
@@ -93,16 +136,13 @@
             border-left: 4px solid var(--yellow-gold);
         }
 
-        /* Links de navegação agrupados */
         .nav-group { flex: 1; }
 
-        /* Separador antes dos botões de fundo */
         .nav-footer {
             border-top: 1px solid rgba(255,255,255,0.07);
             padding: 16px 0;
         }
 
-        /* Botão de Logout — mesmo estilo do nav-item mas com form */
         .btn-logout {
             width: 100%;
             padding: 16px 28px;
@@ -126,14 +166,21 @@
             border-left-color: #ff6b6b;
         }
 
-        /* ===== CONTEÚDO ===== */
         .main-content {
             flex: 1;
             padding: 36px 40px;
             overflow-y: auto;
+            transition: padding 0.3s ease;
         }
 
-        /* ===== COMPONENTES GLOBAIS ===== */
+        @media (max-width: 768px) {
+            .sidebar:not(.collapsed) { width: var(--sidebar-w-collapsed); }
+            .sidebar:not(.collapsed) .nav-item span,
+            .sidebar:not(.collapsed) .btn-logout span { display: none; }
+            .main-content { padding: 20px 16px; }
+        }
+
+        /* Componentes globais */
         .card {
             background: rgba(0, 26, 32, 0.6);
             border: 1px solid rgba(253, 233, 162, 0.2);
@@ -196,71 +243,77 @@
             padding: 2px 8px;
             border-radius: 20px;
         }
-
-        @media (max-width: 768px) {
-            .sidebar { width: 60px; }
-            .sidebar .nav-item span { display: none; }
-            .main-content { padding: 20px 16px; }
-        }
     </style>
 
     @yield('extra-styles')
 </head>
 <body>
 
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <div class="hamburger">
+            <button class="hamburger" id="menuToggleBtn">
                 <span></span><span></span><span></span>
-            </div>
+            </button>
             <div class="logo-box">
-                <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
+                <a href="{{ route('home') }}">
+                    <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
+                </a>
             </div>
         </div>
 
         <nav class="sidebar-nav">
             <div class="nav-group">
-                <a href="{{ route('usuario.perfil') }}"
-                   class="nav-item {{ request()->routeIs('usuario.perfil') ? 'active' : '' }}">
-                    Meu Perfil
+                <a href="{{ route('usuario.perfil') }}" class="nav-item {{ request()->routeIs('usuario.perfil') ? 'active' : '' }}">
+                    <i class="fa-regular fa-user" style="margin-right: 12px;"></i> <span>Meu Perfil</span>
                 </a>
-                <a href="{{ route('usuario.pedidos') }}"
-                   class="nav-item {{ request()->routeIs('usuario.pedidos') ? 'active' : '' }}">
-                    Pedidos
+                <a href="{{ route('usuario.pedidos') }}" class="nav-item {{ request()->routeIs('usuario.pedidos') ? 'active' : '' }}">
+                    <i class="fa-solid fa-box" style="margin-right: 12px;"></i> <span>Pedidos</span>
                 </a>
-                <a href="{{ route('usuario.pagamentos') }}"
-                   class="nav-item {{ request()->routeIs('usuario.pagamentos') ? 'active' : '' }}">
-                    Pagamentos
+                <a href="{{ route('usuario.pagamentos') }}" class="nav-item {{ request()->routeIs('usuario.pagamentos') ? 'active' : '' }}">
+                    <i class="fa-regular fa-credit-card" style="margin-right: 12px;"></i> <span>Pagamentos</span>
                 </a>
-                <a href="{{ route('usuario.favoritos') }}"
-                   class="nav-item {{ request()->routeIs('usuario.favoritos') ? 'active' : '' }}">
-                    Favoritos
+                <a href="{{ route('usuario.favoritos') }}" class="nav-item {{ request()->routeIs('usuario.favoritos') ? 'active' : '' }}">
+                    <i class="fa-regular fa-heart" style="margin-right: 12px;"></i> <span>Favoritos</span>
                 </a>
-                <a href="{{ route('usuario.editar') }}"
-                   class="nav-item {{ request()->routeIs('usuario.editar') ? 'active' : '' }}">
-                    Editar Perfil
+                <a href="{{ route('usuario.editar') }}" class="nav-item {{ request()->routeIs('usuario.editar') ? 'active' : '' }}">
+                    <i class="fa-regular fa-pen-to-square" style="margin-right: 12px;"></i> <span>Editar Perfil</span>
                 </a>
                 <a href="{{ route('home') }}" class="nav-item">
-                    Início
+                    <i class="fa-solid fa-house" style="margin-right: 12px;"></i> <span>Início</span>
                 </a>
             </div>
 
-            {{-- Botão de logout no fundo da sidebar --}}
             <div class="nav-footer">
-                <form action="{{ route('home') }}" method="">
+                <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn-logout">
-                        <i class="fa-solid fa-right-from-bracket"></i>
-                        Sair da conta
+                        <i class="fa-solid fa-right-from-bracket"></i> <span>Sair da conta ({{ Auth::user()->nickname ?? Auth::user()->name }})</span>
                     </button>
                 </form>
             </div>
         </nav>
     </aside>
 
-    <main class="main-content">
+    <main class="main-content" id="mainContent">
         @yield('content')
     </main>
 
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menuToggleBtn');
+        
+        function toggleSidebar() {
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        }
+        
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            sidebar.classList.add('collapsed');
+        }
+        
+        menuToggle.addEventListener('click', toggleSidebar);
+    </script>
+
+    @yield('extra-scripts')
 </body>
 </html>

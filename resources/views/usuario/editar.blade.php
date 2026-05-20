@@ -244,45 +244,33 @@
 <div class="edit-layout">
 
     <div class="avatar-card">
-
         <div class="avatar-atual-wrap">
             <img class="avatar-atual" id="avatarPreview"
                  src="{{ asset('images/icone2.svg') }}"
                  alt="Avatar atual">
         </div>
-
         <p class="avatar-card-title">Escolha seu avatar</p>
-
         <div class="avatar-options">
-
             <label class="avatar-option">
                 <input type="radio" name="avatar" value="icone1.svg" checked onchange="trocarAvatar(this)">
-                <img src="{{ asset('images/icone1.svg') }}" alt="Avatar 1"
-                     onerror="this.src='https://via.placeholder.com/80/1F6D7E/FFDC74?text=1'">
+                <img src="{{ asset('images/icone1.svg') }}" alt="Avatar 1">
                 <span class="avatar-check"><i class="fa-solid fa-check"></i></span>
             </label>
-
             <label class="avatar-option">
                 <input type="radio" name="avatar" value="icone2.svg" onchange="trocarAvatar(this)">
-                <img src="{{ asset('images/icone2.svg') }}" alt="Avatar 2"
-                     onerror="this.src='https://via.placeholder.com/80/1F6D7E/FFDC74?text=2'">
+                <img src="{{ asset('images/icone2.svg') }}" alt="Avatar 2">
                 <span class="avatar-check"><i class="fa-solid fa-check"></i></span>
             </label>
-
             <label class="avatar-option">
                 <input type="radio" name="avatar" value="icone3.svg" onchange="trocarAvatar(this)">
-                <img src="{{ asset('images/icone3.svg') }}" alt="Avatar 3"
-                     onerror="this.src='https://via.placeholder.com/80/1F6D7E/FFDC74?text=3'">
+                <img src="{{ asset('images/icone3.svg') }}" alt="Avatar 3">
                 <span class="avatar-check"><i class="fa-solid fa-check"></i></span>
             </label>
-
             <label class="avatar-option">
                 <input type="radio" name="avatar" value="icone4.svg" onchange="trocarAvatar(this)">
-                <img src="{{ asset('images/icone4.svg') }}" alt="Avatar 4"
-                     onerror="this.src='https://via.placeholder.com/80/1F6D7E/FFDC74?text=4'">
+                <img src="{{ asset('images/icone4.svg') }}" alt="Avatar 4">
                 <span class="avatar-check"><i class="fa-solid fa-check"></i></span>
             </label>
-
         </div>
     </div>
 
@@ -304,15 +292,15 @@
             <div class="form-grid">
                 <div class="form-group full">
                     <label class="form-label">Nome completo</label>
-                    <input class="form-input" type="text" name="name" value="Michael (MJ) Jackson" placeholder="Seu nome completo">
+                    <input class="form-input" type="text" name="name" value="{{ old('name', $usuario->name) }}" placeholder="Seu nome completo">
                 </div>
                 <div class="form-group">
                     <label class="form-label">Nickname</label>
-                    <input class="form-input" type="text" name="nickname" value="MJ Jackson" placeholder="Seu nickname">
+                    <input class="form-input" type="text" name="nickname" value="{{ old('nickname', $usuario->nickname ?? $usuario->name) }}" placeholder="Seu nickname">
                 </div>
                 <div class="form-group">
                     <label class="form-label">CPF</label>
-                    <input class="form-input" type="text" name="cpf" value="000.000.000-00" disabled>
+                    <input class="form-input" type="text" name="cpf" value="{{ $usuario->cpf }}" disabled>
                     <span class="form-hint">O CPF não pode ser alterado.</span>
                 </div>
             </div>
@@ -322,7 +310,7 @@
             <div class="form-grid">
                 <div class="form-group full">
                     <label class="form-label">E-mail</label>
-                    <input class="form-input" type="email" name="email" value="MJ@gmail.com" placeholder="seu@email.com">
+                    <input class="form-input" type="email" name="email" value="{{ old('email', $usuario->email) }}" placeholder="seu@email.com">
                 </div>
             </div>
 
@@ -348,34 +336,34 @@
                 <a href="{{ route('usuario.perfil') }}" class="btn-outline">Cancelar</a>
                 <button type="submit" class="btn-main">Salvar Alterações</button>
             </div>
-
         </form>
 
         <div class="danger-zone">
-            <div class="danger-text">
-                <p class="dt-title">Excluir conta</p>
-                <p class="dt-sub">Esta ação é permanente e não poderá ser desfeita.</p>
-            </div>
-            <button type="button" class="btn-danger">Excluir minha conta</button>
-        </div>
-
+    <div class="danger-text">
+        <p class="dt-title">Excluir conta</p>
+        <p class="dt-sub">Esta ação é permanente e não poderá ser desfeita.</p>
     </div>
+    <form method="POST" action="{{ route('usuario.excluir.conta') }}" id="formExcluirConta">
+        @csrf
+        @method('DELETE')
+        <button type="button" class="btn-danger" id="btnExcluir">Excluir minha conta</button>
+    </form>
 </div>
 
 <script>
-    // Atualiza o avatar em destaque quando o usuário clica numa opção
-    function trocarAvatar(radio) {
-        const novoSrc = radio.closest('.avatar-option').querySelector('img').src;
-        document.getElementById('avatarPreview').src = novoSrc;
-        document.getElementById('avatarSelecionado').value = radio.value;
-    }
-
-    // Simula sucesso ao salvar (remover quando integrar ao back-end)
-    document.getElementById('editForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-        const alerta = document.getElementById('alertSuccess');
-        alerta.style.display = 'block';
-        setTimeout(() => alerta.style.display = 'none', 4000);
+    document.getElementById('btnExcluir').addEventListener('click', function() {
+        let senha = prompt('Digite sua senha atual para confirmar a exclusão da conta:');
+        if (senha && senha.trim() !== '') {
+            let form = document.getElementById('formExcluirConta');
+            let input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'current_password';
+            input.value = senha;
+            form.appendChild(input);
+            form.submit();
+        } else {
+            alert('Você precisa digitar sua senha para excluir a conta.');
+        }
     });
 </script>
 
