@@ -13,6 +13,28 @@
             box-sizing: border-box;
         }
 
+        /* Ícone do Avatar no Menu */
+        .nav-avatar-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .nav-avatar-container:hover {
+            transform: scale(1.08);
+        }
+
+        .nav-avatar-mini {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #FFDC74;
+            object-fit: cover;
+            background: #1F6D7E;
+            box-shadow: 0 0 12px rgba(245, 200, 66, 0.3);
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: #002830;
@@ -21,10 +43,16 @@
             overflow-x: hidden;
         }
 
-        .container {
+        /* .container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 0 60px;
+        } */
+
+            .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 96px 60px 0 60px; /* Adicionado padding-top para o conteúdo não sumir sob a navbar */
         }
 
         /* --- Sidebar (Menu Lateral) --- */
@@ -100,11 +128,33 @@
         .sidebar-overlay.active { display: block; }
 
         /* --- Header --- */
-        header {
+        /* header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 32px 0;
+        } */
+
+            header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 60px; /* Mantém o alinhamento horizontal do container */
+            background: rgba(0, 40, 48, 0.75); /* Cor de fundo translúcida */
+            backdrop-filter: blur(8px); /* Efeito de desfoque ao fundo */
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 998; /* Fica abaixo apenas da sidebar */
+            opacity: 0.85; /* Opacidade padrão ao descer */
+            transition: opacity 0.3s ease, background-color 0.3s ease;
+        }
+
+        header:hover {
+            opacity: 1;
+            background: rgba(0, 40, 48, 0.95);
         }
 
         .logo-area {
@@ -137,7 +187,7 @@
 
         .logo-box img {
             height: 100%;
-            width: auto;
+            width: 160px;
         }
 
         .user-auth-area {
@@ -269,6 +319,60 @@
             .btn-entrar { padding: 8px 20px; font-size: 14px; }
             .footer-info { flex-direction: column; gap: 20px; text-align: center; }
         }
+
+        @media (max-width: 550px) {
+        /* Ajustes gerais e de container */
+            .container { padding: 0 16px; }
+            section { margin-bottom: 40px; }
+            
+            /* Header e Logo mais compactos */
+            header { padding: 20px 0; }
+            .logo-box img { width: 130px; }
+            .logo-area { gap: 12px; }
+
+            header { padding: 16px 16px; }
+            .container { padding: 76px 16px 0 16px; }
+
+            /* Ajustes no Banner Principal para não esmagar o texto */
+            .hero-banner {
+                aspect-ratio: 4 / 3; /* Deixa o banner mais alto no mobile */
+                border-radius: 16px;
+                margin-bottom: 36px;
+            }
+            .slide-content {
+                left: 5%;
+                bottom: 10%;
+                width: 90%;
+            }
+            .slide-title { font-size: 24px; }
+            .slide-subtitle { font-size: 16px; margin-bottom: 12px; }
+            .slide-platform { font-size: 14px; }
+            .slide-badge { padding: 6px 16px; font-size: 12px; }
+            
+            /* Miniaturas do carrossel reduzidas */
+            .carousel-thumbnails {
+                bottom: 12px;
+                right: 12px;
+                gap: 8px;
+            }
+            .thumbnail { width: 50px; height: 35px; border-radius: 6px; }
+
+            /* Títulos das seções */
+            .section-header {
+                flex-direction: column; /* Joga o "Ver mais" para baixo do título */
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+            .section-title { font-size: 22px; }
+            .ver-mais { font-size: 14px; }
+            
+            /* Rodapé */
+            footer { padding: 40px 0 20px 0; }
+            .footer-info p { font-size: 14px; }
+
+
+            
+        }
     </style>
 </head>
 <body>
@@ -319,13 +423,46 @@
             </div>
         </div>
         
-        <div class="user-auth-area">
+        <!-- <div class="user-auth-area">
             @auth
                 <span class="user-name-display">{{ Auth::user()->name }}</span>
+
+                
                 <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
                     @csrf
                     <button type="submit" class="btn-entrar">Sair</button>
                 </form>
+            @else
+                <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
+            @endauth
+        </div> -->
+
+        <!-- <div class="user-auth-area">
+    @auth
+        <a href="{{ route('usuario.perfil') }}" class="user-name-display" style="text-decoration: none;">{{ Auth::user()->name }}</a>
+        
+        <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+            @csrf
+            <button type="submit" class="btn-entrar">Sair</button>
+        </form>
+    @else
+        <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
+    @endauth
+</div> -->
+
+<div class="user-auth-area">
+            @auth
+                <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="Meu Perfil">
+                    <img class="nav-avatar-mini" 
+                         src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}" 
+                         alt="Avatar de {{ Auth::user()->name }}"
+                         onerror="this.src='https://via.placeholder.com/44/1F6D7E/FFDC74?text=GZ'">
+                </a>
+                
+                <!-- <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                    @csrf
+                    <button type="submit" class="btn-entrar">Sair</button>
+                </form> -->
             @else
                 <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
             @endauth

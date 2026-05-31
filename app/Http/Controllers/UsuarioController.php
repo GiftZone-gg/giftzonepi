@@ -7,9 +7,14 @@ use App\Models\Wishlist;
 use App\Models\Produto;
 use App\Models\PaymentMethod;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User; // Ajuste para o seu modelo correto de usuário
 
 class UsuarioController extends Controller
 {
+
+
+
+
     public function perfil()
     {
         $usuario = auth()->user();
@@ -40,26 +45,110 @@ class UsuarioController extends Controller
         return view('usuario.editar', compact('usuario'));
     }
 
-    public function editarSalvar(Request $request)
+//    public function editarSalvar(Request $request)
+//     {
+//         $usuario = auth()->user();
+
+//         $request->validate([
+//             'name'     => 'required|string|max:255',
+//             'email'    => 'required|email|max:255|unique:users,email,' . $usuario->id,
+//             'password' => 'nullable|min:8|confirmed',
+//         ]);
+
+//         $usuario->name = $request->name;
+//         $usuario->email = $request->email;
+        
+//         if ($request->filled('password')) {
+//             $usuario->password = Hash::make($request->password);
+//         }
+
+//         // --- INÍCIO DA LÓGICA DO AVATAR ---
+//         if ($request->has('avatar_base64')) {
+//             $avatarData = $request->input('avatar_base64');
+
+//             if ($avatarData === 'default') {
+//                 $usuario->avatar = 'icone1.svg';
+//             } elseif (preg_match('/^data:image\/(\w+);base64,/', $avatarData)) {
+//                 $imageParts = explode(";base64,", $avatarData);
+//                 $imageType = explode("image/", $imageParts[0])[1];
+//                 $imageBase64 = base64_decode($imageParts[1]);
+
+//                 $fileName = 'avatars/' . uniqid() . '.' . $imageType;
+//                 \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $imageBase64);
+
+//                 $usuario->avatar = $fileName;
+//             }
+//         }
+//         // --- FIM DA LÓGICA DO AVATAR ---
+
+//         $usuario->save();
+
+//         return redirect()->route('usuario.editar')->with('success', 'Perfil atualizado com sucesso!');
+//     }
+
+public function editarSalvar(Request $request)
     {
         $usuario = auth()->user();
 
         $request->validate([
             'name'     => 'required|string|max:255',
+            'nickname' => 'nullable|string|max:255',
             'email'    => 'required|email|max:255|unique:users,email,' . $usuario->id,
             'password' => 'nullable|min:8|confirmed',
         ]);
 
         $usuario->name = $request->name;
         $usuario->email = $request->email;
+        
+        // --- INÍCIO DA LÓGICA DO NICKNAME ---
+        if ($request->filled('nickname')) {
+            $nickname = strtolower($request->nickname);
+            
+            // Garante o @ no início caso o JavaScript falhe
+            if (!str_starts_with($nickname, '@')) {
+                $nickname = '@' . ltrim($nickname, '@');
+            }
+
+            $baseNickname = $nickname;
+            $contador = 1;
+
+            // Verifica se existe e adiciona o número no final
+            while (User::where('nickname', $nickname)->where('id', '!=', $usuario->id)->exists()) {
+                $nickname = $baseNickname . $contador;
+                $contador++;
+            }
+            
+            $usuario->nickname = $nickname;
+        }
+        // --- FIM DA LÓGICA DO NICKNAME ---
+        
         if ($request->filled('password')) {
             $usuario->password = Hash::make($request->password);
         }
+
+        // --- INÍCIO DA LÓGICA DO AVATAR ---
+        if ($request->has('avatar_base64')) {
+            $avatarData = $request->input('avatar_base64');
+
+            if ($avatarData === 'default') {
+                $usuario->avatar = 'icone1.svg';
+            } elseif (preg_match('/^data:image\/(\w+);base64,/', $avatarData)) {
+                $imageParts = explode(";base64,", $avatarData);
+                $imageType = explode("image/", $imageParts[0])[1];
+                $imageBase64 = base64_decode($imageParts[1]);
+
+                $fileName = 'avatars/' . uniqid() . '.' . $imageType;
+                \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $imageBase64);
+
+                $usuario->avatar = $fileName;
+            }
+        }
+        // --- FIM DA LÓGICA DO AVATAR ---
+
         $usuario->save();
 
         return redirect()->route('usuario.editar')->with('success', 'Perfil atualizado com sucesso!');
     }
-
     public function adicionarFavorito($produtoId)
     {
         $userId = auth()->id();
@@ -112,4 +201,6 @@ class UsuarioController extends Controller
 
         return redirect()->route('home')->with('success', 'Sua conta foi excluída permanentemente.');
     }
+
+    
 }

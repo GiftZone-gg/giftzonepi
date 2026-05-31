@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -14,26 +13,29 @@ class PagamentoController extends Controller
     public function checkout()
     {
         $carrinho = session()->get('cart', []);
+
         if (empty($carrinho)) {
             return redirect()->route('carrinho.index')->with('error', 'Carrinho vazio.');
         }
 
         $itens = [];
         $total = 0;
+
         foreach ($carrinho as $id => $quantidade) {
             $produto = Produto::find($id);
             if ($produto) {
-                $preco = $this->getPreco($produto);
+                $preco    = $this->getPreco($produto);
                 $subtotal = $preco * $quantidade;
-                $total += $subtotal;
-                $itens[] = [
-                    'produto' => $produto,
+                $total   += $subtotal;
+                $itens[]  = [
+                    'produto'   => $produto,
                     'quantidade' => $quantidade,
-                    'preco' => $preco,
-                    'subtotal' => $subtotal,
+                    'preco'     => $preco,
+                    'subtotal'  => $subtotal,
                 ];
             }
         }
+
         return view('pagamento.checkout', compact('itens', 'total'));
     }
 
@@ -45,48 +47,70 @@ class PagamentoController extends Controller
         ]);
 
         $carrinho = session()->get('cart', []);
+
         if (empty($carrinho)) {
             return redirect()->route('carrinho.index')->with('error', 'Carrinho vazio.');
         }
 
-        $user = auth()->user();
+        $user  = auth()->user();
         $total = 0;
+
         foreach ($carrinho as $id => $quantidade) {
             $produto = Produto::find($id);
-            $total += $this->getPreco($produto) * $quantidade;
+            if ($produto) {
+                $total += $this->getPreco($produto) * $quantidade;
+            }
+        }
+
+        // PIX: redireciona para tela de QR Code
+        if ($request->metodo === 'pix') {
+            return redirect()->route('pagamento.pix');
+        }
+
+        // Boleto: redireciona para tela de boleto
+        if ($request->metodo === 'boleto') {
+            return redirect()->route('pagamento.boleto');
         }
 
         // Cria o pedido
         $orderNumber = '#GZ-' . strtoupper(Str::random(8));
+
         $order = Order::create([
-            'user_id' => $user->id,
-            'order_number' => $orderNumber,
-            'total_amount' => $total,
+            'user_id'        => $user->id,
+            'order_number'   => $orderNumber,
+            'total_amount'   => $total,
             'discount_amount' => 0,
-            'final_amount' => $total,
+            'final_amount'   => $total,
             'payment_status' => 'paid',      // simulação
-            'order_status' => 'completed',   // simulação
+            'order_status'   => 'completed', // simulação
         ]);
 
         foreach ($carrinho as $id => $quantidade) {
             $produto = Produto::find($id);
-            $preco = $this->getPreco($produto);
-            OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $id,
-                'quantity' => $quantidade,
-                'price' => $preco,
-                'total' => $preco * $quantidade,
-            ]);
+            if ($produto) {
+                $preco = $this->getPreco($produto);
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $id,
+                    'quantity'   => $quantidade,
+                    'price'      => $preco,
+                    'total'      => $preco * $quantidade,
+                ]);
+            }
         }
 
         session()->forget('cart');
-        return redirect()->route('usuario.pedidos')->with('success', "Pedido {$orderNumber} finalizado com sucesso! Pagamento via {$request->metodo}.");
+
+        return redirect()->route('usuario.pedidos')
+            ->with('success', "Pedido {$orderNumber} finalizado com sucesso! Pagamento via {$request->metodo}.");
     }
 
     private function getPreco($produto)
     {
-        $edicoes = is_array($produto->edicoes) ? $produto->edicoes : json_decode($produto->edicoes, true);
+        $edicoes = is_array($produto->edicoes)
+            ? $produto->edicoes
+            : json_decode($produto->edicoes, true);
+
         return $edicoes[0]['preco'] ?? 0;
     }
 }

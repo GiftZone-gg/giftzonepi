@@ -70,7 +70,6 @@
             border: none;
         }
         .hamburger span { 
-            display: block; 
             width: 26px; 
             height: 2px; 
             background: var(--white); 
@@ -83,13 +82,13 @@
             display: flex; 
             align-items: center; 
         }
-        .logo-box a {
+        /* .logo-box a {
             display: flex;
             align-items: center;
-        }
+        } */
         .logo-box img { 
-            height: 100%; 
-            width: auto; 
+            width: 160px;
+            /* height: 100%;  */
         }
 
         .sidebar-nav {
@@ -174,11 +173,19 @@
         }
 
         @media (max-width: 768px) {
+.logo-box img { 
+            width: 0px;
+            height: 0px; 
+        }
+
+
             .sidebar:not(.collapsed) { width: var(--sidebar-w-collapsed); }
             .sidebar:not(.collapsed) .nav-item span,
             .sidebar:not(.collapsed) .btn-logout span { display: none; }
             .main-content { padding: 20px 16px; }
         }
+
+        
 
         /* Componentes globais */
         .card {
@@ -243,6 +250,10 @@
             padding: 2px 8px;
             border-radius: 20px;
         }
+
+        .sidebar.collapsed .logo-box {
+    display: none;
+}
     </style>
 
     @yield('extra-styles')

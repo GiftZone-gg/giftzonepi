@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\PixController;
+use App\Http\Controllers\BoletoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UsuarioController;
@@ -26,7 +28,8 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 Route::post('/favoritos/adicionar/{produtoId}', [UsuarioController::class, 'adicionarFavorito'])->name('favoritos.adicionar');
 
-
+// No seu routes/web.php
+Route::post('/comprar-direto/{produto}', [App\Http\Controllers\CarrinhoController::class, 'comprarDireto'])->name('comprar.direto');
 
 // Carrinho
 Route::get('/carrinho', [App\Http\Controllers\CarrinhoController::class, 'index'])->name('carrinho.index');
@@ -39,6 +42,21 @@ Route::post('/carrinho/finalizar', [App\Http\Controllers\CarrinhoController::cla
 Route::middleware('auth')->group(function () {
     Route::get('/checkout', [App\Http\Controllers\PagamentoController::class, 'checkout'])->name('checkout');
     Route::post('/pagamento/processar', [App\Http\Controllers\PagamentoController::class, 'processar'])->name('pagamento.processar');
+
+    Route::middleware(['auth'])->group(function () {
+
+    // ... suas rotas existentes ...
+
+    // ADICIONE AQUI:
+    Route::get('/pix', [PixController::class, 'show'])->name('pagamento.pix');
+    Route::post('/pix/confirmar', [PixController::class, 'confirmar'])->name('pagamento.pix.confirmar');
+
+});
+
+
+
+Route::get('/boleto', [BoletoController::class, 'show'])->name('pagamento.boleto');
+Route::post('/boleto/confirmar', [BoletoController::class, 'confirmar'])->name('pagamento.boleto.confirmar');
 });
 
 Route::prefix('usuario')->name('usuario.')->group(function () {

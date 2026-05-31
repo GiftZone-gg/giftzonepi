@@ -71,7 +71,7 @@
         background: var(--yellow-light);
         color: #001A20;
         font-family: 'Crimson Pro', serif;
-        font-style: italic;
+        /* font-style: italic; */
         font-weight: 600;
         font-size: 15px;
         padding: 13px 20px;
@@ -102,9 +102,9 @@
     .section-title {
         font-family: 'Gasoek One', sans-serif;
         font-size: 22px;
-        color: var(--yellow-gold);
-        font-style: italic;
-        text-decoration: underline;
+        color: var(--yellow-light);
+        /* font-style: italic;
+        text-decoration: underline; */
         margin-bottom: 24px;
         text-align: center;
     }
@@ -135,8 +135,13 @@
 
 <div class="profile-header-card">
     <div class="profile-avatar-wrap">
-        <img class="profile-avatar"
+        <!-- <img class="profile-avatar"
              src="{{ asset('images/icone2.svg') }}"
+             alt="Avatar do usuário"
+             onerror="this.src='https://via.placeholder.com/130/1F6D7E/FFDC74?text=GZ'"> -->
+
+             <img class="profile-avatar"
+             src="{{ $usuario->avatar === 'icone1.svg' || empty($usuario->avatar) ? asset('images/icone1.svg') : asset('storage/' . $usuario->avatar) }}"
              alt="Avatar do usuário"
              onerror="this.src='https://via.placeholder.com/130/1F6D7E/FFDC74?text=GZ'">
         <a href="{{ route('usuario.editar') }}" class="avatar-edit-btn" title="Editar perfil">

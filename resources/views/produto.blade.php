@@ -19,6 +19,36 @@
         body { font-family: 'Inter', sans-serif; background-color: #002830; color: white; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
         /* NAVBAR */
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.nav-cart-link {
+    position: relative;
+    color: var(--accent); /* Cor amarela definida no seu :root */
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--accent);
+    color: var(--dark);
+    font-size: 10px;
+    font-weight: 900;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
         nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 32px; background: rgba(0,40,48,0.85); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(253,233,162,0.12); }
         .nav-left { display: flex; align-items: center; gap: 16px; }
         .hamburger { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
@@ -73,12 +103,30 @@
         .edition-select { width: 100%; background: rgba(0,40,48,.7); border: 1.5px solid rgba(0,83,99,1); border-radius: 10px; color: var(--white); font-family: 'Inter', sans-serif; font-size: .9rem; padding: 10px 14px; margin-bottom: 18px; outline: none; cursor: pointer; transition: border-color .2s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23FDE9A2' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
         .edition-select:focus { border-color: var(--accent); }
         .edition-select option { background: #002830; }
-        .actions { display: flex; gap: 10px; margin-bottom: 16px; }
-        .btn-fav { flex: 1; padding: 12px; border-radius: 10px; border: 1.5px solid var(--danger); background: transparent; color: var(--danger); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
-        .btn-fav:hover { background: rgba(232,80,32,.15); }
-        .btn-buy { flex: 1; padding: 12px; border-radius: 10px; border: none; background: var(--accent); color: var(--dark); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: opacity .2s, transform .1s; }
-        .btn-buy:hover { opacity: .88; }
-        .btn-buy:active { transform: scale(0.97); }
+        .actions { 
+    display: flex; 
+    gap: 8px; 
+    margin-bottom: 16px; 
+}
+.actions form, .actions a { 
+    flex: 1; 
+    display: flex; 
+}
+.btn-fav { 
+    width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid var(--danger); background: transparent; color: var(--danger); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; 
+}
+.btn-fav:hover { background: rgba(232,80,32,.15); }
+
+.btn-cart { 
+    width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid var(--cyan); background: transparent; color: var(--cyan); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; 
+}
+.btn-cart:hover { background: rgba(58,184,200,.15); }
+
+.btn-buy { 
+    width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--accent); color: var(--dark); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: opacity .2s, transform .1s; 
+}
+.btn-buy:hover { opacity: .88; }
+.btn-buy:active { transform: scale(0.97); }
         .flash-message { padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9rem; }
         .flash-success { background: #2e7d32; color: white; }
         .flash-error { background: #c62828; color: white; }
@@ -91,6 +139,73 @@
         .req-col h4 { font-size: .72rem; font-weight: 700; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
         .req-col p { font-size: .78rem; color: rgba(255,255,255,.55); line-height: 1.75; }
 
+        .nav-avatar-container {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+    text-decoration: none;
+}
+
+.nav-avatar-container:hover {
+    transform: scale(1.08);
+}
+
+.nav-avatar-mini {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 2px solid #FFDC74;
+    object-fit: cover;
+    background: #1F6D7E;
+    box-shadow: 0 0 12px rgba(245, 200, 66, 0.3);
+}<nav>
+    <div class="nav-left">
+        <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+        <a href="/" class="logo">
+            <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
+        </a>
+    </div>
+
+    <div class="nav-right">
+        <a href="{{ route('carrinho.index') }}" class="nav-cart-link">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="cart-badge">{{ Auth::check() ? Auth::user()->carrinho->sum('quantidade') : 0 }}</span>
+        </a>
+
+        @auth
+            <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container">
+                <img class="nav-avatar-mini" src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('images/icone1.svg') }}">
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
+        @endauth
+    </div>
+</nav>
+
+
+        /* Estilo para o novo botão Carrinho */
+.btn-cart {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1.5px solid var(--accent);
+    background: transparent;
+    color: var(--accent);
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: .9rem;
+    cursor: pointer;
+    transition: all .2s;
+}
+
+.btn-cart:hover {
+    background: rgba(253, 233, 162, 0.1);
+}
         /* FOOTER */
         footer { background: #001e25; border-top: 1px solid rgba(253,233,162,.1); padding: 28px 32px; }
         .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
@@ -111,30 +226,60 @@
 <body>
 
 {{-- NAVBAR --}}
-<nav>
+{{-- NAVBAR --}}
+<!-- <nav>
     <div class="nav-left">
-        <a href="{{ route('carrinho.index') }}" style="color: white; margin-right: 15px;">
-    🛒 Carrinho
-</a>
+        <a href="{{ route('carrinho.index') }}" style="color: white; margin-right: 15px; text-decoration: none;">
+            🛒 Carrinho
+        </a>
         <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
         <a href="/" class="logo">
             <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
             <span class="logo-text" style="display:none">GiftZone</span>
         </a>
     </div>
+
     @auth
-        <div style="display:flex;align-items:center;gap:12px;">
-            <span style="font-size:.85rem;color:rgba(255,255,255,.6)">{{ Auth::user()->nickname ?? Auth::user()->name }}</span>
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-                <button type="submit" class="btn-entrar" style="font-size:14px;padding:8px 20px;">Sair</button>
-            </form>
-        </div>
+        <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="Meu Perfil">
+            <img class="nav-avatar-mini" 
+                 src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}" 
+                 alt="Avatar de {{ Auth::user()->name }}"
+                 onerror="this.src='https://via.placeholder.com/44/1F6D7E/FFDC74?text=GZ'">
+        </a>
     @else
         <a href="{{ route('login') }}"><button class="btn-entrar">Entrar</button></a>
     @endauth
-</nav>
+</nav> -->
 
+<nav>
+    <div class="nav-left">
+        <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+        <a href="/" class="logo">
+            <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
+        </a>
+    </div>
+
+    <div class="nav-right">
+        <a href="{{ route('carrinho.index') }}" class="nav-cart-link">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="21" r="1"></circle>
+                <circle cx="20" cy="21" r="1"></circle>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+            </svg>
+            <span class="cart-badge">
+    {{ (Auth::check() && method_exists(Auth::user(), 'carrinho')) ? Auth::user()->carrinho()->sum('quantidade') : 0 }}
+</span>
+        </a>
+
+        @auth
+            <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container">
+                <img class="nav-avatar-mini" src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('images/icone1.svg') }}">
+            </a>
+        @else
+            <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
+        @endauth
+    </div>
+</nav>
 {{-- HERO --}}
 <section class="hero">
     <div class="hero-breadcrumb">
@@ -208,24 +353,30 @@
                     @endforeach
                 </select>
 
-                <div class="actions">
+
+   <div class="actions">
+    {{-- Botão Favoritar --}}
     @if(auth()->check())
-        <form action="{{ route('favoritos.adicionar', $produto->id) }}" method="POST" style="flex:1">
+        <form action="{{ route('favoritos.adicionar', $produto->id) }}" method="POST">
             @csrf
-            <button type="submit" class="btn-fav" id="btn-fav" style="display: flex; align-items: center; justify-content: center; gap: 6px;">
-                @if($isFavorited)
-                    ❤️ Favoritado
-                @else
-                    ♡ Favoritar
-                @endif
+            <button type="submit" class="btn-fav">
+                {{ $isFavorited ? '❤️ Fav' : '♡ Favoritar' }}
             </button>
         </form>
     @else
-        <a href="{{ route('login') }}" style="flex:1">
-            <button class="btn-fav" style="width:100%">♡ Favoritar</button>
+        <a href="{{ route('login') }}">
+            <button class="btn-fav" type="button">♡ Favoritar</button>
         </a>
     @endif
-    <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST" style="flex:1">
+
+    {{-- Botão Adicionar ao Carrinho --}}
+    <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST">
+        @csrf
+        <button type="submit" class="btn-cart">Carrinho</button>
+    </form>
+
+    {{-- Botão Comprar (Direto) --}}
+    <form action="{{ route('comprar.direto', $produto->id) }}" method="POST">
         @csrf
         <button type="submit" class="btn-buy">Comprar</button>
     </form>

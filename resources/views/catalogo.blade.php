@@ -19,6 +19,29 @@
         .btn-entrar { border: 1px solid rgba(255,255,255,0.3); padding: 12px 36px; border-radius: 8px; color: white; text-decoration: none; font-weight: 500; font-size: 18px; transition: all 0.3s ease; background: transparent; cursor: pointer; }
         .btn-entrar:hover { background: rgba(255,255,255,0.1); }
 
+        /* Ícone do Avatar no Menu */
+        .nav-avatar-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+            text-decoration: none;
+        }
+
+        .nav-avatar-container:hover {
+            transform: scale(1.08);
+        }
+
+        .nav-avatar-mini {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid #FFDC74;
+            object-fit: cover;
+            background: #1F6D7E;
+            box-shadow: 0 0 12px rgba(245, 200, 66, 0.3);
+        }
+
         /* ===== MENU LATERAL ===== */
         .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background-color: #001A20; z-index: 1000; transition: all 0.3s ease; padding: 32px 24px; display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
         .sidebar.active { left: 0; }
@@ -64,10 +87,8 @@
 </head>
 <body>
 
-<!-- Sidebar overlay -->
 <div class="sidebar-overlay" id="overlay"></div>
 
-<!-- Menu lateral -->
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
         <button class="close-menu" id="closeBtn">✕</button>
@@ -95,7 +116,6 @@
     </nav>
 </aside>
 
-<!-- Top navigation bar -->
 <nav>
     <div class="nav-left">
         <button class="hamburger" id="menuBtn">
@@ -107,12 +127,14 @@
     </div>
     @auth
         <div style="display:flex; align-items:center; gap:12px;">
-            <span style="font-size:.85rem; color:rgba(255,255,255,.6)">{{ Auth::user()->name }}</span>
-            <form method="POST" action="{{ route('logout') }}" style="margin:0;">
-                @csrf
-                <button type="submit" class="btn-entrar" style="font-size:14px; padding:8px 20px;">Sair</button>
-            </form>
-        </div>
+            <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="Meu Perfil">
+                <img class="nav-avatar-mini" 
+                     src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}" 
+                     alt="Avatar de {{ Auth::user()->name }}"
+                     onerror="this.src='https://via.placeholder.com/44/1F6D7E/FFDC74?text=GZ'">
+            </a>
+            
+            </div>
     @else
         <a href="{{ route('login') }}"><button class="btn-entrar">Entrar</button></a>
     @endauth
@@ -212,7 +234,7 @@
         categorias.forEach(c => { menuCat.innerHTML += `<a href="#" data-categoria="${c}">${c}</a>`; });
         const menuPlat = document.getElementById('menuPlataforma');
         menuPlat.innerHTML = '<a href="#" data-plataforma="null">Todas plataformas</a>';
-        plataformas.forEach(p => { menuPlat.innerHTML += `<a href="#" data-plataforma="${p}">${p}</a>`; });
+        platforms = plataformas.forEach(p => { menuPlat.innerHTML += `<a href="#" data-plataforma="${p}">${p}</a>`; });
         const menuPreco = document.getElementById('menuPreco');
         menuPreco.innerHTML = '<a href="#" data-preco="null">Qualquer preço</a>';
         faixasPreco.forEach(f => { menuPreco.innerHTML += `<a href="#" data-preco-min="${f.min}" data-preco-max="${f.max}">${f.label}</a>`; });

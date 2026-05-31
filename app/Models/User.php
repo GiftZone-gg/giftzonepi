@@ -13,11 +13,17 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'cpf', // Verifique se isso está aqui!
+        'cpf',
     ];
 
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    // Use o nome da classe como string para evitar erros de namespace
+    public function carrinho()
+    {
+        return $this->hasMany('App\Models\Carrinho');
+    }
 }

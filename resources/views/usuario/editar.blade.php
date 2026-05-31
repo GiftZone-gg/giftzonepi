@@ -1,15 +1,50 @@
+
+
+
+
+
 @extends('usuario.layout')
 
 @section('title', 'Editar Perfil')
 
 @section('extra-styles')
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+
 <style>
+
+
+/* ===== TOAST DE AVISO ===== */
+    .toast-warning {
+        position: fixed;
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--yellow-gold);
+        color: #001A20;
+        padding: 12px 24px;
+        border-radius: 8px;
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        transition: bottom 0.4s ease;
+        z-index: 10000;
+    }
+
+    .toast-warning.show {
+        bottom: 30px;
+    }
+
     .page-title {
         font-family: 'Gasoek One', sans-serif;
         font-size: 28px;
-        color: var(--yellow-gold);
-        font-style: italic;
-        text-decoration: underline;
+        color: var(--yellow-light);
         margin-bottom: 28px;
     }
 
@@ -32,6 +67,7 @@
     .avatar-atual-wrap {
         display: inline-block;
         margin-bottom: 20px;
+        position: relative;
     }
 
     .avatar-atual {
@@ -42,7 +78,6 @@
         object-fit: cover;
         background: #1F6D7E;
         display: block;
-        image-rendering: pixelated;
         transition: border-color 0.2s;
     }
 
@@ -56,67 +91,76 @@
         margin-bottom: 14px;
     }
 
-    /* Grade de avatares para escolher */
-    .avatar-options {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
+    /* Botões de Ação do Avatar */
+    .avatar-actions {
+        display: flex;
+        flex-direction: column;
         gap: 10px;
     }
 
-    .avatar-option {
-        position: relative;
+    .btn-avatar {
+        padding: 10px 14px;
+        background: rgba(255,255,255,0.1);
+        border: 1px solid rgba(255,255,255,0.2);
+        color: white;
+        border-radius: 8px;
+        font-family: 'Crimson Pro', serif;
+        font-size: 16px;
+        font-weight: 600;
         cursor: pointer;
+        transition: all 0.2s;
     }
 
-    .avatar-option input[type="radio"] {
-        position: absolute;
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
-
-    .avatar-option img {
-        width: 100%;
-        aspect-ratio: 1;
-        border-radius: 50%;
-        border: 3px solid transparent;
-        object-fit: cover;
-        background: #1F6D7E;
-        image-rendering: pixelated;
-        transition: border-color 0.2s, transform 0.2s;
-        display: block;
-    }
-
-    .avatar-option input[type="radio"]:checked + img {
+    .btn-avatar:hover {
+        background: rgba(255,255,255,0.2);
         border-color: var(--yellow-gold);
-        transform: scale(1.06);
-        box-shadow: 0 0 12px rgba(245,200,66,0.5);
     }
 
-    .avatar-option img:hover {
-        border-color: rgba(253,233,162,0.5);
-        transform: scale(1.04);
+    .form-hint-avatar {
+        font-size: 11px;
+        
+        color: rgba(255,255,255,0.4);
+        margin-top: 8px;
     }
 
-    /* Checkmark no avatar selecionado */
-    .avatar-option input[type="radio"]:checked ~ .avatar-check {
-        display: flex;
-    }
-    .avatar-check {
+    /* ===== MODAL DE CROP ===== */
+    .crop-modal {
         display: none;
-        position: absolute;
-        bottom: 2px;
-        right: 2px;
-        width: 20px;
-        height: 20px;
-        background: var(--yellow-gold);
-        border-radius: 50%;
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0, 0, 0, 0.85);
+        z-index: 9999;
         align-items: center;
         justify-content: center;
-        font-size: 10px;
-        color: #001A20;
-        font-weight: 700;
     }
+
+    .crop-container {
+        background: #001A20;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid var(--yellow-gold);
+        width: 90%;
+        max-width: 500px;
+    }
+
+    .img-container {
+        width: 100%;
+        height: 300px;
+        margin-bottom: 20px;
+        background: #000;
+    }
+
+    .img-container img {
+        max-width: 100%;
+    }
+
+    .crop-actions {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+    }
+
+    .crop-actions div { display: flex; gap: 10px; }
 
     /* ===== FORM ===== */
     .form-card {
@@ -127,8 +171,8 @@
     }
 
     .form-section-title {
-        font-family: 'Inter', sans-serif;
-        font-size: 13px;
+        font-family: 'Crimson Pro', serif;
+        font-size: 16px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.1em;
@@ -150,9 +194,8 @@
 
     .form-label {
         font-family: 'Crimson Pro', serif;
-        font-style: italic;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 16px;
         color: var(--yellow-light);
     }
 
@@ -173,8 +216,8 @@
     .form-input[disabled] { opacity: 0.5; cursor: not-allowed; }
 
     .form-hint {
-        font-family: 'Inter', sans-serif;
-        font-size: 11px;
+        font-family: 'Crimson Pro', serif;
+        font-size: 14px;
         color: rgba(255,255,255,0.35);
         margin-top: 2px;
     }
@@ -245,33 +288,18 @@
 
     <div class="avatar-card">
         <div class="avatar-atual-wrap">
-            <img class="avatar-atual" id="avatarPreview"
-                 src="{{ asset('images/icone2.svg') }}"
-                 alt="Avatar atual">
+    <img class="avatar-atual" id="avatarPreview"
+         src="{{ $usuario->avatar === 'icone1.svg' || !$usuario->avatar ? asset('images/icone1.svg') : asset('storage/' . $usuario->avatar) }}"
+         alt="Avatar atual">
+</div>
+        <p class="avatar-card-title">Sua Foto</p>
+        
+        <div class="avatar-actions">
+            <input type="file" id="uploadAvatar" accept="image/png, image/jpeg, image/jpg" style="display: none;">
+            <button type="button" class="btn-avatar" onclick="document.getElementById('uploadAvatar').click()">Enviar nova foto</button>
+            <button type="button" class="btn-avatar" id="btnResetAvatar">Usar Padrão</button>
         </div>
-        <p class="avatar-card-title">Escolha seu avatar</p>
-        <div class="avatar-options">
-            <label class="avatar-option">
-                <input type="radio" name="avatar" value="icone1.svg" checked onchange="trocarAvatar(this)">
-                <img src="{{ asset('images/icone1.svg') }}" alt="Avatar 1">
-                <span class="avatar-check"><i class="fa-solid fa-check"></i></span>
-            </label>
-            <label class="avatar-option">
-                <input type="radio" name="avatar" value="icone2.svg" onchange="trocarAvatar(this)">
-                <img src="{{ asset('images/icone2.svg') }}" alt="Avatar 2">
-                <span class="avatar-check"><i class="fa-solid fa-check"></i></span>
-            </label>
-            <label class="avatar-option">
-                <input type="radio" name="avatar" value="icone3.svg" onchange="trocarAvatar(this)">
-                <img src="{{ asset('images/icone3.svg') }}" alt="Avatar 3">
-                <span class="avatar-check"><i class="fa-solid fa-check"></i></span>
-            </label>
-            <label class="avatar-option">
-                <input type="radio" name="avatar" value="icone4.svg" onchange="trocarAvatar(this)">
-                <img src="{{ asset('images/icone4.svg') }}" alt="Avatar 4">
-                <span class="avatar-check"><i class="fa-solid fa-check"></i></span>
-            </label>
-        </div>
+        <p class="form-hint-avatar">Tamanho mínimo: 300x300px</p>
     </div>
 
     <div class="form-card">
@@ -281,11 +309,11 @@
             Perfil atualizado com sucesso!
         </div>
 
-        <form action="{{ route('usuario.editar.salvar') }}" method="POST" id="editForm">
+        <form action="{{ route('usuario.editar.salvar') }}" method="POST" id="editForm" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
-            <input type="hidden" name="avatar" id="avatarSelecionado" value="icone1.svg">
+            <input type="hidden" name="avatar_base64" id="avatarInputHidden" value="default">
 
             {{-- DADOS PESSOAIS --}}
             <p class="form-section-title">Dados Pessoais</p>
@@ -295,8 +323,8 @@
                     <input class="form-input" type="text" name="name" value="{{ old('name', $usuario->name) }}" placeholder="Seu nome completo">
                 </div>
                 <div class="form-group">
-                    <label class="form-label">Nickname</label>
-                    <input class="form-input" type="text" name="nickname" value="{{ old('nickname', $usuario->nickname ?? $usuario->name) }}" placeholder="Seu nickname">
+                    <label class="form-label">Nome de usuário</label>
+<input class="form-input" type="text" name="nickname" id="nicknameInput" value="{{ old('nickname', $usuario->nickname ?? $usuario->name) }}" placeholder="@seunickname">
                 </div>
                 <div class="form-group">
                     <label class="form-label">CPF</label>
@@ -339,18 +367,171 @@
         </form>
 
         <div class="danger-zone">
-    <div class="danger-text">
-        <p class="dt-title">Excluir conta</p>
-        <p class="dt-sub">Esta ação é permanente e não poderá ser desfeita.</p>
+            <div class="danger-text">
+                <p class="dt-title">Excluir conta</p>
+                <p class="dt-sub">Esta ação é permanente e não poderá ser desfeita.</p>
+            </div>
+            <form method="POST" action="{{ route('usuario.excluir.conta') }}" id="formExcluirConta">
+                @csrf
+                @method('DELETE')
+                <button type="button" class="btn-danger" id="btnExcluir">Excluir minha conta</button>
+            </form>
+        </div>
     </div>
-    <form method="POST" action="{{ route('usuario.excluir.conta') }}" id="formExcluirConta">
-        @csrf
-        @method('DELETE')
-        <button type="button" class="btn-danger" id="btnExcluir">Excluir minha conta</button>
-    </form>
 </div>
 
+<div class="crop-modal" id="cropModal">
+    <div class="crop-container">
+        <p class="form-section-title" style="margin-bottom: 10px;">Ajustar Foto</p>
+        <div class="img-container">
+            <img id="imageToCrop" src="">
+        </div>
+        <div class="crop-actions">
+            <div>
+                <button type="button" class="btn-avatar" id="btnZoomIn"><i class="fa-solid fa-magnifying-glass-plus"></i> +</button>
+                <button type="button" class="btn-avatar" id="btnZoomOut"><i class="fa-solid fa-magnifying-glass-minus"></i> -</button>
+            </div>
+            <div>
+                <button type="button" class="btn-avatar" id="btnCancelCrop" style="background: transparent; color: #ff6b6b; border-color: #ff6b6b;">Cancelar</button>
+                <button type="button" class="btn-avatar" id="btnApplyCrop" style="background: var(--yellow-gold); color: #000;">Aplicar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="toastSaveWarning" class="toast-warning">
+    <i class="fa-solid fa-triangle-exclamation"></i>
+    <span>Foto alterada! Clique em "Salvar Alterações" para confirmar.</span>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
 <script>
+
+// Formatação automática do Nickname
+const nicknameInput = document.getElementById('nicknameInput');
+
+nicknameInput.addEventListener('input', function() {
+    // Remove tudo que não for letra, número ou underline e passa para minúsculo
+    let value = this.value.replace(/[^a-zA-Z0-9_]/g, '').toLowerCase();
+    
+    // Adiciona o @ no início se houver algum texto
+    this.value = value ? '@' + value : '';
+});
+
+
+    // Configurações e Variáveis
+    const defaultAvatarSrc = "{{ asset('images/icone1.svg') }}";
+    const uploadInput = document.getElementById('uploadAvatar');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const avatarInputHidden = document.getElementById('avatarInputHidden');
+    const btnResetAvatar = document.getElementById('btnResetAvatar');
+    
+    // Elementos do Cropper
+    const cropModal = document.getElementById('cropModal');
+    const imageToCrop = document.getElementById('imageToCrop');
+    let cropper;
+
+    // // Resetar para o avatar padrão
+    // btnResetAvatar.addEventListener('click', () => {
+    //     avatarPreview.src = defaultAvatarSrc;
+    //     avatarInputHidden.value = 'default';
+    //     uploadInput.value = ''; // Limpa o input de arquivo
+    // });
+
+    // Resetar para o avatar padrão
+    btnResetAvatar.addEventListener('click', () => {
+        avatarPreview.src = defaultAvatarSrc;
+        avatarInputHidden.value = 'default';
+        uploadInput.value = ''; // Limpa o input de arquivo
+
+        // Exibe o popup de aviso
+        const toast = document.getElementById('toastSaveWarning');
+        toast.classList.add('show');
+        
+        // Esconde o popup após 4 segundos
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+    });
+
+    // Iniciar upload e validar tamanho
+    uploadInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                if (this.width < 300 || this.height < 300) {
+                    alert('A imagem deve ter no mínimo 300x300 pixels.');
+                    uploadInput.value = '';
+                    return;
+                }
+                
+                // Abrir modal e iniciar o cropper
+                imageToCrop.src = event.target.result;
+                cropModal.style.display = 'flex';
+                
+                if (cropper) cropper.destroy();
+                
+                cropper = new Cropper(imageToCrop, {
+                    aspectRatio: 1, // Fixa o corte em formato quadrado (1:1)
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 1,
+                    restore: false,
+                    guides: false,
+                    center: false,
+                    highlight: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                });
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Controles de Zoom
+    document.getElementById('btnZoomIn').addEventListener('click', () => cropper.zoom(0.1));
+    document.getElementById('btnZoomOut').addEventListener('click', () => cropper.zoom(-0.1));
+
+    // Cancelar Corte
+    document.getElementById('btnCancelCrop').addEventListener('click', () => {
+        cropModal.style.display = 'none';
+        uploadInput.value = '';
+        if (cropper) cropper.destroy();
+    });
+
+   // Aplicar Corte
+    document.getElementById('btnApplyCrop').addEventListener('click', () => {
+        const canvas = cropper.getCroppedCanvas({
+            width: 300,
+            height: 300,
+        });
+
+        const base64Image = canvas.toDataURL('image/jpeg');
+        
+        avatarPreview.src = base64Image;
+        avatarInputHidden.value = base64Image;
+        
+        cropModal.style.display = 'none';
+        if (cropper) cropper.destroy();
+
+        // Exibe o popup de aviso
+        const toast = document.getElementById('toastSaveWarning');
+        toast.classList.add('show');
+        
+        // Esconde o popup após 4 segundos
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 4000);
+    });
+
+    // Função de Excluir Conta mantida original
     document.getElementById('btnExcluir').addEventListener('click', function() {
         let senha = prompt('Digite sua senha atual para confirmar a exclusão da conta:');
         if (senha && senha.trim() !== '') {
