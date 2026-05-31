@@ -86,69 +86,86 @@ class UsuarioController extends Controller
 //         return redirect()->route('usuario.editar')->with('success', 'Perfil atualizado com sucesso!');
 //     }
 
-public function editarSalvar(Request $request)
-    {
-        $usuario = auth()->user();
-
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'nickname' => 'nullable|string|max:255',
-            'email'    => 'required|email|max:255|unique:users,email,' . $usuario->id,
-            'password' => 'nullable|min:8|confirmed',
+public function atualizarAvatar(Request $request)
+{
+    $usuario = auth()->user();
+    $avatarData = $request->input('avatar_base64');
+    
+    if (preg_match('/^data:image\/(\w+);base64,/', $avatarData, $type)) {
+        $imageData = substr($avatarData, strpos($avatarData, ',') + 1);
+        $imageType = strtolower($type[1]);
+        $imageBase64 = base64_decode($imageData);
+        $fileName = 'avatars/' . uniqid() . '.' . $imageType;
+        \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $imageBase64);
+        $usuario->avatar = $fileName;
+        $usuario->save();
+        
+        return response()->json([
+            'success' => true,
+            'avatar_url' => asset('storage/' . $fileName)
         ]);
+    }
+    
+    return response()->json(['success' => false]);
+}
 
-        $usuario->name = $request->name;
-        $usuario->email = $request->email;
-        
-        // --- INÍCIO DA LÓGICA DO NICKNAME ---
-        if ($request->filled('nickname')) {
-            $nickname = strtolower($request->nickname);
-            
-            // Garante o @ no início caso o JavaScript falhe
-            if (!str_starts_with($nickname, '@')) {
-                $nickname = '@' . ltrim($nickname, '@');
-            }
+public function editarSalvar(Request $request)
+{
+    $usuario = auth()->user();
 
-            $baseNickname = $nickname;
-            $contador = 1;
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'nickname' => 'nullable|string|max:255',
+        'email'    => 'required|email|max:255|unique:users,email,' . $usuario->id,
+        'password' => 'nullable|min:8|confirmed',
+    ]);
 
-            // Verifica se existe e adiciona o número no final
-            while (User::where('nickname', $nickname)->where('id', '!=', $usuario->id)->exists()) {
-                $nickname = $baseNickname . $contador;
-                $contador++;
-            }
-            
-            $usuario->nickname = $nickname;
+    $usuario->name = $request->name;
+    $usuario->email = $request->email;
+    
+    // Nickname
+    if ($request->filled('nickname')) {
+        $nickname = strtolower($request->nickname);
+        if (!str_starts_with($nickname, '@')) {
+            $nickname = '@' . ltrim($nickname, '@');
         }
-        // --- FIM DA LÓGICA DO NICKNAME ---
-        
-        if ($request->filled('password')) {
-            $usuario->password = Hash::make($request->password);
+        $baseNickname = $nickname;
+        $contador = 1;
+        while (User::where('nickname', $nickname)->where('id', '!=', $usuario->id)->exists()) {
+            $nickname = $baseNickname . $contador;
+            $contador++;
         }
+        $usuario->nickname = $nickname;
+    }
+    
+    // Senha
+    if ($request->filled('password')) {
+        $usuario->password = Hash::make($request->password);
+    }
 
-        // --- INÍCIO DA LÓGICA DO AVATAR ---
-        if ($request->has('avatar_base64')) {
-            $avatarData = $request->input('avatar_base64');
-
-            if ($avatarData === 'default') {
-                $usuario->avatar = 'icone1.svg';
-            } elseif (preg_match('/^data:image\/(\w+);base64,/', $avatarData)) {
-                $imageParts = explode(";base64,", $avatarData);
-                $imageType = explode("image/", $imageParts[0])[1];
-                $imageBase64 = base64_decode($imageParts[1]);
-
+    // AVATAR - CORRIGIDO
+    if ($request->has('avatar_base64') && $request->avatar_base64 !== 'default') {
+        $avatarData = $request->input('avatar_base64');
+        
+        if (preg_match('/^data:image\/(\w+);base64,/', $avatarData, $type)) {
+            $imageData = substr($avatarData, strpos($avatarData, ',') + 1);
+            $imageType = strtolower($type[1]);
+            
+            if (in_array($imageType, ['jpg', 'jpeg', 'png'])) {
+                $imageBase64 = base64_decode($imageData);
                 $fileName = 'avatars/' . uniqid() . '.' . $imageType;
                 \Illuminate\Support\Facades\Storage::disk('public')->put($fileName, $imageBase64);
-
                 $usuario->avatar = $fileName;
             }
         }
-        // --- FIM DA LÓGICA DO AVATAR ---
-
-        $usuario->save();
-
-        return redirect()->route('usuario.editar')->with('success', 'Perfil atualizado com sucesso!');
+    } elseif ($request->avatar_base64 === 'default') {
+        $usuario->avatar = 'icone1.svg';
     }
+
+    $usuario->save();
+
+    return redirect()->route('usuario.perfil')->with('success', 'Perfil atualizado com sucesso!');
+}
     public function adicionarFavorito($produtoId)
     {
         $userId = auth()->id();

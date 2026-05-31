@@ -26,6 +26,8 @@ Route::post('/login-action', [AuthController::class, 'login'])->name('login.auth
 Route::post('/register-action', [AuthController::class, 'register'])->name('register.auth');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
+Route::post('/usuario/atualizar-avatar', [App\Http\Controllers\UsuarioController::class, 'atualizarAvatar'])->name('usuario.atualizar.avatar');
+
 Route::post('/favoritos/adicionar/{produtoId}', [UsuarioController::class, 'adicionarFavorito'])->name('favoritos.adicionar');
 
 // No seu routes/web.php

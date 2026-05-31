@@ -140,10 +140,10 @@
              alt="Avatar do usuário"
              onerror="this.src='https://via.placeholder.com/130/1F6D7E/FFDC74?text=GZ'"> -->
 
-             <img class="profile-avatar"
-             src="{{ $usuario->avatar === 'icone1.svg' || empty($usuario->avatar) ? asset('images/icone1.svg') : asset('storage/' . $usuario->avatar) }}"
-             alt="Avatar do usuário"
-             onerror="this.src='https://via.placeholder.com/130/1F6D7E/FFDC74?text=GZ'">
+            <img class="profile-avatar"
+     src="{{ $usuario->avatar === 'icone1.svg' || empty($usuario->avatar) ? asset('images/icone1.svg') : asset('storage/' . $usuario->avatar) }}"
+     alt="Avatar do usuário"
+     onerror="this.src='{{ asset('images/icone1.svg') }}'">
         <a href="{{ route('usuario.editar') }}" class="avatar-edit-btn" title="Editar perfil">
             <i class="fa-solid fa-pen"></i>
         </a>

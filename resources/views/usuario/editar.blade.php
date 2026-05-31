@@ -287,20 +287,20 @@
 <div class="edit-layout">
 
     <div class="avatar-card">
-        <div class="avatar-atual-wrap">
-    <img class="avatar-atual" id="avatarPreview"
-         src="{{ $usuario->avatar === 'icone1.svg' || !$usuario->avatar ? asset('images/icone1.svg') : asset('storage/' . $usuario->avatar) }}"
-         alt="Avatar atual">
-</div>
-        <p class="avatar-card-title">Sua Foto</p>
-        
-        <div class="avatar-actions">
-            <input type="file" id="uploadAvatar" accept="image/png, image/jpeg, image/jpg" style="display: none;">
-            <button type="button" class="btn-avatar" onclick="document.getElementById('uploadAvatar').click()">Enviar nova foto</button>
-            <button type="button" class="btn-avatar" id="btnResetAvatar">Usar Padrão</button>
-        </div>
-        <p class="form-hint-avatar">Tamanho mínimo: 300x300px</p>
+    <div class="avatar-atual-wrap">
+        <img class="avatar-atual" id="avatarPreview"
+             src="{{ $usuario->avatar === 'icone1.svg' || !$usuario->avatar ? asset('images/icone1.svg') : asset('storage/' . $usuario->avatar) }}"
+             alt="Avatar atual">
     </div>
+    <p class="avatar-card-title">Sua Foto</p>
+    
+    <div class="avatar-actions">
+        <input type="file" id="uploadAvatar" accept="image/png, image/jpeg, image/jpg" style="display: none;">
+        <button type="button" class="btn-avatar" onclick="document.getElementById('uploadAvatar').click()">Enviar nova foto</button>
+        <button type="button" class="btn-avatar" id="btnResetAvatar">Usar Padrão</button>
+    </div>
+    <p class="form-hint-avatar">Tamanho mínimo: 300x300px</p>
+</div>
 
     <div class="form-card">
 
@@ -406,7 +406,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
-<script>
+<!-- <script>
 
 // Formatação automática do Nickname
 const nicknameInput = document.getElementById('nicknameInput');
@@ -546,6 +546,111 @@ nicknameInput.addEventListener('input', function() {
             alert('Você precisa digitar sua senha para excluir a conta.');
         }
     });
-</script>
+</script> -->
 
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script>
+    const defaultAvatarSrc = "{{ asset('images/icone1.svg') }}";
+    const uploadInput = document.getElementById('uploadAvatar');
+    const avatarPreview = document.getElementById('avatarPreview');
+    const avatarInputHidden = document.getElementById('avatarInputHidden');
+    const btnResetAvatar = document.getElementById('btnResetAvatar');
+    
+    const cropModal = document.getElementById('cropModal');
+    const imageToCrop = document.getElementById('imageToCrop');
+    let cropper;
+
+    // Resetar para avatar padrão
+    btnResetAvatar.addEventListener('click', () => {
+        avatarPreview.src = defaultAvatarSrc;
+        avatarInputHidden.value = 'default';
+        uploadInput.value = '';
+        
+        const toast = document.getElementById('toastSaveWarning');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+    });
+
+    // Upload e validação
+    uploadInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+            const img = new Image();
+            img.onload = function() {
+                if (this.width < 300 || this.height < 300) {
+                    alert('A imagem deve ter no mínimo 300x300 pixels.');
+                    uploadInput.value = '';
+                    return;
+                }
+                
+                imageToCrop.src = event.target.result;
+                cropModal.style.display = 'flex';
+                
+                if (cropper) cropper.destroy();
+                
+                cropper = new Cropper(imageToCrop, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    dragMode: 'move',
+                    autoCropArea: 1,
+                    restore: false,
+                    guides: false,
+                    center: false,
+                    highlight: false,
+                    cropBoxMovable: true,
+                    cropBoxResizable: true,
+                    toggleDragModeOnDblclick: false,
+                });
+            };
+            img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+    });
+
+    // Zoom
+    document.getElementById('btnZoomIn')?.addEventListener('click', () => cropper?.zoom(0.1));
+    document.getElementById('btnZoomOut')?.addEventListener('click', () => cropper?.zoom(-0.1));
+
+    // Cancelar
+    document.getElementById('btnCancelCrop')?.addEventListener('click', () => {
+        cropModal.style.display = 'none';
+        uploadInput.value = '';
+        if (cropper) cropper.destroy();
+    });
+
+    // Aplicar corte
+    document.getElementById('btnApplyCrop')?.addEventListener('click', () => {
+        if (!cropper) return;
+        
+        const canvas = cropper.getCroppedCanvas({
+            width: 300,
+            height: 300,
+        });
+
+        const base64Image = canvas.toDataURL('image/jpeg');
+        
+        avatarPreview.src = base64Image;
+        avatarInputHidden.value = base64Image;
+        
+        cropModal.style.display = 'none';
+        if (cropper) cropper.destroy();
+
+        const toast = document.getElementById('toastSaveWarning');
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 4000);
+    });
+
+    // Validação antes de enviar o formulário
+    document.getElementById('editForm')?.addEventListener('submit', function(e) {
+        if (avatarInputHidden.value === 'default') {
+            console.log('Usando avatar padrão');
+        } else if (avatarInputHidden.value.length > 100) {
+            console.log('Avatar alterado, enviando imagem');
+        }
+    });
+</script>
 @endsection
