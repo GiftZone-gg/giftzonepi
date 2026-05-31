@@ -7,6 +7,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Str;
 
+
+
 class BoletoController extends Controller
 {
     public function show()

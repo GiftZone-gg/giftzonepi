@@ -427,8 +427,7 @@
     <div class="footer-inner">
         <a href="/" class="footer-logo">
             <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone" onerror="this.style.display='none'">
-            <span>GiftZone</span>
-        </a>
+           </a>
         <div class="footer-bottom">
             <span class="footer-copy">© {{ date('Y') }} GiftZone Todos direitos Reservados</span>
             <div class="social-links">
