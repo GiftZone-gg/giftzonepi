@@ -50,33 +50,31 @@ Pedidos → criei uma página para o usuário ver todos os pedidos que fez.
 
 Faltam os models → ainda não criei os arquivos Order e OrderItem (por isso está dando erro).
 
+===============
+
 **Junior - 30.05.2026**
--Alterei o tamanho da logo em todas as páginas
 
--Alterei o comportamento da logo em relação a responsividade, ocultando de acordo com o tamanho da tela
+* Alterei o tamanho da logo em todas as páginas
+* Alterei o comportamento da logo em relação a responsividade, ocultando de acordo com o tamanho da tela
+* Alterei o comportamento da logo em relação ao menu hambúrguer, os elementos entravam em conflito
+* Alterei o CSS do index com auxílio do Claude para que os elementos não entrem em conflito em telas menores
+* Alterei o user-name-display no index, tornando o nome de usuário clicável e redirecionando para página de usuário
+* Alterações o painel de usuário:
+* Remoção dos avatares que não estavam funcionando, deixando um avatar como padrão para novos usuários
+* Adicionei a função de editar avatar, permitindo que o usuário escolha sua própria foto ou voltar ao avatar padrão
+* Padronizei as fontes usadas nos forms de dados pessoais, contato, alterar senha e nos botoes de alterar avatar e voltar ao padrão
 
--Alterei o comportamento da logo em relação ao menu hambúguer, os elementos entravam em conflito
 
--Alterei o CSS do index com auxílio do Claude para que os elementos não entrem em conflito em telas menores
+* Atualizei o nome de usuário exibido na navbar pelo ícone do usuário, com função que redireciona ao pefil
+* Atualizei o comportamento da navbar, deixando ela fixa ao rolar a tela
+* Adicionei PIX e boleto as formas de pagamento, porém tive problemas ao tentar adicionar cartão
 
--Alterei o user-name-display no index, tornando o nome de usuário clicável e redirecionando para página de usuário
+**Faltando**
 
--Alterações o painel de usuário:
-    - Remoção dos avatares que não estavam funcionando, deixando um avatar como padrão para novos usuários
-    - Adicionei a função de editar avatar, permitindo que o usuário escolha sua própria foto ou voltar ao avatar padrão
-    - Padronizei as fontes usadas nos forms de dados pessoais, contato, alterar senha e nos botoes de alterar avatar e voltar ao padrão
-
-- Atualizei o nome de usuário exibido na navbar pelo ícone do usuário, com função que redireciona ao pefil
-
-- Atualizei o comportamento da navbar, deixando ela fixa ao rolar a tela
-
-- Adicionei PIX e boleto as formas de pagamento, porém tive problemas ao tentar adicionar cartão
-
-- Faltando
-    - finalizar métodos de pagamento
-    - tela de admin
-    - i18n
-    - tela de pedidos com erro/faltando
-    - adicionar o carrinho nas telas de catálogo e index
-    - adicionar os requisitos dos games
-    - corrigir o footer
+* finalizar métodos de pagamento
+* tela de admin
+* i18n
+* tela de pedidos com erro/faltando
+* adicionar o carrinho nas telas de catálogo e index
+* adicionar os requisitos dos games
+* corrigir o footer
