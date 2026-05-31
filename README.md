@@ -59,10 +59,11 @@ Faltam os models → ainda não criei os arquivos Order e OrderItem (por isso es
 * Alterei o comportamento da logo em relação ao menu hambúrguer, os elementos entravam em conflito
 * Alterei o CSS do index com auxílio do Claude para que os elementos não entrem em conflito em telas menores
 * Alterei o user-name-display no index, tornando o nome de usuário clicável e redirecionando para página de usuário
+
 * Alterações o painel de usuário:
-* Remoção dos avatares que não estavam funcionando, deixando um avatar como padrão para novos usuários
-* Adicionei a função de editar avatar, permitindo que o usuário escolha sua própria foto ou voltar ao avatar padrão
-* Padronizei as fontes usadas nos forms de dados pessoais, contato, alterar senha e nos botoes de alterar avatar e voltar ao padrão
+    * Remoção dos avatares que não estavam funcionando, deixando um avatar como padrão para novos usuários
+    * Adicionei a função de editar avatar, permitindo que o usuário escolha sua própria foto ou voltar ao avatar padrão
+    * Padronizei as fontes usadas nos forms de dados pessoais, contato, alterar senha e nos botoes de alterar avatar e voltar ao padrão
 
 
 * Atualizei o nome de usuário exibido na navbar pelo ícone do usuário, com função que redireciona ao pefil
