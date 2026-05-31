@@ -13,6 +13,29 @@
             box-sizing: border-box;
         }
 
+        /* Icone de carrinho */
+
+        .nav-cart-link {
+    position: relative;
+    color: white;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.2s, transform 0.2s;
+    }
+        .nav-cart-link:hover { color: #FFDC74; transform: scale(1.1); }
+        .cart-badge {
+        position: absolute;
+        top: -8px; right: -8px;
+        background: #FFDC74;
+        color: #001A20;
+        font-size: 10px;
+        font-weight: 900;
+        width: 18px; height: 18px;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+    }
+
         /* Ícone do Avatar no Menu */
         .nav-avatar-container {
             display: inline-flex;
@@ -401,6 +424,16 @@
 </div> -->
 
 <div class="user-auth-area">
+
+        <a href="{{ route('carrinho.index') }}" class="nav-cart-link" title="Meu Carrinho">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="21" r="1"></circle>
+        <circle cx="20" cy="21" r="1"></circle>
+        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+    </svg>
+    @php $qtdCarrinho = array_sum(array_column(session('carrinho', []), 'quantidade')); @endphp
+    @if($qtdCarrinho > 0)<span class="cart-badge">{{ $qtdCarrinho }}</span>@endif
+    </a>
             @auth
                 <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="Meu Perfil">
                     <img class="nav-avatar-mini" 

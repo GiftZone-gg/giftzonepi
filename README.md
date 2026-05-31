@@ -1,9 +1,25 @@
 # Sobre o projeto - GiftZone
-Bruno - Página de catálogo restruturada para se adequar ao design limpo e agradável do site, atualização das imagens para o mesmo formato de arquivo. 
+**Bruno (16/05/2026):** - Página de catálogo restruturada para se adequar ao design limpo e agradável do site, atualização das imagens para o mesmo formato de arquivo. 
 
 - Padronização de estilos nas páginas.
 
 to fix: Deixar os filtros do catálogo funcionais.
+
+
+**Bruno (31/05/2026):**
+
+* Alterei o estilo da página de carrinho, para ser condizente com o figma da organização.
+* Alteração no icone de carrinho que estava com problemas
+* Tela de pagamentos atualizada.
+* Correção do footer.
+* Correção na disposição dos botões de pagamento e etc.
+
+**Faltando**
+
+- correção de icones
+- atualização de descrição dos produtos
+- tela inicial problema de rotas
+
 
 **Lissandra (11/05/2026):**
 - Criação da pasta user em resources/views, contendo todas as telas relacionadas ao usuário seguindo o padrão de design do site;
@@ -76,6 +92,5 @@ Faltam os models → ainda não criei os arquivos Order e OrderItem (por isso es
 * tela de admin
 * i18n
 * tela de pedidos com erro/faltando
-* adicionar o carrinho nas telas de catálogo e index
 * adicionar os requisitos dos games
-* corrigir o footer
+* adicionar metodo de pagamento - usuario

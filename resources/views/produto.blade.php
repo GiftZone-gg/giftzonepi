@@ -174,7 +174,10 @@
                 <circle cx="20" cy="21" r="1"></circle>
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
             </svg>
-            <span class="cart-badge">{{ Auth::check() ? Auth::user()->carrinho->sum('quantidade') : 0 }}</span>
+        @php $qtdCarrinho = array_sum(array_column(session('carrinho', []), 'quantidade')); @endphp
+        @if($qtdCarrinho > 0)
+            <span class="cart-badge">{{ $qtdCarrinho }}</span>
+        @endif
         </a>
 
         @auth
@@ -266,9 +269,10 @@
                 <circle cx="20" cy="21" r="1"></circle>
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
             </svg>
-            <span class="cart-badge">
-    {{ (Auth::check() && method_exists(Auth::user(), 'carrinho')) ? Auth::user()->carrinho()->sum('quantidade') : 0 }}
-</span>
+           @php $qtdCarrinho = array_sum(array_column(session('carrinho', []), 'quantidade')); @endphp
+            @if($qtdCarrinho > 0)
+                <span class="cart-badge">{{ $qtdCarrinho }}</span>
+            @endif
         </a>
 
         @auth
