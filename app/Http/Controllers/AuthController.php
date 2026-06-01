@@ -39,9 +39,10 @@ class AuthController extends Controller
         ]);
 
         event(new Registered($user));
-        Auth::login($user);
 
         \App\Models\UserNotification::criarBoasVindas($user->id);
+
+        Auth::login($user);
 
         return redirect()->route('verification.notice');
     }
@@ -58,6 +59,12 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $request->has('remember'))) {
             $request->session()->regenerate();
 
+            // Admin pula verificação
+            if (Auth::user()->is_admin) {
+                return redirect()->route('admin.dashboard');
+            }
+
+            // Usuário normal precisa verificar
             if (!Auth::user()->hasVerifiedEmail()) {
                 return redirect()->route('verification.notice');
             }

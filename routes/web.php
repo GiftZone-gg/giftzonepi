@@ -61,6 +61,22 @@ Route::post('/carrinho/finalizar', [CarrinhoController::class, 'finalizar'])->na
 // ─── Favoritos ───
 Route::post('/favoritos/adicionar/{produtoId}', [UsuarioController::class, 'adicionarFavorito'])->name('favoritos.adicionar');
 
+// ─── ADMIN (precisa login, NÃO precisa verificação) ───
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
+
+    Route::get('/produtos', [AdminController::class, 'produtos'])->name('produtos');
+    Route::get('/produtos/criar', [AdminController::class, 'produtoCriar'])->name('produtos.criar');
+    Route::post('/produtos', [AdminController::class, 'produtoSalvar'])->name('produtos.salvar');
+    Route::get('/produtos/{id}/editar', [AdminController::class, 'produtoEditar'])->name('produtos.editar');
+    Route::put('/produtos/{id}', [AdminController::class, 'produtoAtualizar'])->name('produtos.atualizar');
+    Route::delete('/produtos/{id}', [AdminController::class, 'produtoRemover'])->name('produtos.remover');
+    Route::post('/produtos/{id}/toggle', [AdminController::class, 'produtoToggle'])->name('produtos.toggle');
+
+    Route::get('/pedidos', [AdminController::class, 'pedidos'])->name('pedidos');
+    Route::put('/pedidos/{id}/status', [AdminController::class, 'pedidoStatus'])->name('pedidos.status');
+});
+
 // ─── Rotas que exigem login + e-mail verificado ───
 Route::middleware(['auth', 'verified'])->group(function () {
 
@@ -103,21 +119,5 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/cartao/adicionar', [UsuarioController::class, 'adicionarCartao'])->name('cartao.adicionar');
         Route::delete('/cartao/{id}', [UsuarioController::class, 'removerCartao'])->name('cartao.remover');
         Route::post('/cartao/{id}/principal', [UsuarioController::class, 'definirCartaoPrincipal'])->name('cartao.principal');
-    });
-
-    // ─── ADMIN ───
-    Route::middleware('admin')->prefix('admin')->name('admin.')->group(function () {
-        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
-
-        Route::get('/produtos', [AdminController::class, 'produtos'])->name('produtos');
-        Route::get('/produtos/criar', [AdminController::class, 'produtoCriar'])->name('produtos.criar');
-        Route::post('/produtos', [AdminController::class, 'produtoSalvar'])->name('produtos.salvar');
-        Route::get('/produtos/{id}/editar', [AdminController::class, 'produtoEditar'])->name('produtos.editar');
-        Route::put('/produtos/{id}', [AdminController::class, 'produtoAtualizar'])->name('produtos.atualizar');
-        Route::delete('/produtos/{id}', [AdminController::class, 'produtoRemover'])->name('produtos.remover');
-        Route::post('/produtos/{id}/toggle', [AdminController::class, 'produtoToggle'])->name('produtos.toggle');
-
-        Route::get('/pedidos', [AdminController::class, 'pedidos'])->name('pedidos');
-        Route::put('/pedidos/{id}/status', [AdminController::class, 'pedidoStatus'])->name('pedidos.status');
     });
 });
