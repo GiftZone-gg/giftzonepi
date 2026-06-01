@@ -10,6 +10,7 @@ class ProdutoController extends Controller
 {
     public function home()
     {
+<<<<<<< HEAD
         $maisprocurados = Produto::where('ativo', true)->inRandomOrder()->take(3)->get();
 
         $playstation = Produto::where('ativo', true)
@@ -25,6 +26,22 @@ class ProdutoController extends Controller
         $nintendo = Produto::where('ativo', true)
             ->whereJsonContains('plataformas', 'Nintendo Switch')
             ->take(3)->get();
+=======
+        $todos           = Produto::where('ativo', true)->get();
+        $maisprocurados  = $todos->take(3);
+        $playstation     = $todos->filter(function($p) {
+                            $plats = is_array($p->plataformas) ? $p->plataformas : [];
+                            return in_array('PlayStation 5', $plats) || in_array('PlayStation 4', $plats);
+                        })->take(3)->values();
+        $steam           = $todos->filter(function($p) {
+                            $plats = is_array($p->plataformas) ? $p->plataformas : [];
+                            return in_array('PC', $plats);
+                        })->take(3)->values();
+        $nintendo        = $todos->filter(function($p) {
+                            $plats = is_array($p->plataformas) ? $p->plataformas : [];
+                            return in_array('Nintendo Switch', $plats);
+                        })->take(3)->values();
+>>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
 
         return view('index', compact('maisprocurados', 'playstation', 'steam', 'nintendo'));
     }
@@ -35,6 +52,7 @@ class ProdutoController extends Controller
 
         $isFavorited = false;
         if (auth()->check()) {
+<<<<<<< HEAD
             $isFavorited = Wishlist::where('user_id', auth()->id())
                 ->where('product_id', $produto->id)
                 ->exists();
@@ -74,5 +92,13 @@ class ProdutoController extends Controller
         $cartCount = count(session()->get('cart', []));
 
         return view('produto', compact('produto', 'isFavorited', 'relacionados', 'cartCount'));
+=======
+            $isFavorited = \App\Models\Wishlist::where('user_id', auth()->id())
+                              ->where('product_id', $produto->id)
+                              ->exists();
+        }
+
+        return view('produto', compact('produto', 'isFavorited'));
+>>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
     }
 }

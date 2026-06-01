@@ -29,7 +29,21 @@ Route::get('/catalogo', function () {
 })->name('catalogo');
 Route::get('/produto/{slug}', [ProdutoController::class, 'show'])->name('produto.show');
 
+<<<<<<< HEAD
 // ─── Auth ───
+=======
+Route::get('/', [ProdutoController::class, 'home'])->name('home');
+
+Route::get('/login', function () {
+    return view('login');
+})->name('login');
+
+Route::get('/catalogo', function () {
+    $jogos = App\Models\Produto::where('ativo', true)->get();
+    return view('catalogo', compact('jogos'));
+})->name('catalogo');
+
+>>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
 Route::post('/login-action', [AuthController::class, 'login'])->name('login.auth');
 Route::post('/register-action', [AuthController::class, 'register'])->name('register.auth');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
