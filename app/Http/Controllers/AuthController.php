@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -109,11 +108,31 @@ class AuthController extends Controller
         return view('auth.verify-email');
     }
 
-    public function verifyEmail(EmailVerificationRequest $request)
-    {
-        $request->fulfill();
-        return redirect()->route('home')->with('success', 'E-mail verificado com sucesso!');
+    // public function verifyEmail(EmailVerificationRequest $request)
+    public function verifyEmail(Request $request, $id, $hash)
+{
+    $user = \App\Models\User::findOrFail($id);
+
+    if (!hash_equals(sha1($user->getEmailForVerification()), $hash)) {
+        abort(403, 'Link inválido.');
     }
+
+    if (!$user->hasVerifiedEmail()) {
+        $user->markEmailAsVerified();
+    }
+
+    Auth::login($user);
+
+    return redirect()->route('home')->with('success', 'E-mail verificado com sucesso!');
+}
+    // {
+    //     $request->fulfill();
+    //     return redirect()->route('home')->with('success', 'E-mail verificado com sucesso!');
+    // }
+
+    
+
+    
 
     public function resendVerification(Request $request)
     {

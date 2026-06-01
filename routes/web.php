@@ -43,9 +43,11 @@ Route::post('/reset-password', [AuthController::class, 'resetPasswordUpdate'])->
 // ─── Verificação de E-mail ───
 Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [AuthController::class, 'verificationNotice'])->name('verification.notice');
+    // Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+    //     ->middleware('signed')
+    //     ->name('verification.verify');
     Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
-        ->middleware('signed')
-        ->name('verification.verify');
+    ->name('verification.verify');
     Route::post('/email/resend', [AuthController::class, 'resendVerification'])
         ->middleware('throttle:6,1')
         ->name('verification.resend');
