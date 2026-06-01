@@ -32,6 +32,10 @@
         .btn-entrar { border: 1px solid rgba(255,255,255,0.3); padding: 12px 36px; border-radius: 8px; color: white; text-decoration: none; font-weight: 500; font-size: 18px; transition: all 0.3s ease; background: transparent; cursor: pointer; }
         .btn-entrar:hover { background: rgba(255,255,255,0.1); }
 
+        .nav-avatar-container { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s; text-decoration: none; }
+        .nav-avatar-container:hover { transform: scale(1.08); }
+        .nav-avatar-mini { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #FFDC74; object-fit: cover; background: #1F6D7E; box-shadow: 0 0 12px rgba(245, 200, 66, 0.3); }
+
         .hero { position: relative; overflow: hidden; padding: 48px 24px 40px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: linear-gradient(160deg, var(--dark) 0%, var(--mid) 60%, #003d4a 100%); }
         .hero::before { content: ''; position: absolute; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(0,83,99,.55) 0%, transparent 70%); top: -120px; right: -100px; pointer-events: none; }
         .hero::after { content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(253,233,162,.06) 0%, transparent 70%); bottom: -80px; left: -60px; pointer-events: none; }
@@ -45,21 +49,31 @@
         @media (max-width: 760px) { .product-grid { grid-template-columns: 1fr; } }
 
         .platform-badge { display: inline-block; background: var(--cyan); color: #fff; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 4px 14px; border-radius: 4px 4px 0 0; }
-        .main-image-wrap { width: 100%; aspect-ratio: 16/9; border-radius: 0 12px 12px 12px; overflow: hidden; background: var(--mid); }
-        .main-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
-        .main-image-wrap:hover img { transform: scale(1.03); }
-        .gallery { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
-        .gallery-btn { background: none; border: none; color: var(--accent); font-size: 1.4rem; cursor: pointer; padding: 4px 6px; flex-shrink: 0; transition: opacity .2s; }
-        .gallery-btn:hover { opacity: .7; }
-        .gallery-thumbs { display: flex; gap: 8px; overflow: hidden; flex: 1; }
-        .gallery-thumb { width: 82px; height: 54px; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; transition: border-color .2s, transform .2s; }
-        .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
-        .gallery-thumb.active, .gallery-thumb:hover { border-color: var(--accent); transform: scale(1.05); }
+
+        /* ─── MEDIA VIEWER (carrossel) ─── */
+        .media-main { width: 100%; aspect-ratio: 16/9; border-radius: 0 12px 12px 12px; overflow: hidden; background: #000; position: relative; }
+        .media-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .media-main iframe { width: 100%; height: 100%; border: none; display: block; }
+
+        .media-thumbs { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; padding-bottom: 4px; }
+        .media-thumb {
+            width: 100px; height: 60px; border-radius: 8px; overflow: hidden;
+            cursor: pointer; border: 2px solid transparent; flex-shrink: 0;
+            transition: border-color .2s, transform .2s; position: relative; background: #001A20;
+        }
+        .media-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .media-thumb.active, .media-thumb:hover { border-color: var(--accent); transform: scale(1.05); }
+
+        .media-thumb .play-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
+        }
+        .media-thumb .play-overlay svg { width: 28px; height: 28px; fill: #ff0000; }
+
         .desc-box { margin-top: 16px; background: rgba(0,83,99,.35); border: 1px solid rgba(253,233,162,.1); border-radius: 12px; padding: 18px 20px; animation: fadeUp .5s .1s ease both; }
         .desc-box h3 { font-size: .75rem; font-weight: 700; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
         .desc-box p { font-size: .88rem; color: rgba(255,255,255,.65); line-height: 1.65; }
 
-        .product-title { font-family: 'Gasoek One', sans-serif; font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 400; color: var(--accent); letter-spacing: 2px; line-height: 1.15; margin-bottom: 20px; animation: fadeDown .45s ease both; }
         .price-card { background: rgba(0,83,99,.4); border: 1px solid rgba(253,233,162,.18); border-radius: 16px; padding: 22px 24px; margin-bottom: 16px; animation: fadeUp .5s ease both; }
         .price-value { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 2.2rem; color: var(--accent); letter-spacing: 1px; }
         .price-sub { font-size: .78rem; color: rgba(255,255,255,.45); margin-top: 3px; margin-bottom: 18px; }
@@ -92,10 +106,6 @@
         .req-col h4 { font-size: .72rem; font-weight: 700; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
         .req-col p { font-size: .78rem; color: rgba(255,255,255,.55); line-height: 1.75; }
 
-        .nav-avatar-container { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s; text-decoration: none; }
-        .nav-avatar-container:hover { transform: scale(1.08); }
-        .nav-avatar-mini { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #FFDC74; object-fit: cover; background: #1F6D7E; box-shadow: 0 0 12px rgba(245, 200, 66, 0.3); }
-
         footer { background: #001e25; border-top: 1px solid rgba(253,233,162,.1); padding: 28px 32px; }
         .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
         .footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
@@ -108,7 +118,7 @@
 
         @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 600px) { nav { padding: 12px 16px; } main { padding: 28px 16px 60px; } footer { padding: 24px 16px; } .footer-bottom { flex-direction: column; align-items: flex-start; } }
+        @media (max-width: 600px) { nav { padding: 12px 16px; } main { padding: 28px 16px 60px; } footer { padding: 24px 16px; } .footer-bottom { flex-direction: column; align-items: flex-start; } .media-thumbs { gap: 6px; } .media-thumb { width: 80px; height: 48px; } }
     </style>
 </head>
 <body>
@@ -154,40 +164,47 @@
     <div class="product-grid">
         <div class="left-col">
             <span class="platform-badge" id="badge-platform">{{ is_array($produto->plataformas) ? ($produto->plataformas[0] ?? '') : '' }}</span>
-            <div class="main-image-wrap">
-                <img id="main-image" src="{{ asset('images/' . $produto->imagem_principal) }}" alt="{{ $produto->nome }}">
+
+            {{-- ═══ MEDIA VIEWER ═══ --}}
+            @php
+                $galeria = is_array($produto->galeria) ? $produto->galeria : [];
+                $trailerUrl = $produto->trailer_url ?? null;
+                $videoId = null;
+                if ($trailerUrl) {
+                    preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $trailerUrl, $tMatches);
+                    $videoId = $tMatches[1] ?? null;
+                }
+            @endphp
+
+            {{-- Main display --}}
+            <div class="media-main" id="mediaMain">
+                <img id="mainImage" src="{{ asset('images/' . $produto->imagem_principal) }}" alt="{{ $produto->nome }}">
             </div>
 
-            <!-- @php $galeria = is_array($produto->galeria) ? $produto->galeria : []; @endphp
-            @if(count($galeria) > 0)
-            <div class="gallery">
-                <button class="gallery-btn" onclick="galleryPrev()">&#8249;</button>
-                <div class="gallery-thumbs" id="gallery-thumbs">
-                    <div class="gallery-thumb active" onclick="selectThumb(this, '{{ asset('images/' . $produto->imagem_principal) }}')">
-                        <img src="{{ asset('images/' . $produto->imagem_principal) }}" alt="Principal">
+            {{-- Thumbnails --}}
+            <div class="media-thumbs">
+                {{-- Trailer thumb --}}
+                @if($videoId)
+                <div class="media-thumb" onclick="showTrailer('{{ $videoId }}')" id="thumb-trailer">
+                    <img src="https://img.youtube.com/vi/{{ $videoId }}/mqdefault.jpg" alt="Trailer">
+                    <div class="play-overlay">
+                        <svg viewBox="0 0 68 48"><path d="M66.52 7.74c-.78-2.93-2.49-5.41-5.42-6.19C55.79.13 34 0 34 0S12.21.13 6.9 1.55c-2.93.78-4.63 3.26-5.42 6.19C.06 13.05 0 24 0 24s.06 10.95 1.48 16.26c.78 2.93 2.49 5.41 5.42 6.19C12.21 47.87 34 48 34 48s21.79-.13 27.1-1.55c2.93-.78 4.63-3.26 5.42-6.19C67.94 34.95 68 24 68 24s-.06-10.95-1.48-16.26z" fill="#f00"/><path d="M45 24L27 14v20" fill="#fff"/></svg>
                     </div>
-                    @foreach($galeria as $img)
-                    <div class="gallery-thumb" onclick="selectThumb(this, '{{ asset('images/' . $img) }}')">
-                        <img src="{{ asset('images/' . $img) }}" alt="Thumb">
-                    </div>
-                    @endforeach
                 </div>
-                <button class="gallery-btn" onclick="galleryNext()">&#8250;</button>
-            </div>
-            @endif -->
+                @endif
 
-            {{-- Trailer do YouTube --}}
-@if($produto->trailer_url)
-    @php
-        preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $produto->trailer_url, $matches);
-        $videoId = $matches[1] ?? null;
-    @endphp
-    @if($videoId)
-    <div style="margin-top: 12px; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: #000;">
-        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/{{ $videoId }}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border: none;"></iframe>
-    </div>
-    @endif
-@endif
+                {{-- Main image thumb --}}
+                <div class="media-thumb active" onclick="showImage(this, '{{ asset('images/' . $produto->imagem_principal) }}')" id="thumb-main">
+                    <img src="{{ asset('images/' . $produto->imagem_principal) }}" alt="Principal">
+                </div>
+
+                {{-- Gallery thumbs --}}
+                @foreach($galeria as $idx => $img)
+                <div class="media-thumb" onclick="showImage(this, '{{ asset('images/' . $img) }}')">
+                    <img src="{{ asset('images/' . $img) }}" alt="Screenshot {{ $idx + 1 }}">
+                </div>
+                @endforeach
+            </div>
 
             <div class="desc-box">
                 <h3>{{ __('messages.description') }}</h3>
@@ -196,7 +213,6 @@
         </div>
 
         <div class="right-col">
-            <!-- <h2 class="product-title">{{ $produto->nome }}</h2> -->
             <div class="price-card">
                 <div class="price-value" id="price-display">
                     R$ {{ number_format(is_array($produto->edicoes) ? ($produto->edicoes[0]['preco'] ?? 0) : 0, 2, ',', '.') }}
@@ -284,45 +300,45 @@
     </div>
 
     {{-- ═══ PRODUTOS RELACIONADOS ═══ --}}
-@if($relacionados->count() > 0)
-<section style="max-width: 1100px; margin: 0 auto; padding: 0 32px 60px;">
-    <h2 style="font-family: 'Gasoek One', sans-serif; font-size: clamp(1.2rem, 3vw, 1.6rem); color: var(--accent); letter-spacing: 2px; margin-bottom: 24px; text-align: center;">
-        {{ __('messages.continue_shopping') }}
-    </h2>
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px;">
-        @foreach($relacionados as $rel)
-        @php
-            $relEdicoes = is_array($rel->edicoes) ? $rel->edicoes : [];
-            $relPreco = !empty($relEdicoes) ? collect($relEdicoes)->min('preco') : 0;
-        @endphp
-        <a href="{{ route('produto.show', $rel->slug) }}" style="text-decoration: none; display: block;">
-            <div style="background: rgba(0,83,99,0.35); border: 1px solid rgba(253,233,162,0.1); border-radius: 14px; overflow: hidden; transition: transform 0.25s, border-color 0.25s; cursor: pointer;"
-                 onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='rgba(253,233,162,0.4)';"
-                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(253,233,162,0.1)';">
-                <div style="width: 100%; height: 130px; overflow: hidden; background: #1F6D7E;">
-                    <img src="{{ asset('images/' . $rel->imagem_principal) }}" alt="{{ $rel->nome }}"
-                         style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;"
-                         onmouseover="this.style.transform='scale(1.05)'"
-                         onmouseout="this.style.transform='scale(1)'"
-                         onerror="this.style.display='none'">
+    @if($relacionados->count() > 0)
+    <section style="max-width: 1100px; margin: 40px auto 0; padding: 0 0 60px;">
+        <h2 style="font-family: 'Gasoek One', sans-serif; font-size: clamp(1.2rem, 3vw, 1.6rem); color: var(--accent); letter-spacing: 2px; margin-bottom: 24px; text-align: center;">
+            {{ __('messages.continue_shopping') }}
+        </h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px;">
+            @foreach($relacionados as $rel)
+            @php
+                $relEdicoes = is_array($rel->edicoes) ? $rel->edicoes : [];
+                $relPreco = !empty($relEdicoes) ? collect($relEdicoes)->min('preco') : 0;
+            @endphp
+            <a href="{{ route('produto.show', $rel->slug) }}" style="text-decoration: none; display: block;">
+                <div style="background: rgba(0,83,99,0.35); border: 1px solid rgba(253,233,162,0.1); border-radius: 14px; overflow: hidden; transition: transform 0.25s, border-color 0.25s; cursor: pointer;"
+                     onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='rgba(253,233,162,0.4)';"
+                     onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(253,233,162,0.1)';">
+                    <div style="width: 100%; height: 130px; overflow: hidden; background: #1F6D7E;">
+                        <img src="{{ asset('images/' . $rel->imagem_principal) }}" alt="{{ $rel->nome }}"
+                             style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;"
+                             onmouseover="this.style.transform='scale(1.05)'"
+                             onmouseout="this.style.transform='scale(1)'"
+                             onerror="this.style.display='none'">
+                    </div>
+                    <div style="padding: 14px 16px;">
+                        <div style="font-family: 'Gasoek One', sans-serif; font-size: 13px; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            {{ $rel->nome }}
+                        </div>
+                        <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 8px;">
+                            {{ $rel->genero ?? '' }}
+                        </div>
+                        <div style="font-family: 'Inter', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent);">
+                            R$ {{ number_format($relPreco, 2, ',', '.') }}
+                        </div>
+                    </div>
                 </div>
-                <div style="padding: 14px 16px;">
-                    <div style="font-family: 'Gasoek One', sans-serif; font-size: 13px; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                        {{ $rel->nome }}
-                    </div>
-                    <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 8px;">
-                        {{ $rel->genero ?? '' }}
-                    </div>
-                    <div style="font-family: 'Inter', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent);">
-                        R$ {{ number_format($relPreco, 2, ',', '.') }}
-                    </div>
-                </div>
-            </div>
-        </a>
-        @endforeach
-    </div>
-</section>
-@endif
+            </a>
+            @endforeach
+        </div>
+    </section>
+    @endif
 </main>
 
 <footer>
@@ -331,34 +347,42 @@
             <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone" onerror="this.style.display='none'">
         </a>
         <div class="footer-bottom">
-            <span class="footer-copy">© {{ date('Y') }} GiftZone {{ __('messages.all_rights') }}</span>
+            <span class="footer-copy">&copy; {{ date('Y') }} GiftZone {{ __('messages.all_rights') }}</span>
             <div class="social-links">
-                <a href="#" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608C4.519 2.567 5.786 2.293 7.152 2.231 8.418 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.332.014 7.052.072 5.197.157 3.355.673 2.014 2.014.673 3.355.157 5.197.072 7.052.014 8.332 0 8.741 0 12c0 3.259.014 3.668.072 4.948.085 1.855.601 3.697 1.942 5.038 1.341 1.341 3.183 1.857 5.038 1.942C8.332 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.855-.085 3.697-.601 5.038-1.942 1.341-1.341 1.857-3.183 1.942-5.038C23.986 15.668 24 15.259 24 12c0-3.259-.014-3.668-.072-4.948-.085-1.855-.601-3.697-1.942-5.038C20.645.673 18.803.157 16.948.072 15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
-                <a href="#" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
-                <a href="#" aria-label="Facebook"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073c0 6.031 4.388 11.031 10.125 11.927v-8.437H7.078v-3.49h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796v8.437C19.612 23.104 24 18.104 24 12.073z"/></svg></a>
-                <a href="#" aria-label="Discord"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg></a>
+                <a href="#" aria-label="Instagram">IG</a>
+                <a href="#" aria-label="Twitter">X</a>
+                <a href="#" aria-label="Facebook">FB</a>
+                <a href="#" aria-label="Discord">DC</a>
             </div>
         </div>
     </div>
 </footer>
 
 <script>
-    // let thumbOffset = 0;
-    // function selectThumb(el, src) {
-    //     document.getElementById('main-image').src = src;
-    //     document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
-    //     el.classList.add('active');
-    // }
-    // function galleryNext() {
-    //     const wrap = document.getElementById('gallery-thumbs');
-    //     thumbOffset = Math.min(thumbOffset + 90, wrap.scrollWidth - wrap.clientWidth);
-    //     wrap.scrollTo({ left: thumbOffset, behavior: 'smooth' });
-    // }
-    // function galleryPrev() {
-    //     thumbOffset = Math.max(thumbOffset - 90, 0);
-    //     document.getElementById('gallery-thumbs').scrollTo({ left: thumbOffset, behavior: 'smooth' });
-    // }
+    // ─── Media Viewer ───
+    const mediaMain = document.getElementById('mediaMain');
+    const mainImage = document.getElementById('mainImage');
+
+    function clearActive() {
+        document.querySelectorAll('.media-thumb').forEach(t => t.classList.remove('active'));
+    }
+
+    function showImage(el, src) {
+        clearActive();
+        el.classList.add('active');
+        mediaMain.innerHTML = '<img id="mainImage" src="' + src + '" alt="Preview" style="width:100%;height:100%;object-fit:cover;">';
+    }
+
+    function showTrailer(videoId) {
+        clearActive();
+        const trailerThumb = document.getElementById('thumb-trailer');
+        if (trailerThumb) trailerThumb.classList.add('active');
+        mediaMain.innerHTML = '<iframe src="https://www.youtube.com/embed/' + videoId + '" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>';
+    }
+
+    // ─── Platform & Edition ───
     let plataformaSelecionada = document.querySelector('.pill.active')?.textContent.trim() || '';
+
     function selectPlataforma(el, plat) {
         document.querySelectorAll('#platform-pills .pill').forEach(p => p.classList.remove('active'));
         el.classList.add('active');
@@ -366,15 +390,17 @@
         document.getElementById('badge-platform').textContent = plat;
         atualizarLabel();
     }
+
     function selectEdicao(sel) {
         const preco = parseFloat(sel.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
         document.getElementById('price-display').textContent = 'R$ ' + preco;
         atualizarLabel();
     }
+
     function atualizarLabel() {
         const sel = document.getElementById('edition-select');
         const nomeEd = sel.options[sel.selectedIndex]?.dataset.nome || '';
-        document.getElementById('edition-label').textContent = nomeEd + ' — ' + plataformaSelecionada;
+        document.getElementById('edition-label').textContent = nomeEd + ' \u2014 ' + plataformaSelecionada;
     }
 </script>
 </body>

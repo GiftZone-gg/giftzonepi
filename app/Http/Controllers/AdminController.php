@@ -68,12 +68,12 @@ class AdminController extends Controller
             'genero'           => 'nullable|string|max:100',
             'desenvolvedor'    => 'nullable|string|max:255',
             'publisher'        => 'nullable|string|max:255',
-            'imagem_principal' => 'required|image|max:4096',
+            'imagem_principal' => 'required|image|mimes:jpg,jpeg,webp|max:4096',
             'plataformas'      => 'required|array|min:1',
             'edicao_nome.*'    => 'required|string',
             'edicao_preco.*'   => 'required|numeric|min:0',
-            'galeria.*'        => 'nullable|image|max:4096',
-            'trailer_url' => 'nullable|url|max:500',
+            'galeria.*'        => 'nullable|image|mimes:jpg,jpeg,webp|max:4096',
+            'trailer_url'      => 'nullable|url|max:500',
         ]);
 
         // Upload da imagem principal
@@ -90,7 +90,7 @@ class AdminController extends Controller
             }
         }
 
-        // Montar edições
+        // Montar edicoes
         $edicoes = [];
         if ($request->has('edicao_nome')) {
             foreach ($request->edicao_nome as $i => $nome) {
@@ -113,8 +113,8 @@ class AdminController extends Controller
             'plataformas'      => $request->plataformas,
             'edicoes'          => $edicoes,
             'requisitos'       => null,
+            'trailer_url'      => $request->trailer_url,
             'ativo'            => $request->has('ativo'),
-            'trailer_url' => $request->trailer_url,
         ]);
 
         return redirect()->route('admin.produtos')->with('success', 'Produto criado com sucesso!');
@@ -136,12 +136,12 @@ class AdminController extends Controller
             'genero'           => 'nullable|string|max:100',
             'desenvolvedor'    => 'nullable|string|max:255',
             'publisher'        => 'nullable|string|max:255',
-            'imagem_principal' => 'nullable|image|max:4096',
+            'imagem_principal' => 'nullable|image|mimes:jpg,jpeg,webp|max:4096',
             'plataformas'      => 'required|array|min:1',
             'edicao_nome.*'    => 'required|string',
             'edicao_preco.*'   => 'required|numeric|min:0',
-            'galeria.*'        => 'nullable|image|max:4096',
-            'trailer_url' => 'nullable|url|max:500',
+            'galeria.*'        => 'nullable|image|mimes:jpg,jpeg,webp|max:4096',
+            'trailer_url'      => 'nullable|url|max:500',
         ]);
 
         // Imagem principal
@@ -151,7 +151,7 @@ class AdminController extends Controller
             $produto->imagem_principal = $imagemNome;
         }
 
-        // Galeria — adiciona novas imagens às existentes
+        // Galeria — adiciona novas imagens
         $galeria = is_array($produto->galeria) ? $produto->galeria : [];
         if ($request->hasFile('galeria')) {
             foreach ($request->file('galeria') as $img) {
@@ -166,13 +166,13 @@ class AdminController extends Controller
             foreach ($request->remover_galeria as $remover) {
                 $path = public_path('images/' . $remover);
                 if (file_exists($path)) {
-                    unlink($path);
+                    @unlink($path);
                 }
                 $galeria = array_values(array_diff($galeria, [$remover]));
             }
         }
 
-        // Edições
+        // Edicoes
         $edicoes = [];
         if ($request->has('edicao_nome')) {
             foreach ($request->edicao_nome as $i => $nome) {
@@ -192,8 +192,8 @@ class AdminController extends Controller
             'plataformas'   => $request->plataformas,
             'edicoes'       => $edicoes,
             'galeria'       => $galeria,
+            'trailer_url'   => $request->trailer_url,
             'ativo'         => $request->has('ativo'),
-            'trailer_url' => $request->trailer_url,
         ]);
 
         return redirect()->route('admin.produtos')->with('success', 'Produto atualizado!');
@@ -272,7 +272,7 @@ class AdminController extends Controller
         return back()->with('success', "Pedido {$order->order_number} atualizado.");
     }
 
-    // ─── Gestão de Usuários ───
+    // ─── Gestao de Usuarios ───
 
     public function usuarios(Request $request)
     {
@@ -309,11 +309,11 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'Você não pode alterar seu próprio status.');
+            return back()->with('error', 'Voce nao pode alterar seu proprio status.');
         }
         $user->is_admin = !$user->is_admin;
         $user->save();
-        $msg = $user->is_admin ? "'{$user->name}' agora é admin." : "'{$user->name}' não é mais admin.";
+        $msg = $user->is_admin ? "'{$user->name}' agora e admin." : "'{$user->name}' nao e mais admin.";
         return back()->with('success', $msg);
     }
 
@@ -321,11 +321,11 @@ class AdminController extends Controller
     {
         $user = User::findOrFail($id);
         if ($user->id === auth()->id()) {
-            return back()->with('error', 'Você não pode excluir sua própria conta.');
+            return back()->with('error', 'Voce nao pode excluir sua propria conta.');
         }
         $nome = $user->name;
         $user->delete();
-        return back()->with('success', "Conta de '{$nome}' excluída.");
+        return back()->with('success', "Conta de '{$nome}' excluida.");
     }
 
     public function usuarioVerificar($id)
@@ -336,6 +336,6 @@ class AdminController extends Controller
             $user->save();
             return back()->with('success', "E-mail de '{$user->name}' verificado.");
         }
-        return back()->with('error', 'E-mail já verificado.');
+        return back()->with('error', 'E-mail ja verificado.');
     }
 }
