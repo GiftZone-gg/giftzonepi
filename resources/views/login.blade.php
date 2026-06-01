@@ -37,6 +37,27 @@
 </head>
 <body>
 
+<script>
+    // Máscara de CPF
+    const cpfInput = document.querySelector('input[name="cpf"]');
+    if (cpfInput) {
+        cpfInput.addEventListener('input', function(e) {
+            let v = e.target.value.replace(/\D/g, '');
+            if (v.length > 11) v = v.slice(0, 11);
+            if (v.length > 9) {
+                v = v.replace(/(\d{3})(\d{3})(\d{3})(\d{1,2})/, '$1.$2.$3-$4');
+            } else if (v.length > 6) {
+                v = v.replace(/(\d{3})(\d{3})(\d{1,3})/, '$1.$2.$3');
+            } else if (v.length > 3) {
+                v = v.replace(/(\d{3})(\d{1,3})/, '$1.$2');
+            }
+            e.target.value = v;
+        });
+        cpfInput.setAttribute('maxlength', '14');
+        cpfInput.setAttribute('placeholder', '000.000.000-00');
+    }
+</script>
+
     <header>
         <a href="/" class="logo-box">
             <span>Gift</span><span>Zone</span>

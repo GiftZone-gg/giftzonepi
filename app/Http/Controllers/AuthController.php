@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Rules\CpfValido;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -17,11 +18,20 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
+        // Limpa CPF antes de validar
+        $request->merge([
+            'cpf' => preg_replace('/\D/', '', $request->cpf),
+        ]);
+
         $request->validate([
             'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users',
-            'cpf'      => 'required|string|unique:users',
+            'email'    => 'required|string|email|max:255|unique:users,email',
+            'cpf'      => ['required', 'string', 'size:11', 'unique:users,cpf', new CpfValido],
             'password' => 'required|string|min:8',
+        ], [
+            'email.unique' => 'Este e-mail já está cadastrado.',
+            'cpf.unique'   => 'Este CPF já está cadastrado.',
+            'cpf.size'     => 'O CPF deve ter 11 dígitos.',
         ]);
 
         $baseNick = Str::slug($request->name, '');
@@ -40,7 +50,9 @@ class AuthController extends Controller
 
         event(new Registered($user));
 
-        \App\Models\UserNotification::criarBoasVindas($user->id);
+        if (class_exists(\App\Models\UserNotification::class)) {
+            \App\Models\UserNotification::criarBoasVindas($user->id);
+        }
 
         Auth::login($user);
 
@@ -92,7 +104,7 @@ class AuthController extends Controller
     public function verificationNotice()
     {
         if (Auth::user()->hasVerifiedEmail()) {
-            return redirect()->route('usuario.perfil');
+            return redirect()->route('home');
         }
         return view('auth.verify-email');
     }
@@ -100,16 +112,26 @@ class AuthController extends Controller
     public function verifyEmail(EmailVerificationRequest $request)
     {
         $request->fulfill();
-        return redirect()->route('usuario.perfil')->with('success', 'E-mail verificado com sucesso!');
+        return redirect()->route('home')->with('success', 'E-mail verificado com sucesso!');
     }
 
     public function resendVerification(Request $request)
     {
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->route('usuario.perfil');
+            return redirect()->route('home');
         }
         $request->user()->sendEmailVerificationNotification();
         return back()->with('success', 'Link de verificação reenviado!');
+    }
+
+    // ─── Verificação via AJAX (polling) ───
+
+    public function checkVerified()
+    {
+        if (Auth::check() && Auth::user()->hasVerifiedEmail()) {
+            return response()->json(['verified' => true]);
+        }
+        return response()->json(['verified' => false]);
     }
 
     // ─── Esqueci Minha Senha ───
@@ -121,13 +143,9 @@ class AuthController extends Controller
 
     public function forgotPasswordSend(Request $request)
     {
-        $request->validate([
-            'email' => 'required|email',
-        ]);
+        $request->validate(['email' => 'required|email']);
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+        $status = Password::sendResetLink($request->only('email'));
 
         if ($status === Password::RESET_LINK_SENT) {
             return back()->with('success', 'Link de redefinição enviado! Confira seu e-mail.');
@@ -163,9 +181,9 @@ class AuthController extends Controller
         );
 
         if ($status === Password::PASSWORD_RESET) {
-            return redirect()->route('login')->with('success', 'Senha redefinida com sucesso! Faça login.');
+            return redirect()->route('login')->with('success', 'Senha redefinida com sucesso!');
         }
 
-        return back()->withErrors(['email' => 'Token inválido ou expirado. Solicite novamente.']);
+        return back()->withErrors(['email' => 'Token inválido ou expirado.']);
     }
 }

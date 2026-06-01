@@ -63,6 +63,10 @@ Route::post('/favoritos/adicionar/{produtoId}', [UsuarioController::class, 'adic
 
 // ─── ADMIN (precisa login, NÃO precisa verificação) ───
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+
+Route::get('/email/check-verified', [AuthController::class, 'checkVerified'])->name('verification.check');
+
+
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
     Route::get('/produtos', [AdminController::class, 'produtos'])->name('produtos');
