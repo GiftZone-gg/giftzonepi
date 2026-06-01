@@ -49,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/email/resend', [AuthController::class, 'resendVerification'])
         ->middleware('throttle:6,1')
         ->name('verification.resend');
+    Route::get('/email/check-verified', [AuthController::class, 'checkVerified'])->name('verification.check');
 });
 
 // ─── Carrinho ───
@@ -63,12 +64,9 @@ Route::post('/favoritos/adicionar/{produtoId}', [UsuarioController::class, 'adic
 
 // ─── ADMIN (precisa login, NÃO precisa verificação) ───
 Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-
-Route::get('/email/check-verified', [AuthController::class, 'checkVerified'])->name('verification.check');
-
-
     Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
+    // Produtos
     Route::get('/produtos', [AdminController::class, 'produtos'])->name('produtos');
     Route::get('/produtos/criar', [AdminController::class, 'produtoCriar'])->name('produtos.criar');
     Route::post('/produtos', [AdminController::class, 'produtoSalvar'])->name('produtos.salvar');
@@ -77,8 +75,15 @@ Route::get('/email/check-verified', [AuthController::class, 'checkVerified'])->n
     Route::delete('/produtos/{id}', [AdminController::class, 'produtoRemover'])->name('produtos.remover');
     Route::post('/produtos/{id}/toggle', [AdminController::class, 'produtoToggle'])->name('produtos.toggle');
 
+    // Pedidos
     Route::get('/pedidos', [AdminController::class, 'pedidos'])->name('pedidos');
     Route::put('/pedidos/{id}/status', [AdminController::class, 'pedidoStatus'])->name('pedidos.status');
+
+    // Usuários
+    Route::get('/usuarios', [AdminController::class, 'usuarios'])->name('usuarios');
+    Route::post('/usuarios/{id}/toggle-admin', [AdminController::class, 'usuarioToggleAdmin'])->name('usuarios.toggle-admin');
+    Route::delete('/usuarios/{id}', [AdminController::class, 'usuarioExcluir'])->name('usuarios.excluir');
+    Route::post('/usuarios/{id}/verificar', [AdminController::class, 'usuarioVerificar'])->name('usuarios.verificar');
 });
 
 // ─── Rotas que exigem login + e-mail verificado ───
