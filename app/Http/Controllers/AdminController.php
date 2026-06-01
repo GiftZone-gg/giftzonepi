@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
 use App\Models\Produto;
 use App\Models\Order;
 use App\Models\User;
@@ -76,16 +75,16 @@ class AdminController extends Controller
             'galeria.*'        => 'nullable|image|max:4096',
         ]);
 
-        // Upload da imagem principal via Storage
+        // Upload da imagem principal
         $imagemNome = time() . '_' . Str::slug($request->nome) . '.' . $request->file('imagem_principal')->getClientOriginalExtension();
-        $request->file('imagem_principal')->storeAs('public/produtos', $imagemNome);
+        $request->file('imagem_principal')->move(public_path('images'), $imagemNome);
 
         // Upload da galeria
         $galeria = [];
         if ($request->hasFile('galeria')) {
             foreach ($request->file('galeria') as $img) {
                 $gNome = time() . '_' . Str::random(6) . '.' . $img->getClientOriginalExtension();
-                $img->storeAs('public/produtos', $gNome);
+                $img->move(public_path('images'), $gNome);
                 $galeria[] = $gNome;
             }
         }
@@ -145,7 +144,7 @@ class AdminController extends Controller
         // Imagem principal
         if ($request->hasFile('imagem_principal')) {
             $imagemNome = time() . '_' . Str::slug($request->nome) . '.' . $request->file('imagem_principal')->getClientOriginalExtension();
-            $request->file('imagem_principal')->storeAs('public/produtos', $imagemNome);
+            $request->file('imagem_principal')->move(public_path('images'), $imagemNome);
             $produto->imagem_principal = $imagemNome;
         }
 
@@ -154,7 +153,7 @@ class AdminController extends Controller
         if ($request->hasFile('galeria')) {
             foreach ($request->file('galeria') as $img) {
                 $gNome = time() . '_' . Str::random(6) . '.' . $img->getClientOriginalExtension();
-                $img->storeAs('public/produtos', $gNome);
+                $img->move(public_path('images'), $gNome);
                 $galeria[] = $gNome;
             }
         }
@@ -162,7 +161,10 @@ class AdminController extends Controller
         // Remover imagens da galeria
         if ($request->has('remover_galeria')) {
             foreach ($request->remover_galeria as $remover) {
-                Storage::delete('public/produtos/' . $remover);
+                $path = public_path('images/' . $remover);
+                if (file_exists($path)) {
+                    unlink($path);
+                }
                 $galeria = array_values(array_diff($galeria, [$remover]));
             }
         }

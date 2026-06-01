@@ -13,10 +13,10 @@ COPY . .
 
 RUN composer install --no-dev --optimize-autoloader --no-interaction
 
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
-RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache /var/www/html/public
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 RUN mkdir -p /var/www/html/public/images && chmod -R 777 /var/www/html/public/images
 
 EXPOSE 80
 
-CMD bash -c "php artisan storage:link 2>/dev/null; php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan migrate --force && apache2-foreground"
+CMD bash -c "php artisan config:clear && php artisan cache:clear && php artisan route:clear && php artisan view:clear && php artisan storage:link 2>/dev/null && php artisan migrate --force && apache2-foreground"
