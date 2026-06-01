@@ -27,10 +27,7 @@
         .nav-avatar-mini { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #FFDC74; object-fit: cover; background: #1F6D7E; box-shadow: 0 0 12px rgba(245, 200, 66, 0.3); }
 
         body { font-family: 'Inter', sans-serif; background-color: #002830; color: white; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-<<<<<<< HEAD
-=======
 
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
         .container { max-width: 1400px; margin: 0 auto; padding: 96px 60px 0 60px; }
 
         .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background-color: #001A20; z-index: 1000; transition: all 0.3s ease; padding: 32px 24px; display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
@@ -53,13 +50,9 @@
         .user-auth-area { display: flex; align-items: center; gap: 15px; }
         .btn-entrar { border: 1px solid rgba(255, 255, 255, 0.3); padding: 12px 36px; border-radius: 8px; color: white; text-decoration: none; font-weight: 500; font-size: 18px; transition: all 0.3s ease; background: transparent; cursor: pointer; }
         .btn-entrar:hover { background: rgba(255, 255, 255, 0.1); }
-<<<<<<< HEAD
 
-        /* Botão de idioma */
         .lang-toggle { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,220,116,0.25); color: #FFDC74; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; }
         .lang-toggle:hover { background: rgba(255,220,116,0.15); border-color: #FFDC74; }
-=======
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
 
         .hero-banner { width: 100%; aspect-ratio: 1688 / 803; border-radius: 24px; margin-bottom: 56px; position: relative; overflow: hidden; }
         .carousel-container, .carousel-slides { width: 100%; height: 100%; position: relative; }
@@ -80,10 +73,7 @@
         .ver-mais { font-family: 'Inria Sans', sans-serif; font-style: italic; font-weight: 700; color: #FFDC74; text-decoration: none; }
 
         .grid-games { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-<<<<<<< HEAD
-=======
 
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
         .card { position: relative; background: #001A20; border-radius: 20px; overflow: hidden; aspect-ratio: 388 / 287; transition: transform 0.3s ease; text-decoration: none; display: block; }
         .card:hover { transform: translateY(-8px); }
         .card-header { position: absolute; top: 0; left: 0; width: 100%; padding: 12px 0; text-align: center; font-weight: 600; font-size: 13px; z-index: 2; text-transform: uppercase; color: white; }
@@ -121,17 +111,10 @@
         <a href="#" class="menu-item">{{ __('messages.offers') }}</a>
     </nav>
     <nav class="menu-group">
-<<<<<<< HEAD
         <a href="{{ route('catalogo', ['plataforma' => 'PlayStation 5']) }}" class="menu-item">{{ __('messages.playstation') }}</a>
         <a href="{{ route('catalogo', ['plataforma' => 'Xbox']) }}" class="menu-item">{{ __('messages.xbox') }}</a>
         <a href="{{ route('catalogo', ['plataforma' => 'Nintendo Switch']) }}" class="menu-item">{{ __('messages.nintendo') }}</a>
         <a href="{{ route('catalogo', ['plataforma' => 'PC']) }}" class="menu-item">{{ __('messages.steam') }}</a>
-=======
-        <a href="{{ route('catalogo', ['plataforma' => 'PlayStation 5']) }}" class="menu-item">Playstation</a>
-        <a href="{{ route('catalogo', ['plataforma' => 'Xbox']) }}" class="menu-item">Xbox</a>
-        <a href="{{ route('catalogo', ['plataforma' => 'Nintendo Switch']) }}" class="menu-item">Nintendo</a>
-        <a href="{{ route('catalogo', ['plataforma' => 'PC']) }}" class="menu-item">Steam</a>
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
     </nav>
     <nav class="menu-group">
         @auth
@@ -159,8 +142,6 @@
         </div>
 
         <div class="user-auth-area">
-<<<<<<< HEAD
-            {{-- BOTÃO DE IDIOMA — só aparece na home --}}
             <form action="{{ route('idioma.trocar') }}" method="POST" style="margin:0;">
                 @csrf
                 <button type="submit" name="locale" value="{{ app()->getLocale() === 'pt' ? 'en' : 'pt' }}" class="lang-toggle">
@@ -173,15 +154,12 @@
             </form>
 
             <a href="{{ route('carrinho.index') }}" class="nav-cart-link" title="{{ __('messages.my_cart') }}">
-=======
-            <a href="{{ route('carrinho.index') }}" class="nav-cart-link" title="Meu Carrinho">
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="9" cy="21" r="1"></circle>
                     <circle cx="20" cy="21" r="1"></circle>
                     <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
                 </svg>
-<<<<<<< HEAD
+                @php $cartCount = count(session()->get('cart', [])); @endphp
                 @if($cartCount > 0)
                     <span class="cart-badge">{{ $cartCount }}</span>
                 @endif
@@ -189,13 +167,6 @@
 
             @auth
                 <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="{{ __('messages.my_profile') }}">
-=======
-                @php $qtdCarrinho = array_sum(array_column(session('carrinho', []), 'quantidade')); @endphp
-                @if($qtdCarrinho > 0)<span class="cart-badge">{{ $qtdCarrinho }}</span>@endif
-            </a>
-            @auth
-                <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="Meu Perfil">
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
                     <img class="nav-avatar-mini"
                          src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}"
                          alt="Avatar de {{ Auth::user()->name }}"
@@ -243,10 +214,6 @@
         </div>
     </div>
 
-<<<<<<< HEAD
-=======
-    <!-- MACRO para renderizar card de jogo -->
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
     @php
     function badgeClass($plats) {
         if (in_array('PlayStation 5', $plats) || in_array('PlayStation 4', $plats)) return 'bg-ps';
@@ -262,10 +229,6 @@
     }
     @endphp
 
-<<<<<<< HEAD
-=======
-    <!-- Mais Procurados -->
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
     <section>
         <div class="section-header">
             <h2 class="section-title">{{ __('messages.most_wanted') }}</h2>
@@ -282,23 +245,13 @@
         </div>
     </section>
 
-    <!-- Jogos PlayStation -->
     <section>
         <div class="section-header">
-<<<<<<< HEAD
             <h2 class="section-title">{{ __('messages.ps_games') }}</h2>
             <a href="{{ route('catalogo', ['plataforma' => 'PlayStation 5']) }}" class="ver-mais">{{ __('messages.see_more') }}</a>
         </div>
         <div class="grid-games">
             @foreach($playstation as $jogo)
-=======
-            <h2 class="section-title">Jogos PlayStation</h2>
-            <a href="{{ route('catalogo', ['plataforma' => 'PlayStation 5']) }}" class="ver-mais">Ver Mais →</a>
-        </div>
-        <div class="grid-games">
-            @foreach($playstation as $jogo)
-            @php $plats = is_array($jogo->plataformas) ? $jogo->plataformas : []; @endphp
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
             <a href="{{ route('produto.show', $jogo->slug) }}" class="card">
                 <div class="card-header bg-ps">PLAYSTATION STORE</div>
                 <div class="card-img" style="background-image: url('{{ asset('images/' . $jogo->imagem_principal) }}');"></div>
@@ -307,23 +260,13 @@
         </div>
     </section>
 
-    <!-- Jogos Steam -->
     <section>
         <div class="section-header">
-<<<<<<< HEAD
             <h2 class="section-title">{{ __('messages.steam_games') }}</h2>
             <a href="{{ route('catalogo', ['plataforma' => 'PC']) }}" class="ver-mais">{{ __('messages.see_more') }}</a>
         </div>
         <div class="grid-games">
             @foreach($steam as $jogo)
-=======
-            <h2 class="section-title">Jogos Steam</h2>
-            <a href="{{ route('catalogo', ['plataforma' => 'PC']) }}" class="ver-mais">Ver Mais →</a>
-        </div>
-        <div class="grid-games">
-            @foreach($steam as $jogo)
-            @php $plats = is_array($jogo->plataformas) ? $jogo->plataformas : []; @endphp
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
             <a href="{{ route('produto.show', $jogo->slug) }}" class="card">
                 <div class="card-header bg-steam">STEAM</div>
                 <div class="card-img" style="background-image: url('{{ asset('images/' . $jogo->imagem_principal) }}');"></div>
@@ -332,23 +275,13 @@
         </div>
     </section>
 
-    <!-- Universo Nintendo -->
     <section>
         <div class="section-header">
-<<<<<<< HEAD
             <h2 class="section-title">{{ __('messages.nintendo_universe') }}</h2>
             <a href="{{ route('catalogo', ['plataforma' => 'Nintendo Switch']) }}" class="ver-mais">{{ __('messages.see_more') }}</a>
         </div>
         <div class="grid-games">
             @foreach($nintendo as $jogo)
-=======
-            <h2 class="section-title">Universo Nintendo</h2>
-            <a href="{{ route('catalogo', ['plataforma' => 'Nintendo Switch']) }}" class="ver-mais">Ver Mais →</a>
-        </div>
-        <div class="grid-games">
-            @foreach($nintendo as $jogo)
-            @php $plats = is_array($jogo->plataformas) ? $jogo->plataformas : []; @endphp
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
             <a href="{{ route('produto.show', $jogo->slug) }}" class="card">
                 <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
                 <div class="card-img" style="background-image: url('{{ asset('images/' . $jogo->imagem_principal) }}');"></div>
