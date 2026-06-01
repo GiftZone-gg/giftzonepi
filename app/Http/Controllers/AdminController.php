@@ -44,7 +44,7 @@ class AdminController extends Controller
         $query = Produto::query();
 
         if ($request->filled('busca')) {
-            $query->where('nome', 'like', '%' . $request->busca . '%');
+            $query->where('nome', 'ilike', '%' . $request->busca . '%');
         }
 
         if ($request->filled('status')) {
@@ -69,15 +69,26 @@ class AdminController extends Controller
             'genero'           => 'nullable|string|max:100',
             'desenvolvedor'    => 'nullable|string|max:255',
             'publisher'        => 'nullable|string|max:255',
-            'imagem_principal' => 'required|image|max:2048',
+            'imagem_principal' => 'required|image|max:4096',
             'plataformas'      => 'required|array|min:1',
             'edicao_nome.*'    => 'required|string',
             'edicao_preco.*'   => 'required|numeric|min:0',
+            'galeria.*'        => 'nullable|image|max:4096',
         ]);
 
-        // Upload da imagem
+        // Upload da imagem principal via Storage
         $imagemNome = time() . '_' . Str::slug($request->nome) . '.' . $request->file('imagem_principal')->getClientOriginalExtension();
-        $request->file('imagem_principal')->move(public_path('images'), $imagemNome);
+        $request->file('imagem_principal')->storeAs('public/produtos', $imagemNome);
+
+        // Upload da galeria
+        $galeria = [];
+        if ($request->hasFile('galeria')) {
+            foreach ($request->file('galeria') as $img) {
+                $gNome = time() . '_' . Str::random(6) . '.' . $img->getClientOriginalExtension();
+                $img->storeAs('public/produtos', $gNome);
+                $galeria[] = $gNome;
+            }
+        }
 
         // Montar edições
         $edicoes = [];
@@ -98,7 +109,7 @@ class AdminController extends Controller
             'desenvolvedor'    => $request->desenvolvedor,
             'publisher'        => $request->publisher,
             'imagem_principal' => $imagemNome,
-            'galeria'          => [],
+            'galeria'          => $galeria,
             'plataformas'      => $request->plataformas,
             'edicoes'          => $edicoes,
             'requisitos'       => null,
@@ -124,23 +135,36 @@ class AdminController extends Controller
             'genero'           => 'nullable|string|max:100',
             'desenvolvedor'    => 'nullable|string|max:255',
             'publisher'        => 'nullable|string|max:255',
-            'imagem_principal' => 'nullable|image|max:2048',
+            'imagem_principal' => 'nullable|image|max:4096',
             'plataformas'      => 'required|array|min:1',
             'edicao_nome.*'    => 'required|string',
             'edicao_preco.*'   => 'required|numeric|min:0',
+            'galeria.*'        => 'nullable|image|max:4096',
         ]);
 
-        // Imagem
+        // Imagem principal
         if ($request->hasFile('imagem_principal')) {
-            // Remove antiga se não for default
-            $antigaPath = public_path('images/' . $produto->imagem_principal);
-            if (file_exists($antigaPath) && $produto->imagem_principal) {
-                // Não deletamos para evitar quebrar referências
-            }
-
             $imagemNome = time() . '_' . Str::slug($request->nome) . '.' . $request->file('imagem_principal')->getClientOriginalExtension();
-            $request->file('imagem_principal')->move(public_path('images'), $imagemNome);
+            $request->file('imagem_principal')->storeAs('public/produtos', $imagemNome);
             $produto->imagem_principal = $imagemNome;
+        }
+
+        // Galeria — adiciona novas imagens às existentes
+        $galeria = is_array($produto->galeria) ? $produto->galeria : [];
+        if ($request->hasFile('galeria')) {
+            foreach ($request->file('galeria') as $img) {
+                $gNome = time() . '_' . Str::random(6) . '.' . $img->getClientOriginalExtension();
+                $img->storeAs('public/produtos', $gNome);
+                $galeria[] = $gNome;
+            }
+        }
+
+        // Remover imagens da galeria
+        if ($request->has('remover_galeria')) {
+            foreach ($request->remover_galeria as $remover) {
+                Storage::delete('public/produtos/' . $remover);
+                $galeria = array_values(array_diff($galeria, [$remover]));
+            }
         }
 
         // Edições
@@ -162,6 +186,7 @@ class AdminController extends Controller
             'publisher'     => $request->publisher,
             'plataformas'   => $request->plataformas,
             'edicoes'       => $edicoes,
+            'galeria'       => $galeria,
             'ativo'         => $request->has('ativo'),
         ]);
 
@@ -172,7 +197,6 @@ class AdminController extends Controller
     {
         $produto = Produto::findOrFail($id);
         $produto->delete();
-
         return redirect()->route('admin.produtos')->with('success', 'Produto removido.');
     }
 
@@ -180,7 +204,6 @@ class AdminController extends Controller
     {
         $produto = Produto::findOrFail($id);
         $produto->update(['ativo' => !$produto->ativo]);
-
         $status = $produto->ativo ? 'ativado' : 'desativado';
         return back()->with('success', "Produto {$status}.");
     }
@@ -198,10 +221,10 @@ class AdminController extends Controller
         if ($request->filled('busca')) {
             $busca = $request->busca;
             $query->where(function ($q) use ($busca) {
-                $q->where('order_number', 'like', "%{$busca}%")
+                $q->where('order_number', 'ilike', "%{$busca}%")
                   ->orWhereHas('user', function ($q2) use ($busca) {
-                      $q2->where('name', 'like', "%{$busca}%")
-                         ->orWhere('email', 'like', "%{$busca}%");
+                      $q2->where('name', 'ilike', "%{$busca}%")
+                         ->orWhere('email', 'ilike', "%{$busca}%");
                   });
             });
         }
@@ -235,11 +258,78 @@ class AdminController extends Controller
         $order->update($statusMap[$request->order_status]);
 
         if ($request->order_status === 'completed') {
-    \App\Models\UserNotification::criarPedidoConcluido($order->user_id, $order->order_number);
-} elseif ($request->order_status === 'cancelled') {
-    \App\Models\UserNotification::criarPedidoCancelado($order->user_id, $order->order_number);
-}
+            \App\Models\UserNotification::criarPedidoConcluido($order->user_id, $order->order_number);
+        } elseif ($request->order_status === 'cancelled') {
+            \App\Models\UserNotification::criarPedidoCancelado($order->user_id, $order->order_number);
+        }
 
         return back()->with('success', "Pedido {$order->order_number} atualizado.");
+    }
+
+    // ─── Gestão de Usuários ───
+
+    public function usuarios(Request $request)
+    {
+        $query = User::query();
+
+        if ($request->tipo === 'admin') {
+            $query->where('is_admin', true);
+        } elseif ($request->tipo === 'usuario') {
+            $query->where('is_admin', false);
+        }
+
+        if ($request->busca) {
+            $busca = $request->busca;
+            $query->where(function ($q) use ($busca) {
+                $q->where('name', 'ilike', "%{$busca}%")
+                  ->orWhere('email', 'ilike', "%{$busca}%")
+                  ->orWhere('nickname', 'ilike', "%{$busca}%");
+            });
+        }
+
+        $usuarios = $query->orderBy('created_at', 'desc')->get();
+
+        $stats = [
+            'total'       => User::count(),
+            'admins'      => User::where('is_admin', true)->count(),
+            'verificados' => User::whereNotNull('email_verified_at')->count(),
+            'recentes'    => User::where('created_at', '>=', now()->subDays(7))->count(),
+        ];
+
+        return view('admin.usuarios.index', compact('usuarios', 'stats'));
+    }
+
+    public function usuarioToggleAdmin($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Você não pode alterar seu próprio status.');
+        }
+        $user->is_admin = !$user->is_admin;
+        $user->save();
+        $msg = $user->is_admin ? "'{$user->name}' agora é admin." : "'{$user->name}' não é mais admin.";
+        return back()->with('success', $msg);
+    }
+
+    public function usuarioExcluir($id)
+    {
+        $user = User::findOrFail($id);
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Você não pode excluir sua própria conta.');
+        }
+        $nome = $user->name;
+        $user->delete();
+        return back()->with('success', "Conta de '{$nome}' excluída.");
+    }
+
+    public function usuarioVerificar($id)
+    {
+        $user = User::findOrFail($id);
+        if (!$user->hasVerifiedEmail()) {
+            $user->email_verified_at = now();
+            $user->save();
+            return back()->with('success', "E-mail de '{$user->name}' verificado.");
+        }
+        return back()->with('error', 'E-mail já verificado.');
     }
 }

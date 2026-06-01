@@ -183,7 +183,7 @@
         </div>
 
         <div class="right-col">
-            <h2 class="product-title">{{ $produto->nome }}</h2>
+            <!-- <h2 class="product-title">{{ $produto->nome }}</h2> -->
             <div class="price-card">
                 <div class="price-value" id="price-display">
                     R$ {{ number_format(is_array($produto->edicoes) ? ($produto->edicoes[0]['preco'] ?? 0) : 0, 2, ',', '.') }}
