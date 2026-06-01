@@ -73,6 +73,7 @@ class AdminController extends Controller
             'edicao_nome.*'    => 'required|string',
             'edicao_preco.*'   => 'required|numeric|min:0',
             'galeria.*'        => 'nullable|image|max:4096',
+            'trailer_url' => 'nullable|url|max:500',
         ]);
 
         // Upload da imagem principal
@@ -113,6 +114,7 @@ class AdminController extends Controller
             'edicoes'          => $edicoes,
             'requisitos'       => null,
             'ativo'            => $request->has('ativo'),
+            'trailer_url' => $request->trailer_url,
         ]);
 
         return redirect()->route('admin.produtos')->with('success', 'Produto criado com sucesso!');
@@ -139,6 +141,7 @@ class AdminController extends Controller
             'edicao_nome.*'    => 'required|string',
             'edicao_preco.*'   => 'required|numeric|min:0',
             'galeria.*'        => 'nullable|image|max:4096',
+            'trailer_url' => 'nullable|url|max:500',
         ]);
 
         // Imagem principal
@@ -190,6 +193,7 @@ class AdminController extends Controller
             'edicoes'       => $edicoes,
             'galeria'       => $galeria,
             'ativo'         => $request->has('ativo'),
+            'trailer_url' => $request->trailer_url,
         ]);
 
         return redirect()->route('admin.produtos')->with('success', 'Produto atualizado!');

@@ -23,6 +23,7 @@ class Produto extends Model
         'plataformas',
         'edicoes',
         'requisitos',
+        'trailer_url',
         'ativo',
     ];
 
@@ -34,18 +35,12 @@ class Produto extends Model
         'ativo'       => 'boolean',
     ];
 
-    /**
-     * Retorna o preço mínimo dentre as edições.
-     */
     public function getPrecoMinimoAttribute(): float
     {
         if (empty($this->edicoes)) return 0;
         return collect($this->edicoes)->min('preco');
     }
 
-    /**
-     * Scope para produtos ativos.
-     */
     public function scopeAtivo($query)
     {
         return $query->where('ativo', true);

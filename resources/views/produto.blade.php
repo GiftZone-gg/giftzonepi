@@ -158,7 +158,7 @@
                 <img id="main-image" src="{{ asset('images/' . $produto->imagem_principal) }}" alt="{{ $produto->nome }}">
             </div>
 
-            @php $galeria = is_array($produto->galeria) ? $produto->galeria : []; @endphp
+            <!-- @php $galeria = is_array($produto->galeria) ? $produto->galeria : []; @endphp
             @if(count($galeria) > 0)
             <div class="gallery">
                 <button class="gallery-btn" onclick="galleryPrev()">&#8249;</button>
@@ -174,7 +174,20 @@
                 </div>
                 <button class="gallery-btn" onclick="galleryNext()">&#8250;</button>
             </div>
-            @endif
+            @endif -->
+
+            {{-- Trailer do YouTube --}}
+@if($produto->trailer_url)
+    @php
+        preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $produto->trailer_url, $matches);
+        $videoId = $matches[1] ?? null;
+    @endphp
+    @if($videoId)
+    <div style="margin-top: 12px; aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; background: #000;">
+        <iframe width="100%" height="100%" src="https://www.youtube.com/embed/{{ $videoId }}" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border: none;"></iframe>
+    </div>
+    @endif
+@endif
 
             <div class="desc-box">
                 <h3>{{ __('messages.description') }}</h3>
@@ -330,21 +343,21 @@
 </footer>
 
 <script>
-    let thumbOffset = 0;
-    function selectThumb(el, src) {
-        document.getElementById('main-image').src = src;
-        document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-    }
-    function galleryNext() {
-        const wrap = document.getElementById('gallery-thumbs');
-        thumbOffset = Math.min(thumbOffset + 90, wrap.scrollWidth - wrap.clientWidth);
-        wrap.scrollTo({ left: thumbOffset, behavior: 'smooth' });
-    }
-    function galleryPrev() {
-        thumbOffset = Math.max(thumbOffset - 90, 0);
-        document.getElementById('gallery-thumbs').scrollTo({ left: thumbOffset, behavior: 'smooth' });
-    }
+    // let thumbOffset = 0;
+    // function selectThumb(el, src) {
+    //     document.getElementById('main-image').src = src;
+    //     document.querySelectorAll('.gallery-thumb').forEach(t => t.classList.remove('active'));
+    //     el.classList.add('active');
+    // }
+    // function galleryNext() {
+    //     const wrap = document.getElementById('gallery-thumbs');
+    //     thumbOffset = Math.min(thumbOffset + 90, wrap.scrollWidth - wrap.clientWidth);
+    //     wrap.scrollTo({ left: thumbOffset, behavior: 'smooth' });
+    // }
+    // function galleryPrev() {
+    //     thumbOffset = Math.max(thumbOffset - 90, 0);
+    //     document.getElementById('gallery-thumbs').scrollTo({ left: thumbOffset, behavior: 'smooth' });
+    // }
     let plataformaSelecionada = document.querySelector('.pill.active')?.textContent.trim() || '';
     function selectPlataforma(el, plat) {
         document.querySelectorAll('#platform-pills .pill').forEach(p => p.classList.remove('active'));

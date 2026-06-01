@@ -8,20 +8,16 @@
         background: rgba(0,26,32,0.6); border: 1px solid rgba(253,233,162,0.12);
         border-radius: 16px; padding: 32px; max-width: 800px;
     }
-
     .form-section-title {
         font-family: 'Crimson Pro', serif; font-size: 15px; font-weight: 700;
         text-transform: uppercase; letter-spacing: 0.1em; color: var(--teal-light);
         margin-bottom: 16px; padding-bottom: 8px;
         border-bottom: 1px solid rgba(144,221,232,0.15);
     }
-
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
     .form-group { display: flex; flex-direction: column; gap: 6px; }
     .form-group.full { grid-column: 1 / -1; }
-
     .form-label { font-size: 12px; font-weight: 600; color: var(--yellow-light); text-transform: uppercase; letter-spacing: 0.05em; }
-
     .form-input, .form-textarea, .form-select {
         width: 100%; padding: 12px 14px; background: rgba(0,40,48,0.8);
         border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
@@ -30,17 +26,13 @@
     }
     .form-input:focus, .form-textarea:focus, .form-select:focus { border-color: var(--yellow-gold); }
     .form-input::placeholder, .form-textarea::placeholder { color: rgba(255,255,255,0.2); }
-
     .form-textarea { resize: vertical; min-height: 100px; }
-
     .form-select {
         cursor: pointer; appearance: none;
         background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23FDE9A2' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
         background-repeat: no-repeat; background-position: right 14px center;
     }
     .form-select option { background: #002830; }
-
-    /* Checkboxes de plataforma */
     .plat-checks { display: flex; flex-wrap: wrap; gap: 10px; }
     .plat-check {
         display: flex; align-items: center; gap: 6px;
@@ -51,8 +43,6 @@
     .plat-check:hover { border-color: rgba(253,233,162,0.3); }
     .plat-check input { accent-color: var(--yellow-gold); cursor: pointer; }
     .plat-check.checked { border-color: var(--yellow-gold); background: rgba(253,233,162,0.08); color: var(--yellow-light); }
-
-    /* Edições dinâmicas */
     .editions-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
     .edition-row {
         display: flex; gap: 10px; align-items: center;
@@ -66,18 +56,13 @@
         display: flex; align-items: center; justify-content: center; transition: all 0.2s; flex-shrink: 0;
     }
     .btn-remove-edition:hover { background: rgba(255,80,80,0.1); border-color: #ff6b6b; }
-
     .btn-add-edition {
         padding: 8px 16px; background: transparent; border: 1px dashed rgba(253,233,162,0.25);
         border-radius: 8px; color: rgba(253,233,162,0.5); font-size: 13px; font-weight: 600;
         cursor: pointer; transition: all 0.2s; width: fit-content;
     }
     .btn-add-edition:hover { border-color: var(--yellow-gold); color: var(--yellow-gold); }
-
-    /* Toggle ativo */
-    .toggle-wrap {
-        display: flex; align-items: center; gap: 12px; margin-bottom: 24px;
-    }
+    .toggle-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
     .toggle-switch {
         position: relative; width: 48px; height: 26px; background: rgba(255,255,255,0.1);
         border-radius: 13px; cursor: pointer; transition: background 0.3s;
@@ -87,31 +72,25 @@
         position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
         background: rgba(255,255,255,0.4); border-radius: 50%; transition: all 0.3s;
     }
-    .toggle-switch input:checked + .slider {
-        left: 25px; background: var(--yellow-gold);
-    }
-    .toggle-switch input:checked ~ .toggle-switch { background: rgba(253,233,162,0.2); }
+    .toggle-switch input:checked + .slider { left: 25px; background: var(--yellow-gold); }
     .toggle-label { font-size: 14px; font-weight: 600; color: rgba(255,255,255,0.6); }
-
     .form-actions { display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06); }
-
     .btn-cancel {
         padding: 12px 24px; background: transparent; border: 1px solid rgba(255,255,255,0.15);
         border-radius: 10px; color: rgba(255,255,255,0.5); font-size: 14px; font-weight: 600;
         cursor: pointer; text-decoration: none; transition: all 0.2s;
     }
     .btn-cancel:hover { border-color: rgba(255,255,255,0.4); color: white; }
-
     .btn-save {
         padding: 12px 28px; background: var(--admin-accent); border: none;
         border-radius: 10px; color: #fff; font-family: 'Gasoek One', sans-serif;
         font-size: 14px; cursor: pointer; transition: all 0.2s;
     }
     .btn-save:hover { background: #ff8555; transform: translateY(-1px); }
-
     .current-image { margin-top: 8px; }
     .current-image img { width: 120px; height: 70px; object-fit: cover; border-radius: 8px; border: 1px solid rgba(253,233,162,0.2); }
-
+    .trailer-preview { margin-top: 8px; aspect-ratio: 16/9; max-width: 300px; border-radius: 8px; overflow: hidden; background: #000; }
+    .trailer-preview iframe { width: 100%; height: 100%; border: none; }
     @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .edition-row { flex-wrap: wrap; } }
 </style>
 @endsection
@@ -158,6 +137,20 @@
                         <img src="{{ asset('images/' . $produto->imagem_principal) }}" alt="Atual">
                     </div>
                 @endif
+            </div>
+        </div>
+
+        {{-- Trailer --}}
+        <p class="form-section-title">Trailer</p>
+        <div class="form-grid" style="margin-bottom: 24px;">
+            <div class="form-group full">
+                <label class="form-label">URL do Trailer (YouTube)</label>
+                <input class="form-input" type="url" name="trailer_url" id="trailerInput"
+                       value="{{ old('trailer_url', $produto->trailer_url ?? '') }}"
+                       placeholder="https://www.youtube.com/watch?v=XXXXX"
+                       oninput="previewTrailer(this.value)">
+                @error('trailer_url') <span style="color: #ff6b6b; font-size: 12px;">{{ $message }}</span> @enderror
+                <div class="trailer-preview" id="trailerPreview" style="display: none;"></div>
             </div>
         </div>
 
@@ -220,6 +213,24 @@ function addEdition() {
     `;
     list.appendChild(row);
 }
+
+function previewTrailer(url) {
+    const preview = document.getElementById('trailerPreview');
+    const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+    if (match && match[1]) {
+        preview.style.display = 'block';
+        preview.innerHTML = '<iframe src="https://www.youtube.com/embed/' + match[1] + '" allowfullscreen></iframe>';
+    } else {
+        preview.style.display = 'none';
+        preview.innerHTML = '';
+    }
+}
+
+// Preview on load if editing
+document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('trailerInput');
+    if (input && input.value) previewTrailer(input.value);
+});
 </script>
 
 @endsection
