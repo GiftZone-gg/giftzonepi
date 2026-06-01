@@ -1,0 +1,625 @@
+﻿
+
+========== app/Http/Controllers/PixController.php ==========
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Produto;
+use Illuminate\Support\Str;
+
+class PixController extends Controller
+{
+    // Monta o payload PIX e exibe a tela com QR Code
+    public function show(Request $request)
+    {
+        $carrinho = session()->get('cart', []);
+
+        if (empty($carrinho)) {
+            return redirect()->route('carrinho.index')->with('error', 'Carrinho vazio.');
+        }
+
+        $total = 0;
+        foreach ($carrinho as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $edicoes = is_array($produto->edicoes)
+                    ? $produto->edicoes
+                    : json_decode($produto->edicoes, true);
+                $total += ($edicoes[0]['preco'] ?? 0) * $quantidade;
+            }
+        }
+
+        $chavePix   = 'c3a545af-36fc-42fa-a8e3-2644bda768db';
+        $nomeBenef  = 'GiftZone';
+        $cidade     = 'SAO PAULO';
+        $valor      = number_format($total, 2, '.', '');
+        $txid       = strtoupper(Str::random(10));
+
+        $payload = $this->gerarPayloadPix($chavePix, $nomeBenef, $cidade, $valor, $txid);
+
+        // URL da API pÃºblica para gerar QR Code (sem instalaÃ§Ã£o)
+        $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' . urlencode($payload);
+
+        // Salva o pedido como pendente na sessÃ£o para confirmar depois
+        session()->put('pix_pending', [
+            'cart'    => $carrinho,
+            'total'   => $total,
+            'payload' => $payload,
+            'txid'    => $txid,
+        ]);
+
+        return view('pagamento.pix', compact('total', 'qrCodeUrl', 'payload'));
+    }
+
+    // Confirma o pedido apÃ³s pagamento (simulaÃ§Ã£o)
+    public function confirmar(Request $request)
+    {
+        $pending = session()->get('pix_pending');
+
+        if (!$pending) {
+            return redirect()->route('carrinho.index')->with('error', 'SessÃ£o expirada.');
+        }
+
+        $user  = auth()->user();
+        $order = Order::create([
+            'user_id'         => $user->id,
+            'order_number'    => '#GZ-' . strtoupper(Str::random(8)),
+            'total_amount'    => $pending['total'],
+            'discount_amount' => 0,
+            'final_amount'    => $pending['total'],
+            'payment_status'  => 'paid',
+            'order_status'    => 'completed',
+        ]);
+
+        foreach ($pending['cart'] as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $edicoes = is_array($produto->edicoes)
+                    ? $produto->edicoes
+                    : json_decode($produto->edicoes, true);
+                $preco = $edicoes[0]['preco'] ?? 0;
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $id,
+                    'quantity'   => $quantidade,
+                    'price'      => $preco,
+                    'total'      => $preco * $quantidade,
+                ]);
+            }
+        }
+
+        session()->forget(['cart', 'pix_pending']);
+
+        return redirect()->route('usuario.pedidos')
+            ->with('success', "Pedido {$order->order_number} confirmado via PIX!");
+    }
+
+    // Gera o payload PIX padrÃ£o Banco Central
+    private function gerarPayloadPix($chave, $nome, $cidade, $valor, $txid)
+    {
+        $nome   = substr($this->removerAcentos($nome), 0, 25);
+        $cidade = substr($this->removerAcentos($cidade), 0, 15);
+
+        $merchantAccountInfo = $this->tlv('00', 'BR.GOV.BCB.PIX') . $this->tlv('01', $chave);
+        $merchantAccountInfo = $this->tlv('26', $merchantAccountInfo);
+
+        $payload =
+            $this->tlv('00', '01') .
+            $merchantAccountInfo .
+            $this->tlv('52', '0000') .
+            $this->tlv('53', '986') .
+            $this->tlv('54', $valor) .
+            $this->tlv('58', 'BR') .
+            $this->tlv('59', $nome) .
+            $this->tlv('60', $cidade) .
+            $this->tlv('62', $this->tlv('05', $txid));
+
+        $payload .= $this->tlv('63', $this->crc16($payload . '6304'));
+
+        return $payload;
+    }
+
+    private function tlv($id, $value)
+    {
+        return $id . str_pad(strlen($value), 2, '0', STR_PAD_LEFT) . $value;
+    }
+
+    private function crc16($data)
+    {
+        $crc = 0xFFFF;
+        for ($i = 0; $i < strlen($data); $i++) {
+            $crc ^= ord($data[$i]) << 8;
+            for ($j = 0; $j < 8; $j++) {
+                $crc = ($crc & 0x8000) ? (($crc << 1) ^ 0x1021) : ($crc << 1);
+            }
+        }
+        return strtoupper(dechex($crc & 0xFFFF));
+    }
+
+    private function removerAcentos($str)
+    {
+        return iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+    }
+}
+
+========== app/Http/Controllers/BoletoController.php ==========
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Produto;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Str;
+
+
+
+class BoletoController extends Controller
+{
+    public function show()
+    {
+        $carrinho = session()->get('cart', []);
+
+        if (empty($carrinho)) {
+            return redirect()->route('carrinho.index')->with('error', 'Carrinho vazio.');
+        }
+
+        $total = 0;
+        foreach ($carrinho as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $edicoes = is_array($produto->edicoes)
+                    ? $produto->edicoes
+                    : json_decode($produto->edicoes, true);
+                $total += ($edicoes[0]['preco'] ?? 0) * $quantidade;
+            }
+        }
+
+        // CÃ³digo de barras fictÃ­cio
+        $codigo = vsprintf('%05d.%05d %05d.%06d %05d.%06d %d %014d', [
+            rand(10000, 99999), rand(10000, 99999),
+            rand(10000, 99999), rand(100000, 999999),
+            rand(10000, 99999), rand(100000, 999999),
+            rand(1, 9),
+            rand(10000000000000, 99999999999999),
+        ]);
+
+        $vencimento = now()->addWeekdays(3)->format('d/m/Y');
+
+        session()->put('boleto_pending', [
+            'cart'   => $carrinho,
+            'total'  => $total,
+            'codigo' => $codigo,
+        ]);
+
+        return view('pagamento.boleto', compact('total', 'codigo', 'vencimento'));
+    }
+
+    public function confirmar()
+    {
+        $pending = session()->get('boleto_pending');
+
+        if (!$pending) {
+            return redirect()->route('carrinho.index')->with('error', 'SessÃ£o expirada.');
+        }
+
+        $user  = auth()->user();
+        $order = Order::create([
+            'user_id'         => $user->id,
+            'order_number'    => '#GZ-' . strtoupper(Str::random(8)),
+            'total_amount'    => $pending['total'],
+            'discount_amount' => 0,
+            'final_amount'    => $pending['total'],
+            'payment_status'  => 'pending', // boleto demora para compensar
+            'order_status'    => 'pending',
+        ]);
+
+        foreach ($pending['cart'] as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $edicoes = is_array($produto->edicoes)
+                    ? $produto->edicoes
+                    : json_decode($produto->edicoes, true);
+                $preco = $edicoes[0]['preco'] ?? 0;
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $id,
+                    'quantity'   => $quantidade,
+                    'price'      => $preco,
+                    'total'      => $preco * $quantidade,
+                ]);
+            }
+        }
+
+        session()->forget(['cart', 'boleto_pending']);
+
+        return redirect()->route('usuario.pedidos')
+            ->with('success', "Pedido {$order->order_number} registrado! Aguardando compensaÃ§Ã£o do boleto.");
+    }
+}
+
+========== app/Http/Controllers/PagamentoController.php ==========
+<?php
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Produto;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Str;
+
+class PagamentoController extends Controller
+{
+    // Exibe a tela de escolha do mÃ©todo de pagamento
+    public function checkout()
+    {
+        $carrinho = session()->get('cart', []);
+
+        if (empty($carrinho)) {
+            return redirect()->route('carrinho.index')->with('error', 'Carrinho vazio.');
+        }
+
+        $itens = [];
+        $total = 0;
+
+        foreach ($carrinho as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $preco    = $this->getPreco($produto);
+                $subtotal = $preco * $quantidade;
+                $total   += $subtotal;
+                $itens[]  = [
+                    'produto'   => $produto,
+                    'quantidade' => $quantidade,
+                    'preco'     => $preco,
+                    'subtotal'  => $subtotal,
+                ];
+            }
+        }
+
+        return view('pagamento.checkout', compact('itens', 'total'));
+    }
+
+    // Processa o pagamento (simulaÃ§Ã£o)
+    public function processar(Request $request)
+    {
+        $request->validate([
+            'metodo' => 'required|in:boleto,credito,debito,pix',
+        ]);
+
+        $carrinho = session()->get('cart', []);
+
+        if (empty($carrinho)) {
+            return redirect()->route('carrinho.index')->with('error', 'Carrinho vazio.');
+        }
+
+        $user  = auth()->user();
+        $total = 0;
+
+        foreach ($carrinho as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $total += $this->getPreco($produto) * $quantidade;
+            }
+        }
+
+        // PIX: redireciona para tela de QR Code
+        if ($request->metodo === 'pix') {
+            return redirect()->route('pagamento.pix');
+        }
+
+        // Boleto: redireciona para tela de boleto
+        if ($request->metodo === 'boleto') {
+            return redirect()->route('pagamento.boleto');
+        }
+
+        // Cria o pedido
+        $orderNumber = '#GZ-' . strtoupper(Str::random(8));
+
+        $order = Order::create([
+            'user_id'        => $user->id,
+            'order_number'   => $orderNumber,
+            'total_amount'   => $total,
+            'discount_amount' => 0,
+            'final_amount'   => $total,
+            'payment_status' => 'paid',      // simulaÃ§Ã£o
+            'order_status'   => 'completed', // simulaÃ§Ã£o
+        ]);
+
+        foreach ($carrinho as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $preco = $this->getPreco($produto);
+                OrderItem::create([
+                    'order_id'   => $order->id,
+                    'product_id' => $id,
+                    'quantity'   => $quantidade,
+                    'price'      => $preco,
+                    'total'      => $preco * $quantidade,
+                ]);
+            }
+        }
+
+        session()->forget('cart');
+
+        return redirect()->route('usuario.pedidos')
+            ->with('success', "Pedido {$orderNumber} finalizado com sucesso! Pagamento via {$request->metodo}.");
+    }
+
+    private function getPreco($produto)
+    {
+        $edicoes = is_array($produto->edicoes)
+            ? $produto->edicoes
+            : json_decode($produto->edicoes, true);
+
+        return $edicoes[0]['preco'] ?? 0;
+    }
+}
+
+========== app/Models/Order.php ==========
+<?php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Order extends Model
+{
+    protected $fillable = [
+        'user_id',
+        'order_number',
+        'total_amount',
+        'discount_amount',
+        'final_amount',
+        'payment_status',
+        'order_status',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+}
+
+========== app/Models/OrderItem.php ==========
+<?php
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class OrderItem extends Model
+{
+    protected $fillable = [
+        'order_id',
+        'product_id',
+        'quantity',
+        'price',
+        'total',
+    ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function produto()
+    {
+        return $this->belongsTo(Produto::class, 'product_id');
+    }
+}
+
+========== C:\Users\junior\giftzonepi\database\migrations\2026_04_09_141644_create_orders_table.php ==========
+<?php
+// Para que serve: Guarda cada compra finalizada
+
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('orders', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained();  // Quem comprou
+            $table->string('order_number', 50)->unique();  // NÃºmero do pedido: "#GZ-2024001"
+            $table->decimal('total_amount', 10, 2);  // Valor total
+            $table->decimal('discount_amount', 10, 2)->default(0);  // Desconto aplicado
+            $table->decimal('final_amount', 10, 2);  // Valor final pago
+            $table->foreignId('coupon_id')->nullable()->constrained()->nullOnDelete();  // Cupom usado
+            $table->foreignId('payment_method_id')->constrained();  // CartÃ£o usado
+            $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending');  // Status pagamento
+            $table->enum('order_status', ['processing', 'completed', 'cancelled'])->default('processing');  // Status pedido
+            $table->string('transaction_id', 255)->nullable();  // ID da transaÃ§Ã£o (gateway)
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('orders');
+    }
+};
+
+========== C:\Users\junior\giftzonepi\database\migrations\2026_04_09_141649_create_order_items_table.php ==========
+<?php
+// Para que serve: Guarda cada produto dentro de um pedido (histÃ³rico)
+
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('order_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');  // Pedido
+            $table->foreignId('product_id')->constrained();  // Produto comprado
+            $table->integer('quantity');  // Quantidade
+            $table->decimal('price', 10, 2);  // PreÃ§o na hora da compra
+            $table->decimal('total', 10, 2);  // PreÃ§o x Quantidade
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('order_items');
+    }
+};
+
+========== C:\Users\junior\giftzonepi\database\migrations\2026_05_31_024556_create_orders_table.php ==========
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('orders', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('order_number');
+            $table->decimal('total_amount', 10, 2);
+            $table->decimal('discount_amount', 10, 2)->default(0);
+            $table->decimal('final_amount', 10, 2);
+            $table->string('payment_status')->default('pending');
+            $table->string('order_status')->default('pending');
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('orders');
+    }
+};
+
+========== C:\Users\junior\giftzonepi\database\migrations\2026_05_31_024557_create_order_items_table.php ==========
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('order_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('produtos')->onDelete('cascade');
+            $table->integer('quantity');
+            $table->decimal('price', 10, 2);
+            $table->decimal('total', 10, 2);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('order_items');
+    }
+};
+
+========== C:\Users\junior\giftzonepi\database\migrations\2026_04_09_141634_create_cart_items_table.php ==========
+<?php
+// Para que serve: Guarda cada produto dentro do carrinho
+
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('cart_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('cart_id')->constrained()->onDelete('cascade');  // Carrinho
+            $table->foreignId('product_id')->constrained();  // Produto adicionado
+            $table->integer('quantity');  // Quantidade
+            $table->decimal('price_at_time', 10, 2);  // PreÃ§o no momento que adicionou
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('cart_items');
+    }
+};
+
+========== C:\Users\junior\giftzonepi\database\migrations\2026_04_09_141649_create_order_items_table.php ==========
+<?php
+// Para que serve: Guarda cada produto dentro de um pedido (histÃ³rico)
+
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('order_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');  // Pedido
+            $table->foreignId('product_id')->constrained();  // Produto comprado
+            $table->integer('quantity');  // Quantidade
+            $table->decimal('price', 10, 2);  // PreÃ§o na hora da compra
+            $table->decimal('total', 10, 2);  // PreÃ§o x Quantidade
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('order_items');
+    }
+};
+
+========== C:\Users\junior\giftzonepi\database\migrations\2026_05_31_024557_create_order_items_table.php ==========
+<?php
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('order_items', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('order_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('product_id');
+            $table->foreign('product_id')->references('id')->on('produtos')->onDelete('cascade');
+            $table->integer('quantity');
+            $table->decimal('price', 10, 2);
+            $table->decimal('total', 10, 2);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('order_items');
+    }
+};

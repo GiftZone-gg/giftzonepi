@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -6,8 +7,6 @@ use App\Models\Produto;
 use App\Models\Order;
 use App\Models\OrderItem;
 use Illuminate\Support\Str;
-
-
 
 class BoletoController extends Controller
 {
@@ -23,14 +22,11 @@ class BoletoController extends Controller
         foreach ($carrinho as $id => $quantidade) {
             $produto = Produto::find($id);
             if ($produto) {
-                $edicoes = is_array($produto->edicoes)
-                    ? $produto->edicoes
-                    : json_decode($produto->edicoes, true);
+                $edicoes = is_array($produto->edicoes) ? $produto->edicoes : json_decode($produto->edicoes, true);
                 $total += ($edicoes[0]['preco'] ?? 0) * $quantidade;
             }
         }
 
-        // Código de barras fictício
         $codigo = vsprintf('%05d.%05d %05d.%06d %05d.%06d %d %014d', [
             rand(10000, 99999), rand(10000, 99999),
             rand(10000, 99999), rand(100000, 999999),
@@ -65,28 +61,35 @@ class BoletoController extends Controller
             'total_amount'    => $pending['total'],
             'discount_amount' => 0,
             'final_amount'    => $pending['total'],
-            'payment_status'  => 'pending', // boleto demora para compensar
-            'order_status'    => 'pending',
+            // 'payment_status'  => 'pending',
+            // 'order_status'    => 'pending',
+
+'payment_status'  => 'paid',
+'order_status'    => 'completed',
+
         ]);
 
         foreach ($pending['cart'] as $id => $quantidade) {
             $produto = Produto::find($id);
             if ($produto) {
-                $edicoes = is_array($produto->edicoes)
-                    ? $produto->edicoes
-                    : json_decode($produto->edicoes, true);
+                $edicoes = is_array($produto->edicoes) ? $produto->edicoes : json_decode($produto->edicoes, true);
                 $preco = $edicoes[0]['preco'] ?? 0;
+
                 OrderItem::create([
-                    'order_id'   => $order->id,
-                    'product_id' => $id,
-                    'quantity'   => $quantidade,
-                    'price'      => $preco,
-                    'total'      => $preco * $quantidade,
+                    'order_id'     => $order->id,
+                    'product_id'   => $id,
+                    'quantity'     => $quantidade,
+                    'price'        => $preco,
+                    'total'        => $preco * $quantidade,
+                    'digital_key'  => OrderItem::gerarChaveDigital(),
+                    'key_revealed' => false,
                 ]);
             }
         }
 
         session()->forget(['cart', 'boleto_pending']);
+
+        \App\Models\UserNotification::criarPedidoRealizado($user->id, $order->order_number);
 
         return redirect()->route('usuario.pedidos')
             ->with('success', "Pedido {$order->order_number} registrado! Aguardando compensação do boleto.");

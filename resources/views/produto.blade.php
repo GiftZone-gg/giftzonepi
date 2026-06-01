@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,36 +18,9 @@
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: #002830; color: white; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 
-        /* NAVBAR */
-.nav-right {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-}
-
-.nav-cart-link {
-    position: relative;
-    color: var(--accent); /* Cor amarela definida no seu :root */
-    text-decoration: none;
-    display: flex;
-    align-items: center;
-}
-
-.cart-badge {
-    position: absolute;
-    top: -8px;
-    right: -8px;
-    background: var(--accent);
-    color: var(--dark);
-    font-size: 10px;
-    font-weight: 900;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-cart-link { position: relative; color: var(--accent); text-decoration: none; display: flex; align-items: center; }
+        .cart-badge { position: absolute; top: -8px; right: -8px; background: var(--accent); color: var(--dark); font-size: 10px; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
 
         nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 32px; background: rgba(0,40,48,0.85); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(253,233,162,0.12); }
         .nav-left { display: flex; align-items: center; gap: 16px; }
@@ -56,11 +29,9 @@
         .hamburger:hover span { background: var(--accent); }
         .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .logo img { height: 36px; width: auto; }
-        .logo-text { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.6rem; color: var(--accent); letter-spacing: 1px; }
         .btn-entrar { border: 1px solid rgba(255,255,255,0.3); padding: 12px 36px; border-radius: 8px; color: white; text-decoration: none; font-weight: 500; font-size: 18px; transition: all 0.3s ease; background: transparent; cursor: pointer; }
         .btn-entrar:hover { background: rgba(255,255,255,0.1); }
 
-        /* HERO */
         .hero { position: relative; overflow: hidden; padding: 48px 24px 40px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: linear-gradient(160deg, var(--dark) 0%, var(--mid) 60%, #003d4a 100%); }
         .hero::before { content: ''; position: absolute; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(0,83,99,.55) 0%, transparent 70%); top: -120px; right: -100px; pointer-events: none; }
         .hero::after { content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(253,233,162,.06) 0%, transparent 70%); bottom: -80px; left: -60px; pointer-events: none; }
@@ -69,12 +40,10 @@
         .hero-breadcrumb a:hover { color: var(--accent); }
         .hero-title { font-family: 'Gasoek One', sans-serif; font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 400; color: var(--accent); letter-spacing: 4px; text-align: center; line-height: 1.1; animation: fadeDown .5s ease both; }
 
-        /* MAIN */
         main { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
         .product-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: start; }
         @media (max-width: 760px) { .product-grid { grid-template-columns: 1fr; } }
 
-        /* LEFT */
         .platform-badge { display: inline-block; background: var(--cyan); color: #fff; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 4px 14px; border-radius: 4px 4px 0 0; }
         .main-image-wrap { width: 100%; aspect-ratio: 16/9; border-radius: 0 12px 12px 12px; overflow: hidden; background: var(--mid); }
         .main-image-wrap img { width: 100%; height: 100%; object-fit: cover; transition: transform .4s ease; }
@@ -90,7 +59,6 @@
         .desc-box h3 { font-size: .75rem; font-weight: 700; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
         .desc-box p { font-size: .88rem; color: rgba(255,255,255,.65); line-height: 1.65; }
 
-        /* RIGHT */
         .product-title { font-family: 'Gasoek One', sans-serif; font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 400; color: var(--accent); letter-spacing: 2px; line-height: 1.15; margin-bottom: 20px; animation: fadeDown .45s ease both; }
         .price-card { background: rgba(0,83,99,.4); border: 1px solid rgba(253,233,162,.18); border-radius: 16px; padding: 22px 24px; margin-bottom: 16px; animation: fadeUp .5s ease both; }
         .price-value { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 2.2rem; color: var(--accent); letter-spacing: 1px; }
@@ -103,30 +71,15 @@
         .edition-select { width: 100%; background: rgba(0,40,48,.7); border: 1.5px solid rgba(0,83,99,1); border-radius: 10px; color: var(--white); font-family: 'Inter', sans-serif; font-size: .9rem; padding: 10px 14px; margin-bottom: 18px; outline: none; cursor: pointer; transition: border-color .2s; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23FDE9A2' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
         .edition-select:focus { border-color: var(--accent); }
         .edition-select option { background: #002830; }
-        .actions { 
-    display: flex; 
-    gap: 8px; 
-    margin-bottom: 16px; 
-}
-.actions form, .actions a { 
-    flex: 1; 
-    display: flex; 
-}
-.btn-fav { 
-    width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid var(--danger); background: transparent; color: var(--danger); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; 
-}
-.btn-fav:hover { background: rgba(232,80,32,.15); }
-
-.btn-cart { 
-    width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid var(--cyan); background: transparent; color: var(--cyan); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; 
-}
-.btn-cart:hover { background: rgba(58,184,200,.15); }
-
-.btn-buy { 
-    width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--accent); color: var(--dark); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: opacity .2s, transform .1s; 
-}
-.btn-buy:hover { opacity: .88; }
-.btn-buy:active { transform: scale(0.97); }
+        .actions { display: flex; gap: 8px; margin-bottom: 16px; }
+        .actions form, .actions a { flex: 1; display: flex; }
+        .btn-fav { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid var(--danger); background: transparent; color: var(--danger); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; }
+        .btn-fav:hover { background: rgba(232,80,32,.15); }
+        .btn-cart { width: 100%; padding: 12px; border-radius: 10px; border: 1.5px solid var(--accent); background: transparent; color: var(--accent); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: all .2s; }
+        .btn-cart:hover { background: rgba(253, 233, 162, 0.1); }
+        .btn-buy { width: 100%; padding: 12px; border-radius: 10px; border: none; background: var(--accent); color: var(--dark); font-family: 'Inter', sans-serif; font-weight: 700; font-size: .9rem; cursor: pointer; transition: opacity .2s, transform .1s; }
+        .btn-buy:hover { opacity: .88; }
+        .btn-buy:active { transform: scale(0.97); }
         .flash-message { padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9rem; }
         .flash-success { background: #2e7d32; color: white; }
         .flash-error { background: #c62828; color: white; }
@@ -139,82 +92,14 @@
         .req-col h4 { font-size: .72rem; font-weight: 700; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
         .req-col p { font-size: .78rem; color: rgba(255,255,255,.55); line-height: 1.75; }
 
-        .nav-avatar-container {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    transition: transform 0.2s;
-    text-decoration: none;
-}
+        .nav-avatar-container { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s; text-decoration: none; }
+        .nav-avatar-container:hover { transform: scale(1.08); }
+        .nav-avatar-mini { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #FFDC74; object-fit: cover; background: #1F6D7E; box-shadow: 0 0 12px rgba(245, 200, 66, 0.3); }
 
-.nav-avatar-container:hover {
-    transform: scale(1.08);
-}
-
-.nav-avatar-mini {
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    border: 2px solid #FFDC74;
-    object-fit: cover;
-    background: #1F6D7E;
-    box-shadow: 0 0 12px rgba(245, 200, 66, 0.3);
-}<nav>
-    <div class="nav-left">
-        <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
-        <a href="/" class="logo">
-            <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
-        </a>
-    </div>
-
-    <div class="nav-right">
-        <a href="{{ route('carrinho.index') }}" class="nav-cart-link">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-        @php $qtdCarrinho = array_sum(array_column(session('carrinho', []), 'quantidade')); @endphp
-        @if($qtdCarrinho > 0)
-            <span class="cart-badge">{{ $qtdCarrinho }}</span>
-        @endif
-        </a>
-
-        @auth
-            <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container">
-                <img class="nav-avatar-mini" src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('images/icone1.svg') }}">
-            </a>
-        @else
-            <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
-        @endauth
-    </div>
-</nav>
-
-
-        /* Estilo para o novo botão Carrinho */
-.btn-cart {
-    flex: 1;
-    padding: 12px;
-    border-radius: 10px;
-    border: 1.5px solid var(--accent);
-    background: transparent;
-    color: var(--accent);
-    font-family: 'Inter', sans-serif;
-    font-weight: 700;
-    font-size: .9rem;
-    cursor: pointer;
-    transition: all .2s;
-}
-
-.btn-cart:hover {
-    background: rgba(253, 233, 162, 0.1);
-}
-        /* FOOTER */
         footer { background: #001e25; border-top: 1px solid rgba(253,233,162,.1); padding: 28px 32px; }
         .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
         .footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .footer-logo img { height: 30px; }
-        .footer-logo span { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--accent); }
         .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
         .footer-copy { font-size: .78rem; color: #6a9a94; }
         .social-links { display: flex; gap: 14px; }
@@ -228,32 +113,6 @@
 </head>
 <body>
 
-{{-- NAVBAR --}}
-{{-- NAVBAR --}}
-<!-- <nav>
-    <div class="nav-left">
-        <a href="{{ route('carrinho.index') }}" style="color: white; margin-right: 15px; text-decoration: none;">
-            🛒 Carrinho
-        </a>
-        <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
-        <a href="/" class="logo">
-            <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block'">
-            <span class="logo-text" style="display:none">GiftZone</span>
-        </a>
-    </div>
-
-    @auth
-        <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="Meu Perfil">
-            <img class="nav-avatar-mini" 
-                 src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}" 
-                 alt="Avatar de {{ Auth::user()->name }}"
-                 onerror="this.src='https://via.placeholder.com/44/1F6D7E/FFDC74?text=GZ'">
-        </a>
-    @else
-        <a href="{{ route('login') }}"><button class="btn-entrar">Entrar</button></a>
-    @endauth
-</nav> -->
-
 <nav>
     <div class="nav-left">
         <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
@@ -261,51 +120,45 @@
             <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
         </a>
     </div>
-
     <div class="nav-right">
         <a href="{{ route('carrinho.index') }}" class="nav-cart-link">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"></circle>
-                <circle cx="20" cy="21" r="1"></circle>
+                <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
                 <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
             </svg>
-           @php $qtdCarrinho = array_sum(array_column(session('carrinho', []), 'quantidade')); @endphp
-            @if($qtdCarrinho > 0)
-                <span class="cart-badge">{{ $qtdCarrinho }}</span>
+            @if($cartCount > 0)
+                <span class="cart-badge">{{ $cartCount }}</span>
             @endif
         </a>
-
         @auth
-            <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container">
-                <img class="nav-avatar-mini" src="{{ Auth::user()->avatar ? asset('storage/' . Auth::user()->avatar) : asset('images/icone1.svg') }}">
+            <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="{{ __('messages.my_profile') }}">
+                <img class="nav-avatar-mini"
+                     src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}"
+                     alt="Avatar de {{ Auth::user()->name }}"
+                     onerror="this.src='{{ asset('images/icone1.svg') }}'">
             </a>
         @else
-            <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
+            <a href="{{ route('login') }}" class="btn-entrar">{{ __('messages.enter') }}</a>
         @endauth
     </div>
 </nav>
-{{-- HERO --}}
+
 <section class="hero">
     <div class="hero-breadcrumb">
-        <a href="{{ url('/catalogo') }}">Catálogo</a> &rsaquo; {{ $produto->nome }}
+        <a href="{{ url('/catalogo') }}">{{ __('messages.catalog') }}</a> &rsaquo; {{ $produto->nome }}
     </div>
     <h1 class="hero-title">{{ strtoupper($produto->nome) }}</h1>
 </section>
 
-{{-- MAIN --}}
 <main>
     <div class="product-grid">
-
-        {{-- LEFT --}}
         <div class="left-col">
             <span class="platform-badge" id="badge-platform">{{ is_array($produto->plataformas) ? ($produto->plataformas[0] ?? '') : '' }}</span>
             <div class="main-image-wrap">
                 <img id="main-image" src="{{ asset('images/' . $produto->imagem_principal) }}" alt="{{ $produto->nome }}">
             </div>
 
-            @php
-                $galeria = is_array($produto->galeria) ? $produto->galeria : [];
-            @endphp
+            @php $galeria = is_array($produto->galeria) ? $produto->galeria : []; @endphp
             @if(count($galeria) > 0)
             <div class="gallery">
                 <button class="gallery-btn" onclick="galleryPrev()">&#8249;</button>
@@ -324,15 +177,13 @@
             @endif
 
             <div class="desc-box">
-                <h3>Descrição</h3>
+                <h3>{{ __('messages.description') }}</h3>
                 <p>{{ $produto->descricao }}</p>
             </div>
         </div>
 
-        {{-- RIGHT --}}
         <div class="right-col">
             <h2 class="product-title">{{ $produto->nome }}</h2>
-
             <div class="price-card">
                 <div class="price-value" id="price-display">
                     R$ {{ number_format(is_array($produto->edicoes) ? ($produto->edicoes[0]['preco'] ?? 0) : 0, 2, ',', '.') }}
@@ -341,14 +192,14 @@
                     {{ is_array($produto->edicoes) ? ($produto->edicoes[0]['nome'] ?? '') : '' }} — {{ is_array($produto->plataformas) ? ($produto->plataformas[0] ?? '') : '' }}
                 </div>
 
-                <div class="selector-label">Plataforma</div>
+                <div class="selector-label">{{ __('messages.platform') }}</div>
                 <div class="selector-pills" id="platform-pills">
                     @foreach(is_array($produto->plataformas) ? $produto->plataformas : [] as $i => $plat)
                     <button class="pill {{ $i === 0 ? 'active' : '' }}" onclick="selectPlataforma(this, '{{ $plat }}')">{{ $plat }}</button>
                     @endforeach
                 </div>
 
-                <div class="selector-label">Edição</div>
+                <div class="selector-label">{{ __('messages.edition') }}</div>
                 <select class="edition-select" id="edition-select" onchange="selectEdicao(this)">
                     @foreach(is_array($produto->edicoes) ? $produto->edicoes : [] as $ed)
                     <option value="{{ $ed['preco'] }}" data-nome="{{ $ed['nome'] }}">
@@ -357,36 +208,31 @@
                     @endforeach
                 </select>
 
+                <div class="actions">
+                    @if(auth()->check())
+                        <form action="{{ route('favoritos.adicionar', $produto->id) }}" method="POST">
+                            @csrf
+                            <button type="submit" class="btn-fav">
+                                {{ $isFavorited ? __('messages.favorited') : __('messages.favorite') }}
+                            </button>
+                        </form>
+                    @else
+                        <a href="{{ route('login') }}">
+                            <button class="btn-fav" type="button">{{ __('messages.favorite') }}</button>
+                        </a>
+                    @endif
 
-   <div class="actions">
-    {{-- Botão Favoritar --}}
-    @if(auth()->check())
-        <form action="{{ route('favoritos.adicionar', $produto->id) }}" method="POST">
-            @csrf
-            <button type="submit" class="btn-fav">
-                {{ $isFavorited ? '❤️ Fav' : '♡ Favoritar' }}
-            </button>
-        </form>
-    @else
-        <a href="{{ route('login') }}">
-            <button class="btn-fav" type="button">♡ Favoritar</button>
-        </a>
-    @endif
+                    <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn-cart">{{ __('messages.cart') }}</button>
+                    </form>
 
-    {{-- Botão Adicionar ao Carrinho --}}
-    <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST">
-        @csrf
-        <button type="submit" class="btn-cart">Carrinho</button>
-    </form>
+                    <form action="{{ route('comprar.direto', $produto->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="btn-buy">{{ __('messages.buy') }}</button>
+                    </form>
+                </div>
 
-    {{-- Botão Comprar (Direto) --}}
-    <form action="{{ route('comprar.direto', $produto->id) }}" method="POST">
-        @csrf
-        <button type="submit" class="btn-buy">Comprar</button>
-    </form>
-</div>
-
-                {{-- Mensagens flash --}}
                 @if(session('success'))
                     <div class="flash-message flash-success">{{ session('success') }}</div>
                 @endif
@@ -400,10 +246,10 @@
 
             @if($produto->requisitos && is_array($produto->requisitos))
             <div class="req-box">
-                <div class="req-title">Requisitos do Sistema</div>
+                <div class="req-title">{{ __('messages.system_requirements') }}</div>
                 <div class="req-cols">
                     <div class="req-col">
-                        <h4>Mínimos</h4>
+                        <h4>{{ __('messages.minimum') }}</h4>
                         <p>
                             @foreach(($produto->requisitos['minimo'] ?? []) as $key => $val)
                                 <strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>
@@ -411,7 +257,7 @@
                         </p>
                     </div>
                     <div class="req-col">
-                        <h4>Recomendados</h4>
+                        <h4>{{ __('messages.recommended') }}</h4>
                         <p>
                             @foreach(($produto->requisitos['recomendado'] ?? []) as $key => $val)
                                 <strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>
@@ -422,18 +268,57 @@
             </div>
             @endif
         </div>
-
     </div>
+
+    {{-- ═══ PRODUTOS RELACIONADOS ═══ --}}
+@if($relacionados->count() > 0)
+<section style="max-width: 1100px; margin: 0 auto; padding: 0 32px 60px;">
+    <h2 style="font-family: 'Gasoek One', sans-serif; font-size: clamp(1.2rem, 3vw, 1.6rem); color: var(--accent); letter-spacing: 2px; margin-bottom: 24px; text-align: center;">
+        {{ __('messages.continue_shopping') }}
+    </h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 18px;">
+        @foreach($relacionados as $rel)
+        @php
+            $relEdicoes = is_array($rel->edicoes) ? $rel->edicoes : [];
+            $relPreco = !empty($relEdicoes) ? collect($relEdicoes)->min('preco') : 0;
+        @endphp
+        <a href="{{ route('produto.show', $rel->slug) }}" style="text-decoration: none; display: block;">
+            <div style="background: rgba(0,83,99,0.35); border: 1px solid rgba(253,233,162,0.1); border-radius: 14px; overflow: hidden; transition: transform 0.25s, border-color 0.25s; cursor: pointer;"
+                 onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='rgba(253,233,162,0.4)';"
+                 onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(253,233,162,0.1)';">
+                <div style="width: 100%; height: 130px; overflow: hidden; background: #1F6D7E;">
+                    <img src="{{ asset('images/' . $rel->imagem_principal) }}" alt="{{ $rel->nome }}"
+                         style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;"
+                         onmouseover="this.style.transform='scale(1.05)'"
+                         onmouseout="this.style.transform='scale(1)'"
+                         onerror="this.style.display='none'">
+                </div>
+                <div style="padding: 14px 16px;">
+                    <div style="font-family: 'Gasoek One', sans-serif; font-size: 13px; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        {{ $rel->nome }}
+                    </div>
+                    <div style="font-size: 11px; color: rgba(255,255,255,0.4); margin-bottom: 8px;">
+                        {{ $rel->genero ?? '' }}
+                    </div>
+                    <div style="font-family: 'Inter', sans-serif; font-weight: 900; font-size: 16px; color: var(--accent);">
+                        R$ {{ number_format($relPreco, 2, ',', '.') }}
+                    </div>
+                </div>
+            </div>
+        </a>
+        @endforeach
+    </div>
+</section>
+@endif
 </main>
 
-{{-- FOOTER --}}
 <footer>
     <div class="footer-inner">
         <a href="/" class="footer-logo">
             <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone" onerror="this.style.display='none'">
-           </a>
+        </a>
         <div class="footer-bottom">
-            <span class="footer-copy">© {{ date('Y') }} GiftZone Todos direitos Reservados</span>
+            <span class="footer-copy">© {{ date('Y') }} GiftZone {{ __('messages.all_rights') }}</span>
             <div class="social-links">
                 <a href="#" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608C4.519 2.567 5.786 2.293 7.152 2.231 8.418 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.332.014 7.052.072 5.197.157 3.355.673 2.014 2.014.673 3.355.157 5.197.072 7.052.014 8.332 0 8.741 0 12c0 3.259.014 3.668.072 4.948.085 1.855.601 3.697 1.942 5.038 1.341 1.341 3.183 1.857 5.038 1.942C8.332 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.855-.085 3.697-.601 5.038-1.942 1.341-1.341 1.857-3.183 1.942-5.038C23.986 15.668 24 15.259 24 12c0-3.259-.014-3.668-.072-4.948-.085-1.855-.601-3.697-1.942-5.038C20.645.673 18.803.157 16.948.072 15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
                 <a href="#" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>

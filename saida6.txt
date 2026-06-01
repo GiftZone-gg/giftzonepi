@@ -1,0 +1,461 @@
+﻿
+
+========== app/Models/Produto.php ==========
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
+class Produto extends Model
+{
+    use HasFactory;
+
+    protected $table = 'produtos';
+
+    protected $fillable = [
+        'nome',
+        'slug',
+        'descricao',
+        'desenvolvedor',
+        'publisher',
+        'genero',
+        'imagem_principal',
+        'galeria',
+        'plataformas',
+        'edicoes',
+        'requisitos',
+        'ativo',
+    ];
+
+    protected $casts = [
+        'galeria'     => 'array',
+        'plataformas' => 'array',
+        'edicoes'     => 'array',
+        'requisitos'  => 'array',
+        'ativo'       => 'boolean',
+    ];
+
+    /**
+     * Retorna o preÃ§o mÃ­nimo dentre as ediÃ§Ãµes.
+     */
+    public function getPrecoMinimoAttribute(): float
+    {
+        if (empty($this->edicoes)) return 0;
+        return collect($this->edicoes)->min('preco');
+    }
+
+    /**
+     * Scope para produtos ativos.
+     */
+    public function scopeAtivo($query)
+    {
+        return $query->where('ativo', true);
+    }
+}
+
+========== app/Models/OrderItem.php ==========
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
+
+class OrderItem extends Model
+{
+    protected $fillable = [
+        'order_id',
+        'product_id',
+        'quantity',
+        'price',
+        'total',
+        'digital_key',
+        'key_revealed',
+    ];
+
+    protected $casts = [
+        'key_revealed' => 'boolean',
+    ];
+
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
+
+    public function produto()
+    {
+        return $this->belongsTo(Produto::class, 'product_id');
+    }
+
+    /**
+     * Gera uma chave digital no formato XXXXX-XXXXX-XXXXX
+     */
+    public static function gerarChaveDigital(): string
+    {
+        $segments = [];
+        for ($i = 0; $i < 3; $i++) {
+            $segments[] = strtoupper(Str::random(5));
+        }
+        return implode('-', $segments);
+    }
+}
+
+========== app/Http/Controllers/ProdutoController.php ==========
+<?php
+ 
+namespace App\Http\Controllers;
+ 
+use App\Models\Produto;
+use Illuminate\Http\Request;
+ 
+class ProdutoController extends Controller
+{
+
+
+public function home()
+{
+    // Mais procurados â€” pega 3 jogos ativos aleatÃ³rios
+    $maisprocurados = \App\Models\Produto::where('ativo', true)
+        ->inRandomOrder()
+        ->take(3)
+        ->get();
+
+    // PlayStation
+    $playstation = \App\Models\Produto::where('ativo', true)
+        ->where(function ($q) {
+            $q->whereJsonContains('plataformas', 'PlayStation 5')
+              ->orWhereJsonContains('plataformas', 'PlayStation 4');
+        })
+        ->take(3)
+        ->get();
+
+    // Steam / PC
+    $steam = \App\Models\Produto::where('ativo', true)
+        ->whereJsonContains('plataformas', 'PC')
+        ->take(3)
+        ->get();
+
+    // Nintendo
+    $nintendo = \App\Models\Produto::where('ativo', true)
+        ->whereJsonContains('plataformas', 'Nintendo Switch')
+        ->take(3)
+        ->get();
+
+    return view('index', compact('maisprocurados', 'playstation', 'steam', 'nintendo'));
+}
+    /**
+     * Exibe a pÃ¡gina de um produto pelo slug.
+     */
+    public function show(string $slug)
+{
+    $produto = Produto::where('slug', $slug)->where('ativo', true)->firstOrFail();
+    
+    // Verifica se o usuÃ¡rio estÃ¡ logado e se este produto estÃ¡ nos favoritos dele
+    $isFavorited = false;
+    if (auth()->check()) {
+        $isFavorited = \App\Models\Wishlist::where('user_id', auth()->id())
+                          ->where('product_id', $produto->id)
+                          ->exists();
+    }
+    
+    return view('produto', compact('produto', 'isFavorited'));
+}
+}
+ 
+
+========== C:\Users\junior\giftzonepi\database\migrations\2024_01_01_000001_create_produtos_table.php ==========
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('produtos', function (Blueprint $table) {
+            $table->id();
+            $table->string('nome');
+            $table->string('slug')->unique();
+            $table->text('descricao');
+            $table->string('desenvolvedor')->nullable();
+            $table->string('publisher')->nullable();
+            $table->string('genero')->nullable();
+            $table->string('imagem_principal');
+            $table->json('galeria')->nullable(); // array de paths de imagens
+            $table->json('plataformas'); // ex: ["PS4","PS5","PC"]
+            $table->json('edicoes'); // ex: [{"nome":"Standard","preco":350},{"nome":"Deluxe","preco":499}]
+            $table->json('requisitos')->nullable(); // {"minimo":{"so":"...","armazenamento":"..."},"recomendado":{...}}
+            $table->boolean('ativo')->default(true);
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('produtos');
+    }
+};
+
+
+========== C:\Users\junior\giftzonepi\database\migrations\2026_04_09_141644_create_orders_table.php ==========
+<?php
+// Para que serve: Guarda cada compra finalizada
+
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('orders', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained();  // Quem comprou
+            $table->string('order_number', 50)->unique();  // NÃºmero do pedido: "#GZ-2024001"
+            $table->decimal('total_amount', 10, 2);  // Valor total
+            $table->decimal('discount_amount', 10, 2)->default(0);  // Desconto aplicado
+            $table->decimal('final_amount', 10, 2);  // Valor final pago
+            $table->foreignId('coupon_id')->nullable()->constrained()->nullOnDelete();  // Cupom usado
+            $table->foreignId('payment_method_id')->constrained();  // CartÃ£o usado
+            $table->enum('payment_status', ['pending', 'paid', 'failed', 'refunded'])->default('pending');  // Status pagamento
+            $table->enum('order_status', ['processing', 'completed', 'cancelled'])->default('processing');  // Status pedido
+            $table->string('transaction_id', 255)->nullable();  // ID da transaÃ§Ã£o (gateway)
+            $table->timestamps();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('orders');
+    }
+};
+
+========== C:\Users\junior\giftzonepi\database\migrations\2026_06_01_010827_fix_orders_nullable_columns.php ==========
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        // SQLite nÃ£o suporta ALTER COLUMN, entÃ£o recriamos as colunas
+        // Mas podemos contornar removendo a constraint via rebuild
+
+        // SoluÃ§Ã£o simples: criar coluna nova, copiar dados, dropar antiga
+        Schema::table('orders', function (Blueprint $table) {
+            $table->unsignedBigInteger('payment_method_id_new')->nullable()->after('final_amount');
+            $table->string('transaction_id_new', 255)->nullable()->after('order_status');
+        });
+
+        // Copia dados existentes
+        DB::table('orders')->update([
+            'payment_method_id_new' => DB::raw('payment_method_id'),
+            'transaction_id_new' => DB::raw('transaction_id'),
+        ]);
+    }
+
+    public function down(): void
+    {
+        Schema::table('orders', function (Blueprint $table) {
+            $table->dropColumn(['payment_method_id_new', 'transaction_id_new']);
+        });
+    }
+};
+
+========== resources/views/usuario/perfil.blade.php ==========
+@extends('usuario.layout')
+
+@section('title', 'Meu Perfil')
+
+@section('extra-styles')
+<style>
+    .profile-header-card {
+        background: rgba(0, 26, 32, 0.6);
+        border: 1px solid #fde9a2;
+        border-radius: 20px;
+        padding: 36px 40px;
+        display: flex;
+        align-items: center;
+        gap: 44px;
+        margin-bottom: 28px;
+        position: relative;
+        overflow: hidden;
+    }
+    .profile-header-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, var(--yellow-gold), var(--teal-light), transparent);
+        border-radius: 20px 20px 0 0;
+    }
+    .profile-avatar-wrap { position: relative; flex-shrink: 0; }
+    .profile-avatar {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        border: 4px solid var(--yellow-gold);
+        object-fit: cover;
+        display: block;
+        background: #1F6D7E;
+        box-shadow: 0 0 24px rgba(245,200,66,0.25);
+    }
+    .avatar-edit-btn {
+        position: absolute;
+        bottom: 4px; right: 4px;
+        width: 28px; height: 28px;
+        background: var(--yellow-gold);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 12px; color: #001A20;
+        text-decoration: none;
+        transition: transform 0.2s;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+    }
+    .avatar-edit-btn:hover { transform: scale(1.15); }
+    .profile-info {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    .profile-greeting {
+        font-family: 'Gasoek One', sans-serif;
+        font-size: 15px;
+        color: #fde9a2;
+        letter-spacing: 0.08em;
+        margin-bottom: 4px;
+    }
+    .info-row {
+        display: flex;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .info-label {
+        background: var(--yellow-light);
+        color: #001A20;
+        font-family: 'Crimson Pro', serif;
+        /* font-style: italic; */
+        font-weight: 600;
+        font-size: 15px;
+        padding: 13px 20px;
+        min-width: 130px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .info-value {
+        background: rgba(253,233,162,0.1);
+        border: 1px solid rgba(253,233,162,0.25);
+        border-left: none;
+        color: var(--white);
+        font-family: 'Crimson Pro', serif;
+        font-weight: 600;
+        font-size: 15px;
+        padding: 13px 20px;
+        flex: 1;
+        display: flex;
+        align-items: center;
+    }
+    .ultimas-compras-col {
+        background: rgba(0, 26, 32, 0.55);
+        border: 1px solid rgba(253, 233, 162, 0.2);
+        border-radius: 20px;
+        padding: 32px 36px;
+    }
+    .section-title {
+        font-family: 'Gasoek One', sans-serif;
+        font-size: 22px;
+        color: var(--yellow-light);
+        /* font-style: italic;
+        text-decoration: underline; */
+        margin-bottom: 24px;
+        text-align: center;
+    }
+    .empty-compras {
+        text-align: center;
+        padding: 50px 20px;
+        color: rgba(255,255,255,0.2);
+    }
+    .empty-compras i {
+        font-size: 48px;
+        display: block;
+        margin-bottom: 14px;
+        color: rgba(253,233,162,0.1);
+    }
+    .empty-compras p {
+        font-family: 'Inter', sans-serif;
+        font-size: 14px;
+    }
+    @media (max-width: 900px) {
+        .profile-header-card { flex-direction: column; align-items: center; text-align: center; padding: 28px 20px; }
+        .info-label { min-width: 110px; }
+        .ultimas-compras-col { padding: 24px 18px; }
+    }
+</style>
+@endsection
+
+@section('content')
+
+<div class="profile-header-card">
+    <div class="profile-avatar-wrap">
+        <!-- <img class="profile-avatar"
+             src="{{ asset('images/icone2.svg') }}"
+             alt="Avatar do usuÃ¡rio"
+             onerror="this.src='https://via.placeholder.com/130/1F6D7E/FFDC74?text=GZ'"> -->
+
+            <img class="profile-avatar"
+     src="{{ $usuario->avatar === 'icone1.svg' || empty($usuario->avatar) ? asset('images/icone1.svg') : asset('storage/' . $usuario->avatar) }}"
+     alt="Avatar do usuÃ¡rio"
+     onerror="this.src='{{ asset('images/icone1.svg') }}'">
+        <a href="{{ route('usuario.editar') }}" class="avatar-edit-btn" title="Editar perfil">
+            <i class="fa-solid fa-pen"></i>
+        </a>
+    </div>
+
+    <div class="profile-info">
+        <p class="profile-greeting">Bem-Vindo(a)!</p>
+        <div class="info-row">
+            <span class="info-label">
+                <i class="fa-solid fa-user" style="font-size:12px; opacity:0.6;"></i>
+                Nickname
+            </span>
+            <span class="info-value">{{ $usuario->nickname ?? $usuario->name }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">
+                <i class="fa-regular fa-envelope" style="font-size:12px; opacity:0.6;"></i>
+                E-mail
+            </span>
+            <span class="info-value">{{ $usuario->email }}</span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">
+                <i class="fa-solid fa-id-card" style="font-size:12px; opacity:0.6;"></i>
+                CPF
+            </span>
+            <span class="info-value">{{ $usuario->cpf }}</span>
+        </div>
+    </div>
+</div>
+
+<div class="ultimas-compras-col">
+    <p class="section-title">Ãšltimas Compras</p>
+    <div class="empty-compras">
+        <i class="fa-solid fa-bag-shopping"></i>
+        <p>Nenhuma compra realizada ainda.</p>
+    </div>
+</div>
+
+@endsection

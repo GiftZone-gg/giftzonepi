@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -33,7 +33,6 @@
             display: flex;
         }
 
-        /* ===== SIDEBAR ===== */
         .sidebar {
             width: var(--sidebar-w);
             min-height: 100vh;
@@ -49,9 +48,7 @@
             transition: width 0.3s ease;
         }
 
-        .sidebar.collapsed {
-            width: var(--sidebar-w-collapsed);
-        }
+        .sidebar.collapsed { width: var(--sidebar-w-collapsed); }
 
         .sidebar-header {
             display: flex;
@@ -61,42 +58,13 @@
             border-bottom: 1px solid rgba(255,255,255,0.07);
         }
 
-        .hamburger { 
-            display: flex; 
-            flex-direction: column; 
-            gap: 5px; 
-            cursor: pointer; 
-            background: none; 
-            border: none;
-        }
-        .hamburger span { 
-            width: 26px; 
-            height: 2px; 
-            background: var(--white); 
-            border-radius: 2px; 
-            transition: 0.2s;
-        }
+        .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
+        .hamburger span { width: 26px; height: 2px; background: var(--white); border-radius: 2px; transition: 0.2s; }
 
-        .logo-box { 
-            height: 44px; 
-            display: flex; 
-            align-items: center; 
-        }
-        /* .logo-box a {
-            display: flex;
-            align-items: center;
-        } */
-        .logo-box img { 
-            width: 160px;
-            /* height: 100%;  */
-        }
+        .logo-box { height: 44px; display: flex; align-items: center; }
+        .logo-box img { width: 160px; }
 
-        .sidebar-nav {
-            flex: 1;
-            padding: 30px 0;
-            display: flex;
-            flex-direction: column;
-        }
+        .sidebar-nav { flex: 1; padding: 30px 0; display: flex; flex-direction: column; }
 
         .nav-item {
             display: block;
@@ -112,20 +80,11 @@
         }
 
         .sidebar.collapsed .nav-item span,
-        .sidebar.collapsed .btn-logout span {
-            display: none;
-        }
+        .sidebar.collapsed .btn-logout span { display: none; }
         .sidebar.collapsed .nav-item,
-        .sidebar.collapsed .btn-logout {
-            text-align: center;
-            padding-left: 0;
-            padding-right: 0;
-        }
+        .sidebar.collapsed .btn-logout { text-align: center; padding-left: 0; padding-right: 0; }
 
-        .nav-item:hover {
-            color: var(--yellow-main);
-            background: rgba(255,220,116,0.06);
-        }
+        .nav-item:hover { color: var(--yellow-main); background: rgba(255,220,116,0.06); }
 
         .nav-item.active {
             color: var(--white);
@@ -137,10 +96,7 @@
 
         .nav-group { flex: 1; }
 
-        .nav-footer {
-            border-top: 1px solid rgba(255,255,255,0.07);
-            padding: 16px 0;
-        }
+        .nav-footer { border-top: 1px solid rgba(255,255,255,0.07); padding: 16px 0; }
 
         .btn-logout {
             width: 100%;
@@ -159,35 +115,18 @@
             align-items: center;
             gap: 10px;
         }
-        .btn-logout:hover {
-            color: #ff6b6b;
-            background: rgba(255,80,80,0.06);
-            border-left-color: #ff6b6b;
-        }
+        .btn-logout:hover { color: #ff6b6b; background: rgba(255,80,80,0.06); border-left-color: #ff6b6b; }
 
-        .main-content {
-            flex: 1;
-            padding: 36px 40px;
-            overflow-y: auto;
-            transition: padding 0.3s ease;
-        }
+        .main-content { flex: 1; padding: 36px 40px; overflow-y: auto; transition: padding 0.3s ease; }
 
         @media (max-width: 768px) {
-.logo-box img { 
-            width: 0px;
-            height: 0px; 
-        }
-
-
+            .logo-box img { width: 0px; height: 0px; }
             .sidebar:not(.collapsed) { width: var(--sidebar-w-collapsed); }
             .sidebar:not(.collapsed) .nav-item span,
             .sidebar:not(.collapsed) .btn-logout span { display: none; }
             .main-content { padding: 20px 16px; }
         }
 
-        
-
-        /* Componentes globais */
         .card {
             background: rgba(0, 26, 32, 0.6);
             border: 1px solid rgba(253, 233, 162, 0.2);
@@ -227,33 +166,12 @@
         }
         .btn-outline:hover { background: var(--yellow-main); color: #001A20; }
 
-        .tag-status {
-            display: inline-block;
-            padding: 4px 14px;
-            border-radius: 20px;
-            font-family: 'Inria Sans', sans-serif;
-            font-size: 13px;
-            font-weight: 700;
-        }
+        .tag-status { display: inline-block; padding: 4px 14px; border-radius: 20px; font-family: 'Inria Sans', sans-serif; font-size: 13px; font-weight: 700; }
         .tag-concluido { background: var(--yellow-gold); color: #001A20; }
-        .tag-pendente  { background: rgba(144,221,232,0.25); color: var(--teal-light); border: 1px solid var(--teal-light); }
+        .tag-pendente { background: rgba(144,221,232,0.25); color: var(--teal-light); border: 1px solid var(--teal-light); }
         .tag-cancelado { background: rgba(255,80,80,0.2); color: #ff6b6b; border: 1px solid #ff6b6b; }
 
-        .badge-cashback {
-            position: absolute;
-            top: 8px; right: 8px;
-            background: var(--yellow-gold);
-            color: #001A20;
-            font-family: 'Inria Sans', sans-serif;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 2px 8px;
-            border-radius: 20px;
-        }
-
-        .sidebar.collapsed .logo-box {
-    display: none;
-}
+        .sidebar.collapsed .logo-box { display: none; }
     </style>
 
     @yield('extra-styles')
@@ -275,22 +193,33 @@
         <nav class="sidebar-nav">
             <div class="nav-group">
                 <a href="{{ route('usuario.perfil') }}" class="nav-item {{ request()->routeIs('usuario.perfil') ? 'active' : '' }}">
-                    <i class="fa-regular fa-user" style="margin-right: 12px;"></i> <span>Meu Perfil</span>
+                    <i class="fa-regular fa-user" style="margin-right: 12px;"></i> <span>{{ __('messages.my_profile') }}</span>
                 </a>
                 <a href="{{ route('usuario.pedidos') }}" class="nav-item {{ request()->routeIs('usuario.pedidos') ? 'active' : '' }}">
-                    <i class="fa-solid fa-box" style="margin-right: 12px;"></i> <span>Pedidos</span>
+                    <i class="fa-solid fa-box" style="margin-right: 12px;"></i> <span>{{ __('messages.orders_nav') }}</span>
                 </a>
                 <a href="{{ route('usuario.pagamentos') }}" class="nav-item {{ request()->routeIs('usuario.pagamentos') ? 'active' : '' }}">
-                    <i class="fa-regular fa-credit-card" style="margin-right: 12px;"></i> <span>Pagamentos</span>
+                    <i class="fa-regular fa-credit-card" style="margin-right: 12px;"></i> <span>{{ __('messages.payments_nav') }}</span>
                 </a>
                 <a href="{{ route('usuario.favoritos') }}" class="nav-item {{ request()->routeIs('usuario.favoritos') ? 'active' : '' }}">
-                    <i class="fa-regular fa-heart" style="margin-right: 12px;"></i> <span>Favoritos</span>
+                    <i class="fa-regular fa-heart" style="margin-right: 12px;"></i> <span>{{ __('messages.favorites_nav') }}</span>
                 </a>
+
+<a href="{{ route('usuario.notificacoes') }}" class="nav-item {{ request()->routeIs('usuario.notificacoes') ? 'active' : '' }}">
+    <i class="fa-regular fa-bell" style="margin-right: 12px;"></i> <span>{{ __('messages.notifications_nav') }}</span>
+    @php
+        $unreadCount = \App\Models\UserNotification::where('user_id', auth()->id())->where('read', false)->count();
+    @endphp
+    @if($unreadCount > 0)
+        <span style="background: #ff6b35; color: #fff; font-size: 10px; font-weight: 800; padding: 2px 7px; border-radius: 10px; margin-left: 6px;">{{ $unreadCount }}</span>
+    @endif
+</a>
+
                 <a href="{{ route('usuario.editar') }}" class="nav-item {{ request()->routeIs('usuario.editar') ? 'active' : '' }}">
-                    <i class="fa-regular fa-pen-to-square" style="margin-right: 12px;"></i> <span>Editar Perfil</span>
+                    <i class="fa-regular fa-pen-to-square" style="margin-right: 12px;"></i> <span>{{ __('messages.edit_profile') }}</span>
                 </a>
                 <a href="{{ route('home') }}" class="nav-item">
-                    <i class="fa-solid fa-house" style="margin-right: 12px;"></i> <span>Início</span>
+                    <i class="fa-solid fa-house" style="margin-right: 12px;"></i> <span>{{ __('messages.home') }}</span>
                 </a>
             </div>
 
@@ -298,7 +227,7 @@
                 <form action="{{ route('logout') }}" method="POST">
                     @csrf
                     <button type="submit" class="btn-logout">
-                        <i class="fa-solid fa-right-from-bracket"></i> <span>Sair da conta ({{ Auth::user()->nickname ?? Auth::user()->name }})</span>
+                        <i class="fa-solid fa-right-from-bracket"></i> <span>{{ __('messages.logout_account') }} ({{ Auth::user()->nickname ?? Auth::user()->name }})</span>
                     </button>
                 </form>
             </div>
@@ -312,16 +241,13 @@
     <script>
         const sidebar = document.getElementById('sidebar');
         const menuToggle = document.getElementById('menuToggleBtn');
-        
         function toggleSidebar() {
             sidebar.classList.toggle('collapsed');
             localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
         }
-        
         if (localStorage.getItem('sidebarCollapsed') === 'true') {
             sidebar.classList.add('collapsed');
         }
-        
         menuToggle.addEventListener('click', toggleSidebar);
     </script>
 

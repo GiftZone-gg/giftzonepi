@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -9,7 +10,6 @@ use Illuminate\Support\Str;
 
 class PixController extends Controller
 {
-    // Monta o payload PIX e exibe a tela com QR Code
     public function show(Request $request)
     {
         $carrinho = session()->get('cart', []);
@@ -22,25 +22,20 @@ class PixController extends Controller
         foreach ($carrinho as $id => $quantidade) {
             $produto = Produto::find($id);
             if ($produto) {
-                $edicoes = is_array($produto->edicoes)
-                    ? $produto->edicoes
-                    : json_decode($produto->edicoes, true);
+                $edicoes = is_array($produto->edicoes) ? $produto->edicoes : json_decode($produto->edicoes, true);
                 $total += ($edicoes[0]['preco'] ?? 0) * $quantidade;
             }
         }
 
-        $chavePix   = 'c3a545af-36fc-42fa-a8e3-2644bda768db';
-        $nomeBenef  = 'GiftZone';
-        $cidade     = 'SAO PAULO';
-        $valor      = number_format($total, 2, '.', '');
-        $txid       = strtoupper(Str::random(10));
+        $chavePix  = 'c3a545af-36fc-42fa-a8e3-2644bda768db';
+        $nomeBenef = 'GiftZone';
+        $cidade    = 'SAO PAULO';
+        $valor     = number_format($total, 2, '.', '');
+        $txid      = strtoupper(Str::random(10));
 
-        $payload = $this->gerarPayloadPix($chavePix, $nomeBenef, $cidade, $valor, $txid);
-
-        // URL da API pública para gerar QR Code (sem instalação)
+        $payload   = $this->gerarPayloadPix($chavePix, $nomeBenef, $cidade, $valor, $txid);
         $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' . urlencode($payload);
 
-        // Salva o pedido como pendente na sessão para confirmar depois
         session()->put('pix_pending', [
             'cart'    => $carrinho,
             'total'   => $total,
@@ -51,7 +46,6 @@ class PixController extends Controller
         return view('pagamento.pix', compact('total', 'qrCodeUrl', 'payload'));
     }
 
-    // Confirma o pedido após pagamento (simulação)
     public function confirmar(Request $request)
     {
         $pending = session()->get('pix_pending');
@@ -74,27 +68,28 @@ class PixController extends Controller
         foreach ($pending['cart'] as $id => $quantidade) {
             $produto = Produto::find($id);
             if ($produto) {
-                $edicoes = is_array($produto->edicoes)
-                    ? $produto->edicoes
-                    : json_decode($produto->edicoes, true);
+                $edicoes = is_array($produto->edicoes) ? $produto->edicoes : json_decode($produto->edicoes, true);
                 $preco = $edicoes[0]['preco'] ?? 0;
+
                 OrderItem::create([
-                    'order_id'   => $order->id,
-                    'product_id' => $id,
-                    'quantity'   => $quantidade,
-                    'price'      => $preco,
-                    'total'      => $preco * $quantidade,
+                    'order_id'     => $order->id,
+                    'product_id'   => $id,
+                    'quantity'     => $quantidade,
+                    'price'        => $preco,
+                    'total'        => $preco * $quantidade,
+                    'digital_key'  => OrderItem::gerarChaveDigital(),
+                    'key_revealed' => false,
                 ]);
             }
         }
 
         session()->forget(['cart', 'pix_pending']);
 
+        \App\Models\UserNotification::criarPedidoRealizado($user->id, $order->order_number);
         return redirect()->route('usuario.pedidos')
             ->with('success', "Pedido {$order->order_number} confirmado via PIX!");
     }
 
-    // Gera o payload PIX padrão Banco Central
     private function gerarPayloadPix($chave, $nome, $cidade, $valor, $txid)
     {
         $nome   = substr($this->removerAcentos($nome), 0, 25);
@@ -115,7 +110,6 @@ class PixController extends Controller
             $this->tlv('62', $this->tlv('05', $txid));
 
         $payload .= $this->tlv('63', $this->crc16($payload . '6304'));
-
         return $payload;
     }
 

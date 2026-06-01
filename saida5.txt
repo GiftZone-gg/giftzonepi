@@ -1,0 +1,643 @@
+﻿
+
+========== routes/web.php ==========
+<?php
+
+// â”€â”€â”€ Troca de Idioma â”€â”€â”€
+Route::post('/idioma', function (Illuminate\Http\Request $request) {
+    $locale = $request->input('locale');
+    if (in_array($locale, ['pt', 'en'])) {
+        session()->put('locale', $locale);
+    }
+    return back();
+})->name('idioma.trocar');
+
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UsuarioController;
+use App\Http\Controllers\ProdutoController;
+use App\Http\Controllers\CarrinhoController;
+use App\Http\Controllers\PagamentoController;
+use App\Http\Controllers\PixController;
+use App\Http\Controllers\BoletoController;
+
+// â”€â”€â”€ PÃ¡ginas PÃºblicas â”€â”€â”€
+Route::get('/', [ProdutoController::class, 'home'])->name('home');
+Route::get('/login', fn() => view('login'))->name('login');
+Route::get('/catalogo', function () {
+    $jogos = \App\Models\Produto::where('ativo', true)->get();
+    return view('catalogo', compact('jogos'));
+})->name('catalogo');
+Route::get('/produto/{slug}', [ProdutoController::class, 'show'])->name('produto.show');
+
+// â”€â”€â”€ Auth â”€â”€â”€
+Route::post('/login-action', [AuthController::class, 'login'])->name('login.auth');
+Route::post('/register-action', [AuthController::class, 'register'])->name('register.auth');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+// â”€â”€â”€ Carrinho (session, funciona com e sem login) â”€â”€â”€
+Route::get('/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');
+Route::post('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
+Route::patch('/carrinho/atualizar/{id}', [CarrinhoController::class, 'atualizar'])->name('carrinho.atualizar');
+Route::delete('/carrinho/remover/{id}', [CarrinhoController::class, 'remover'])->name('carrinho.remover');
+Route::post('/carrinho/finalizar', [CarrinhoController::class, 'finalizar'])->name('carrinho.finalizar');
+
+// â”€â”€â”€ Favoritos â”€â”€â”€
+Route::post('/favoritos/adicionar/{produtoId}', [UsuarioController::class, 'adicionarFavorito'])->name('favoritos.adicionar');
+
+// â”€â”€â”€ Rotas que exigem login â”€â”€â”€
+Route::middleware('auth')->group(function () {
+
+    // Compra direta
+    Route::post('/comprar-direto/{produto}', [CarrinhoController::class, 'comprarDireto'])->name('comprar.direto');
+
+    // Checkout e Pagamento
+    Route::get('/checkout', [PagamentoController::class, 'checkout'])->name('checkout');
+    Route::post('/pagamento/processar', [PagamentoController::class, 'processar'])->name('pagamento.processar');
+
+    // PIX
+    Route::get('/pix', [PixController::class, 'show'])->name('pagamento.pix');
+    Route::post('/pix/confirmar', [PixController::class, 'confirmar'])->name('pagamento.pix.confirmar');
+
+    // Boleto
+    Route::get('/boleto', [BoletoController::class, 'show'])->name('pagamento.boleto');
+    Route::post('/boleto/confirmar', [BoletoController::class, 'confirmar'])->name('pagamento.boleto.confirmar');
+
+    // Avatar via AJAX
+    Route::post('/usuario/atualizar-avatar', [UsuarioController::class, 'atualizarAvatar'])->name('usuario.atualizar.avatar');
+
+    // Painel do UsuÃ¡rio
+    Route::prefix('usuario')->name('usuario.')->group(function () {
+        Route::get('/perfil', [UsuarioController::class, 'perfil'])->name('perfil');
+        Route::get('/pedidos', [UsuarioController::class, 'pedidos'])->name('pedidos');
+        Route::get('/pagamentos', [UsuarioController::class, 'pagamentos'])->name('pagamentos');
+        Route::get('/favoritos', [UsuarioController::class, 'favoritos'])->name('favoritos');
+        Route::delete('/favoritos/{id}', [UsuarioController::class, 'removerFavorito'])->name('favoritos.remover');
+        Route::get('/editar', [UsuarioController::class, 'editar'])->name('editar');
+        Route::put('/editar', [UsuarioController::class, 'editarSalvar'])->name('editar.salvar');
+        Route::delete('/excluir-conta', [UsuarioController::class, 'excluirConta'])->name('excluir.conta');
+
+Route::post('/pedidos/{id}/cancelar', [UsuarioController::class, 'cancelarPedido'])->name('pedidos.cancelar');
+    Route::post('/pedidos/item/{id}/revelar', [UsuarioController::class, 'revelarChave'])->name('pedidos.revelar');
+});
+
+
+});
+
+========== app/Http/Controllers/CheckoutController.php (NAO ENCONTRADO) ==========
+
+========== app/Http/Controllers/UsuarioController.php ==========
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use App\Models\User;
+use App\Models\Wishlist;
+use App\Models\Produto;
+use App\Models\PaymentMethod;
+use App\Models\Order;
+
+class UsuarioController extends Controller
+{
+    public function perfil()
+    {
+        $usuario = auth()->user();
+        return view('usuario.perfil', compact('usuario'));
+    }
+
+  public function pedidos()
+{
+    $pedidos = \App\Models\Order::with('items.produto')
+        ->where('user_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->get();
+    return view('usuario.pedidos', compact('pedidos'));
+}
+    public function pagamentos()
+    {
+        $metodos = PaymentMethod::where('user_id', auth()->id())->get();
+        return view('usuario.pagamentos', compact('metodos'));
+    }
+
+    public function favoritos()
+    {
+        $favoritos = Wishlist::with('produto')
+                             ->where('user_id', auth()->id())
+                             ->get();
+        return view('usuario.favoritos', compact('favoritos'));
+    }
+
+    public function editar()
+    {
+        $usuario = auth()->user();
+        return view('usuario.editar', compact('usuario'));
+    }
+
+    public function editarSalvar(Request $request)
+    {
+        $usuario = auth()->user();
+
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'nickname' => 'nullable|string|max:255',
+            'email'    => 'required|email|max:255|unique:users,email,' . $usuario->id,
+            'password' => 'nullable|min:8|confirmed',
+        ]);
+
+        $usuario->name  = $request->name;
+        $usuario->email = $request->email;
+
+        // â”€â”€ Nickname â”€â”€
+        if ($request->filled('nickname')) {
+            $nickname = strtolower($request->nickname);
+            if (!str_starts_with($nickname, '@')) {
+                $nickname = '@' . ltrim($nickname, '@');
+            }
+            $baseNickname = $nickname;
+            $contador = 1;
+            while (User::where('nickname', $nickname)->where('id', '!=', $usuario->id)->exists()) {
+                $nickname = $baseNickname . $contador;
+                $contador++;
+            }
+            $usuario->nickname = $nickname;
+        }
+
+        // â”€â”€ Senha â”€â”€
+        if ($request->filled('password')) {
+            $usuario->password = Hash::make($request->password);
+        }
+
+        // â”€â”€ Avatar â”€â”€
+        $avatarData = $request->input('avatar_base64', '');
+
+        if ($avatarData === 'reset_to_default') {
+            // UsuÃ¡rio clicou "Usar PadrÃ£o" explicitamente
+            if ($usuario->avatar && $usuario->avatar !== 'icone1.svg') {
+                Storage::disk('public')->delete($usuario->avatar);
+            }
+            $usuario->avatar = 'icone1.svg';
+
+        } elseif (!empty($avatarData) && preg_match('/^data:image\/(\w+);base64,/', $avatarData, $type)) {
+            // UsuÃ¡rio enviou nova imagem via cropper
+            $imageData = substr($avatarData, strpos($avatarData, ',') + 1);
+            $imageType = strtolower($type[1]);
+
+            if (in_array($imageType, ['jpg', 'jpeg', 'png'])) {
+                // Deleta avatar antigo do storage
+                if ($usuario->avatar && $usuario->avatar !== 'icone1.svg') {
+                    Storage::disk('public')->delete($usuario->avatar);
+                }
+
+                $imageBase64 = base64_decode($imageData);
+                $fileName    = 'avatars/' . uniqid() . '.' . $imageType;
+                Storage::disk('public')->put($fileName, $imageBase64);
+                $usuario->avatar = $fileName;
+            }
+        }
+        // Se avatarData estiver vazio â†’ nÃ£o mexe no avatar (usuÃ¡rio nÃ£o alterou)
+
+        $usuario->save();
+
+        return redirect()->route('usuario.perfil')->with('success', 'Perfil atualizado com sucesso!');
+    }
+
+    public function atualizarAvatar(Request $request)
+    {
+        $usuario = auth()->user();
+        $avatarData = $request->input('avatar_base64');
+
+        if (preg_match('/^data:image\/(\w+);base64,/', $avatarData, $type)) {
+            $imageData   = substr($avatarData, strpos($avatarData, ',') + 1);
+            $imageType   = strtolower($type[1]);
+            $imageBase64 = base64_decode($imageData);
+            $fileName    = 'avatars/' . uniqid() . '.' . $imageType;
+
+            // Deleta avatar antigo
+            if ($usuario->avatar && $usuario->avatar !== 'icone1.svg') {
+                Storage::disk('public')->delete($usuario->avatar);
+            }
+
+            Storage::disk('public')->put($fileName, $imageBase64);
+            $usuario->avatar = $fileName;
+            $usuario->save();
+
+            return response()->json([
+                'success'    => true,
+                'avatar_url' => asset('storage/' . $fileName),
+            ]);
+        }
+
+        return response()->json(['success' => false]);
+    }
+
+    public function adicionarFavorito($produtoId)
+    {
+        $userId = auth()->id();
+        if (!$userId) {
+            return redirect()->route('login')->with('error', 'VocÃª precisa estar logado para favoritar.');
+        }
+
+        $produto = Produto::find($produtoId);
+        if (!$produto) {
+            return back()->with('error', 'Produto nÃ£o encontrado.');
+        }
+
+        $existe = Wishlist::where('user_id', $userId)
+                          ->where('product_id', $produtoId)
+                          ->exists();
+
+        if (!$existe) {
+            Wishlist::create([
+                'user_id'    => $userId,
+                'product_id' => $produtoId,
+            ]);
+            return back()->with('success', 'Produto adicionado aos favoritos!');
+        }
+
+        return back()->with('info', 'Este produto jÃ¡ estÃ¡ nos seus favoritos.');
+    }
+
+    public function removerFavorito($id)
+    {
+        $favorito = Wishlist::where('user_id', auth()->id())
+                            ->where('id', $id)
+                            ->firstOrFail();
+        $favorito->delete();
+        return redirect()->route('usuario.favoritos')->with('success', 'Produto removido dos favoritos.');
+    }
+
+    public function excluirConta(Request $request)
+    {
+        $user = auth()->user();
+
+        $request->validate([
+            'current_password' => 'required|string',
+        ]);
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return back()->withErrors(['current_password' => 'Senha atual incorreta.']);
+        }
+
+        // Deleta avatar do storage
+        if ($user->avatar && $user->avatar !== 'icone1.svg') {
+            Storage::disk('public')->delete($user->avatar);
+        }
+
+        auth()->logout();
+        $user->delete();
+
+        return redirect()->route('home')->with('success', 'Sua conta foi excluÃ­da permanentemente.');
+    }
+
+    /**
+ * Cancela um pedido (se nenhuma chave foi revelada)
+ */
+public function cancelarPedido($id)
+{
+    $order = \App\Models\Order::where('user_id', auth()->id())
+        ->where('id', $id)
+        ->firstOrFail();
+
+    if (!$order->canCancel()) {
+        return back()->with('error', 'Este pedido nÃ£o pode ser cancelado (chave jÃ¡ revelada ou jÃ¡ cancelado).');
+    }
+
+    $order->update([
+        'order_status'   => 'cancelled',
+        'payment_status' => 'refunded',
+    ]);
+
+    return back()->with('success', "Pedido {$order->order_number} cancelado com sucesso.");
+}
+
+/**
+ * Revela a chave digital de um item (AJAX)
+ */
+public function revelarChave($itemId)
+{
+    $item = \App\Models\OrderItem::whereHas('order', function ($q) {
+        $q->where('user_id', auth()->id());
+    })->where('id', $itemId)->firstOrFail();
+
+    $item->update(['key_revealed' => true]);
+
+    return response()->json([
+        'success' => true,
+        'key'     => $item->digital_key,
+    ]);
+}
+}
+
+========== app/Http/Controllers/PixController.php ==========
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\Produto;
+use Illuminate\Support\Str;
+
+class PixController extends Controller
+{
+    public function show(Request $request)
+    {
+        $carrinho = session()->get('cart', []);
+
+        if (empty($carrinho)) {
+            return redirect()->route('carrinho.index')->with('error', 'Carrinho vazio.');
+        }
+
+        $total = 0;
+        foreach ($carrinho as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $edicoes = is_array($produto->edicoes) ? $produto->edicoes : json_decode($produto->edicoes, true);
+                $total += ($edicoes[0]['preco'] ?? 0) * $quantidade;
+            }
+        }
+
+        $chavePix  = 'c3a545af-36fc-42fa-a8e3-2644bda768db';
+        $nomeBenef = 'GiftZone';
+        $cidade    = 'SAO PAULO';
+        $valor     = number_format($total, 2, '.', '');
+        $txid      = strtoupper(Str::random(10));
+
+        $payload   = $this->gerarPayloadPix($chavePix, $nomeBenef, $cidade, $valor, $txid);
+        $qrCodeUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=' . urlencode($payload);
+
+        session()->put('pix_pending', [
+            'cart'    => $carrinho,
+            'total'   => $total,
+            'payload' => $payload,
+            'txid'    => $txid,
+        ]);
+
+        return view('pagamento.pix', compact('total', 'qrCodeUrl', 'payload'));
+    }
+
+    public function confirmar(Request $request)
+    {
+        $pending = session()->get('pix_pending');
+
+        if (!$pending) {
+            return redirect()->route('carrinho.index')->with('error', 'SessÃ£o expirada.');
+        }
+
+        $user  = auth()->user();
+        $order = Order::create([
+            'user_id'         => $user->id,
+            'order_number'    => '#GZ-' . strtoupper(Str::random(8)),
+            'total_amount'    => $pending['total'],
+            'discount_amount' => 0,
+            'final_amount'    => $pending['total'],
+            'payment_status'  => 'paid',
+            'order_status'    => 'completed',
+        ]);
+
+        foreach ($pending['cart'] as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $edicoes = is_array($produto->edicoes) ? $produto->edicoes : json_decode($produto->edicoes, true);
+                $preco = $edicoes[0]['preco'] ?? 0;
+
+                OrderItem::create([
+                    'order_id'     => $order->id,
+                    'product_id'   => $id,
+                    'quantity'     => $quantidade,
+                    'price'        => $preco,
+                    'total'        => $preco * $quantidade,
+                    'digital_key'  => OrderItem::gerarChaveDigital(),
+                    'key_revealed' => false,
+                ]);
+            }
+        }
+
+        session()->forget(['cart', 'pix_pending']);
+
+        return redirect()->route('usuario.pedidos')
+            ->with('success', "Pedido {$order->order_number} confirmado via PIX!");
+    }
+
+    private function gerarPayloadPix($chave, $nome, $cidade, $valor, $txid)
+    {
+        $nome   = substr($this->removerAcentos($nome), 0, 25);
+        $cidade = substr($this->removerAcentos($cidade), 0, 15);
+
+        $merchantAccountInfo = $this->tlv('00', 'BR.GOV.BCB.PIX') . $this->tlv('01', $chave);
+        $merchantAccountInfo = $this->tlv('26', $merchantAccountInfo);
+
+        $payload =
+            $this->tlv('00', '01') .
+            $merchantAccountInfo .
+            $this->tlv('52', '0000') .
+            $this->tlv('53', '986') .
+            $this->tlv('54', $valor) .
+            $this->tlv('58', 'BR') .
+            $this->tlv('59', $nome) .
+            $this->tlv('60', $cidade) .
+            $this->tlv('62', $this->tlv('05', $txid));
+
+        $payload .= $this->tlv('63', $this->crc16($payload . '6304'));
+        return $payload;
+    }
+
+    private function tlv($id, $value)
+    {
+        return $id . str_pad(strlen($value), 2, '0', STR_PAD_LEFT) . $value;
+    }
+
+    private function crc16($data)
+    {
+        $crc = 0xFFFF;
+        for ($i = 0; $i < strlen($data); $i++) {
+            $crc ^= ord($data[$i]) << 8;
+            for ($j = 0; $j < 8; $j++) {
+                $crc = ($crc & 0x8000) ? (($crc << 1) ^ 0x1021) : ($crc << 1);
+            }
+        }
+        return strtoupper(dechex($crc & 0xFFFF));
+    }
+
+    private function removerAcentos($str)
+    {
+        return iconv('UTF-8', 'ASCII//TRANSLIT//IGNORE', $str);
+    }
+}
+
+========== app/Http/Controllers/BoletoController.php ==========
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\Produto;
+use App\Models\Order;
+use App\Models\OrderItem;
+use Illuminate\Support\Str;
+
+class BoletoController extends Controller
+{
+    public function show()
+    {
+        $carrinho = session()->get('cart', []);
+
+        if (empty($carrinho)) {
+            return redirect()->route('carrinho.index')->with('error', 'Carrinho vazio.');
+        }
+
+        $total = 0;
+        foreach ($carrinho as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $edicoes = is_array($produto->edicoes) ? $produto->edicoes : json_decode($produto->edicoes, true);
+                $total += ($edicoes[0]['preco'] ?? 0) * $quantidade;
+            }
+        }
+
+        $codigo = vsprintf('%05d.%05d %05d.%06d %05d.%06d %d %014d', [
+            rand(10000, 99999), rand(10000, 99999),
+            rand(10000, 99999), rand(100000, 999999),
+            rand(10000, 99999), rand(100000, 999999),
+            rand(1, 9),
+            rand(10000000000000, 99999999999999),
+        ]);
+
+        $vencimento = now()->addWeekdays(3)->format('d/m/Y');
+
+        session()->put('boleto_pending', [
+            'cart'   => $carrinho,
+            'total'  => $total,
+            'codigo' => $codigo,
+        ]);
+
+        return view('pagamento.boleto', compact('total', 'codigo', 'vencimento'));
+    }
+
+    public function confirmar()
+    {
+        $pending = session()->get('boleto_pending');
+
+        if (!$pending) {
+            return redirect()->route('carrinho.index')->with('error', 'SessÃ£o expirada.');
+        }
+
+        $user  = auth()->user();
+        $order = Order::create([
+            'user_id'         => $user->id,
+            'order_number'    => '#GZ-' . strtoupper(Str::random(8)),
+            'total_amount'    => $pending['total'],
+            'discount_amount' => 0,
+            'final_amount'    => $pending['total'],
+            // 'payment_status'  => 'pending',
+            // 'order_status'    => 'pending',
+
+'payment_status'  => 'paid',
+'order_status'    => 'completed',
+
+        ]);
+
+        foreach ($pending['cart'] as $id => $quantidade) {
+            $produto = Produto::find($id);
+            if ($produto) {
+                $edicoes = is_array($produto->edicoes) ? $produto->edicoes : json_decode($produto->edicoes, true);
+                $preco = $edicoes[0]['preco'] ?? 0;
+
+                OrderItem::create([
+                    'order_id'     => $order->id,
+                    'product_id'   => $id,
+                    'quantity'     => $quantidade,
+                    'price'        => $preco,
+                    'total'        => $preco * $quantidade,
+                    'digital_key'  => OrderItem::gerarChaveDigital(),
+                    'key_revealed' => false,
+                ]);
+            }
+        }
+
+        session()->forget(['cart', 'boleto_pending']);
+
+        return redirect()->route('usuario.pedidos')
+            ->with('success', "Pedido {$order->order_number} registrado! Aguardando compensaÃ§Ã£o do boleto.");
+    }
+}
+
+========== app/Models/Order.php ==========
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class Order extends Model
+{
+    protected $fillable = [
+        'user_id',
+        'order_number',
+        'total_amount',
+        'discount_amount',
+        'final_amount',
+        'payment_status',
+        'order_status',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    /**
+     * Pode cancelar se:
+     * - NÃ£o estÃ¡ cancelado
+     * - Nenhuma chave foi revelada
+     */
+    public function canCancel(): bool
+    {
+        if ($this->order_status === 'cancelled') {
+            return false;
+        }
+        return !$this->items()->where('key_revealed', true)->exists();
+    }
+}
+
+========== app/Models/User.php ==========
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+
+class User extends Authenticatable
+{
+    use Notifiable;
+
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'cpf',
+        'nickname',
+        'avatar',
+    ];
+
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+
+    public function carrinho()
+    {
+        return $this->hasMany(Carrinho::class);
+    }
+}

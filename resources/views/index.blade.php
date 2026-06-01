@@ -1,351 +1,100 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GiftZone | Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Gasoek+One&family=Inria+Sans:ital,wght@1,700&display=swap" rel="stylesheet">
     <style>
-        /* --- Reset e Base --- */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Icone de carrinho */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         .nav-cart-link {
-    position: relative;
-    color: white;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    transition: color 0.2s, transform 0.2s;
-    }
+            position: relative; color: white; text-decoration: none;
+            display: inline-flex; align-items: center;
+            transition: color 0.2s, transform 0.2s;
+        }
         .nav-cart-link:hover { color: #FFDC74; transform: scale(1.1); }
         .cart-badge {
-        position: absolute;
-        top: -8px; right: -8px;
-        background: #FFDC74;
-        color: #001A20;
-        font-size: 10px;
-        font-weight: 900;
-        width: 18px; height: 18px;
-        border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-    }
-
-        /* Ícone do Avatar no Menu */
-        .nav-avatar-container {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.2s;
+            position: absolute; top: -8px; right: -8px;
+            background: #FFDC74; color: #001A20;
+            font-size: 10px; font-weight: 900;
+            width: 18px; height: 18px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
         }
 
-        .nav-avatar-container:hover {
-            transform: scale(1.08);
-        }
+        .nav-avatar-container { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+        .nav-avatar-container:hover { transform: scale(1.08); }
+        .nav-avatar-mini { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #FFDC74; object-fit: cover; background: #1F6D7E; box-shadow: 0 0 12px rgba(245, 200, 66, 0.3); }
 
-        .nav-avatar-mini {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            border: 2px solid #FFDC74;
-            object-fit: cover;
-            background: #1F6D7E;
-            box-shadow: 0 0 12px rgba(245, 200, 66, 0.3);
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #002830; color: white; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 96px 60px 0 60px; }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #002830;
-            color: white;
-            -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
-        }
-
-        /* .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 0 60px;
-        } */
-
-            .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 96px 60px 0 60px; /* Adicionado padding-top para o conteúdo não sumir sob a navbar */
-        }
-
-        /* --- Sidebar (Menu Lateral) --- */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100%;
-            background-color: #001A20;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            padding: 32px 24px;
-            display: flex;
-            flex-direction: column;
-            box-shadow: 5px 0 15px rgba(0,0,0,0.3);
-        }
-
-        .sidebar.active {
-            left: 0;
-        }
-
-        .sidebar-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 40px;
-        }
-
-        .close-menu {
-            cursor: pointer;
-            font-size: 24px;
-            background: none;
-            border: none;
-            color: white;
-        }
-
-        .menu-group {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px 0;
-        }
-
-        .menu-item {
-            display: block;
-            color: white;
-            text-decoration: none;
-            font-family: 'Gasoek One', sans-serif;
-            font-size: 16px;
-            margin-bottom: 20px;
-            font-weight: 400;
-            transition: color 0.3s;
-            text-transform: uppercase;
-            cursor: pointer;
-            border: none;
-            background: none;
-            width: 100%;
-            text-align: left;
-        }
-
+        .sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100%; background-color: #001A20; z-index: 1000; transition: all 0.3s ease; padding: 32px 24px; display: flex; flex-direction: column; box-shadow: 5px 0 15px rgba(0,0,0,0.3); }
+        .sidebar.active { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .close-menu { cursor: pointer; font-size: 24px; background: none; border: none; color: white; }
+        .menu-group { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 20px 0; }
+        .menu-item { display: block; color: white; text-decoration: none; font-family: 'Gasoek One', sans-serif; font-size: 16px; margin-bottom: 20px; font-weight: 400; transition: color 0.3s; text-transform: uppercase; cursor: pointer; border: none; background: none; width: 100%; text-align: left; }
         .menu-item:hover { color: #FFDC74; }
-
-        .sidebar-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.6);
-            display: none;
-            z-index: 999;
-        }
-
+        .sidebar-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.6); display: none; z-index: 999; }
         .sidebar-overlay.active { display: block; }
 
-        /* --- Header --- */
-        /* header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 32px 0;
-        } */
+        header { position: fixed; top: 0; left: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 60px; background: rgba(0, 40, 48, 0.75); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); z-index: 998; opacity: 0.85; transition: opacity 0.3s ease, background-color 0.3s ease; }
+        header:hover { opacity: 1; background: rgba(0, 40, 48, 0.95); }
+        .logo-area { display: flex; align-items: center; gap: 20px; }
+        .hamburger { cursor: pointer; display: flex; flex-direction: column; gap: 6px; background: none; border: none; }
+        .hamburger span { display: block; width: 24px; height: 2px; background-color: white; }
+        .logo-box { height: 44px; display: flex; align-items: center; }
+        .logo-box img { height: 100%; width: 160px; }
+        .user-auth-area { display: flex; align-items: center; gap: 15px; }
+        .btn-entrar { border: 1px solid rgba(255, 255, 255, 0.3); padding: 12px 36px; border-radius: 8px; color: white; text-decoration: none; font-weight: 500; font-size: 18px; transition: all 0.3s ease; background: transparent; cursor: pointer; }
+        .btn-entrar:hover { background: rgba(255, 255, 255, 0.1); }
 
-            header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 60px; /* Mantém o alinhamento horizontal do container */
-            background: rgba(0, 40, 48, 0.75); /* Cor de fundo translúcida */
-            backdrop-filter: blur(8px); /* Efeito de desfoque ao fundo */
-            -webkit-backdrop-filter: blur(8px);
-            z-index: 998; /* Fica abaixo apenas da sidebar */
-            opacity: 0.85; /* Opacidade padrão ao descer */
-            transition: opacity 0.3s ease, background-color 0.3s ease;
-        }
+        /* Botão de idioma */
+        .lang-toggle { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,220,116,0.25); color: #FFDC74; border-radius: 20px; padding: 6px 14px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 4px; letter-spacing: 0.5px; font-family: 'Inter', sans-serif; }
+        .lang-toggle:hover { background: rgba(255,220,116,0.15); border-color: #FFDC74; }
 
-        header:hover {
-            opacity: 1;
-            background: rgba(0, 40, 48, 0.95);
-        }
-
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .hamburger {
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            background: none;
-            border: none;
-        }
-
-        .hamburger span {
-            display: block;
-            width: 24px;
-            height: 2px;
-            background-color: white;
-        }
-
-        .logo-box {
-            height: 44px; 
-            display: flex;
-            align-items: center;
-        }
-
-        .logo-box img {
-            height: 100%;
-            width: 160px;
-        }
-
-        .user-auth-area {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .user-name-display {
-            font-family: 'Gasoek One';
-            color: #FFDC74;
-            font-size: 16px;
-            text-transform: uppercase;
-        }
-
-        .btn-entrar {
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 12px 36px;
-            border-radius: 8px;
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 18px;
-            transition: all 0.3s ease;
-            background: transparent;
-            cursor: pointer;
-        }
-
-        .btn-entrar:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* --- Banner Hero --- */
-        .hero-banner {
-            width: 100%;
-            aspect-ratio: 1688 / 803;
-            border-radius: 24px;
-            margin-bottom: 56px;
-            position: relative;
-            overflow: hidden;
-        }
-
+        .hero-banner { width: 100%; aspect-ratio: 1688 / 803; border-radius: 24px; margin-bottom: 56px; position: relative; overflow: hidden; }
         .carousel-container, .carousel-slides { width: 100%; height: 100%; position: relative; }
-
-        .carousel-slide {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-size: cover; background-position: center;
-            opacity: 0; transition: opacity 0.6s ease;
-        }
-
+        .carousel-slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 0.6s ease; }
         .carousel-slide.active { opacity: 1; }
-
         .slide-content { position: absolute; bottom: 15%; left: 8%; z-index: 5; }
-
         .slide-platform { font-family: 'Gasoek One', sans-serif; font-size: 18px; color: #FFDC74; margin-bottom: 12px; font-weight: 400; }
-
         .slide-title { font-family: 'Gasoek One', sans-serif; font-size: 56px; line-height: 1.1; margin-bottom: 8px; font-weight: 400; }
-
         .slide-subtitle { font-size: 24px; font-weight: 400; margin-bottom: 16px; color: rgba(255,255,255,0.8); }
-
-        .slide-badge {
-            display: inline-block;
-            background-color: #0066CC;
-            padding: 8px 24px;
-            border-radius: 30px;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
+        .slide-badge { display: inline-block; background-color: #0066CC; padding: 8px 24px; border-radius: 30px; font-weight: 500; font-size: 14px; }
         .carousel-thumbnails { position: absolute; bottom: 24px; right: 24px; display: flex; gap: 16px; z-index: 10; }
-
-        .thumbnail {
-            width: 140px; height: 78px; border-radius: 12px;
-            background-size: cover; cursor: pointer;
-            border: 2px solid rgba(255, 255, 255, 0.2); opacity: 0.7;
-        }
-
+        .thumbnail { width: 140px; height: 78px; border-radius: 12px; background-size: cover; cursor: pointer; border: 2px solid rgba(255, 255, 255, 0.2); opacity: 0.7; }
         .thumbnail.active { border-color: white; opacity: 1; }
 
-        /* --- Seções --- */
         section { margin-bottom: 64px; }
-
         .section-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 28px; }
-
         .section-title { font-family: 'Gasoek One', sans-serif; font-size: 32px; color: #FDE9A2; font-weight: 400; }
-
         .ver-mais { font-family: 'Inria Sans', sans-serif; font-style: italic; font-weight: 700; color: #FFDC74; text-decoration: none; }
 
         .grid-games { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
-
-        .card {
-            position: relative; background: #001A20; border-radius: 20px;
-            overflow: hidden; aspect-ratio: 388 / 287; transition: transform 0.3s ease;
-        }
-
+        .card { position: relative; background: #001A20; border-radius: 20px; overflow: hidden; aspect-ratio: 388 / 287; transition: transform 0.3s ease; text-decoration: none; display: block; }
         .card:hover { transform: translateY(-8px); }
-
-        .card-header {
-            position: absolute; top: 0; left: 0; width: 100%; padding: 12px 0;
-            text-align: center; font-weight: 600; font-size: 13px; z-index: 2; text-transform: uppercase;
-        }
-
+        .card-header { position: absolute; top: 0; left: 0; width: 100%; padding: 12px 0; text-align: center; font-weight: 600; font-size: 13px; z-index: 2; text-transform: uppercase; color: white; }
         .card-img { width: 100%; height: 100%; background-size: cover; background-position: center; }
 
         .bg-ps { background-color: #0066CC; }
         .bg-steam { background-color: #1B4F5E; }
         .bg-nintendo { background-color: #E60012; }
+        .bg-xbox { background-color: #107C10; }
 
-  /* FOOTER */
         footer { background: #001e25; border-top: 1px solid rgba(253,233,162,.1); padding: 28px 32px; }
         .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
         .footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
         .footer-logo img { height: 30px; }
-        .footer-logo span { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 1.4rem; color: var(--accent); }
         .footer-bottom { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
         .footer-copy { font-size: .78rem; color: #6a9a94; }
         .social-links { display: flex; gap: 14px; }
         .social-links a { color: #6a9a94; text-decoration: none; transition: color .2s; }
-        .social-links a:hover { color: var(--accent); }
+        .social-links a:hover { color: #FFDC74; }
 
-        
-        /* Responsividade */
-        @media (max-width: 900px) {
-            .grid-games { grid-template-columns: repeat(2, 1fr); }
-            .container { padding: 0 20px; }
-            .slide-title { font-size: 32px; }
-            .thumbnail { width: 80px; height: 50px; }
-        }
-
-        @media (max-width: 600px) {
-            .grid-games { grid-template-columns: 1fr; }
-            .btn-entrar { padding: 8px 20px; font-size: 14px; }
-            .footer-info { flex-direction: column; gap: 20px; text-align: center; }
-        }
+        @media (max-width: 900px) { .grid-games { grid-template-columns: repeat(2, 1fr); } .container { padding: 96px 20px 0; } .slide-title { font-size: 32px; } .thumbnail { width: 80px; height: 50px; } }
+        @media (max-width: 600px) { .grid-games { grid-template-columns: 1fr; } .btn-entrar { padding: 8px 20px; font-size: 14px; } }
     </style>
 </head>
 <body>
@@ -355,28 +104,25 @@
     <div class="sidebar-header">
         <button class="close-menu" id="closeBtn">✕</button>
     </div>
-    
     <nav class="menu-group">
-        <a href="{{ route('home') }}" class="menu-item">Início</a>
-        <a href="{{ route('catalogo') }}" class="menu-item">Catálogo</a>
-        <a href="#" class="menu-item">Ofertas</a>
+        <a href="{{ route('home') }}" class="menu-item">{{ __('messages.home') }}</a>
+        <a href="{{ route('catalogo') }}" class="menu-item">{{ __('messages.catalog') }}</a>
+        <a href="#" class="menu-item">{{ __('messages.offers') }}</a>
     </nav>
-
     <nav class="menu-group">
-    <a href="{{ route('catalogo', ['plataforma' => 'PlayStation 5']) }}" class="menu-item">Playstation</a>
-    <a href="{{ route('catalogo', ['plataforma' => 'Xbox']) }}" class="menu-item">Xbox</a>
-    <a href="{{ route('catalogo', ['plataforma' => 'Nintendo Switch']) }}" class="menu-item">Nintendo</a>
-    <a href="{{ route('catalogo', ['plataforma' => 'PC']) }}" class="menu-item">Steam</a>
-</nav>
-
+        <a href="{{ route('catalogo', ['plataforma' => 'PlayStation 5']) }}" class="menu-item">{{ __('messages.playstation') }}</a>
+        <a href="{{ route('catalogo', ['plataforma' => 'Xbox']) }}" class="menu-item">{{ __('messages.xbox') }}</a>
+        <a href="{{ route('catalogo', ['plataforma' => 'Nintendo Switch']) }}" class="menu-item">{{ __('messages.nintendo') }}</a>
+        <a href="{{ route('catalogo', ['plataforma' => 'PC']) }}" class="menu-item">{{ __('messages.steam') }}</a>
+    </nav>
     <nav class="menu-group">
         @auth
             <form action="{{ route('logout') }}" method="POST" id="logout-form-side">
                 @csrf
-                <button type="submit" class="menu-item">Sair ({{ Auth::user()->name }})</button>
+                <button type="submit" class="menu-item">{{ __('messages.logout') }} ({{ Auth::user()->name }})</button>
             </form>
         @else
-            <a href="{{ route('login') }}" class="menu-item">Entrar</a>
+            <a href="{{ route('login') }}" class="menu-item">{{ __('messages.enter') }}</a>
         @endauth
     </nav>
 </aside>
@@ -385,9 +131,7 @@
     <header>
         <div class="logo-area">
             <button class="hamburger" id="menuBtn">
-                <span></span>
-                <span></span>
-                <span></span>
+                <span></span><span></span><span></span>
             </button>
             <div class="logo-box">
                 <a href="{{ route('home') }}">
@@ -395,59 +139,40 @@
                 </a>
             </div>
         </div>
-        
-        <!-- <div class="user-auth-area">
+
+        <div class="user-auth-area">
+            {{-- BOTÃO DE IDIOMA — só aparece na home --}}
+            <form action="{{ route('idioma.trocar') }}" method="POST" style="margin:0;">
+                @csrf
+                <button type="submit" name="locale" value="{{ app()->getLocale() === 'pt' ? 'en' : 'pt' }}" class="lang-toggle">
+                    @if(app()->getLocale() === 'pt')
+                        🇺🇸 EN
+                    @else
+                        🇧🇷 PT
+                    @endif
+                </button>
+            </form>
+
+            <a href="{{ route('carrinho.index') }}" class="nav-cart-link" title="{{ __('messages.my_cart') }}">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="9" cy="21" r="1"></circle>
+                    <circle cx="20" cy="21" r="1"></circle>
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                </svg>
+                @if($cartCount > 0)
+                    <span class="cart-badge">{{ $cartCount }}</span>
+                @endif
+            </a>
+
             @auth
-                <span class="user-name-display">{{ Auth::user()->name }}</span>
-
-                
-                <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-                    @csrf
-                    <button type="submit" class="btn-entrar">Sair</button>
-                </form>
-            @else
-                <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
-            @endauth
-        </div> -->
-
-        <!-- <div class="user-auth-area">
-    @auth
-        <a href="{{ route('usuario.perfil') }}" class="user-name-display" style="text-decoration: none;">{{ Auth::user()->name }}</a>
-        
-        <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-            @csrf
-            <button type="submit" class="btn-entrar">Sair</button>
-        </form>
-    @else
-        <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
-    @endauth
-</div> -->
-
-<div class="user-auth-area">
-
-        <a href="{{ route('carrinho.index') }}" class="nav-cart-link" title="Meu Carrinho">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="9" cy="21" r="1"></circle>
-        <circle cx="20" cy="21" r="1"></circle>
-        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-    </svg>
-    @php $qtdCarrinho = array_sum(array_column(session('carrinho', []), 'quantidade')); @endphp
-    @if($qtdCarrinho > 0)<span class="cart-badge">{{ $qtdCarrinho }}</span>@endif
-    </a>
-            @auth
-                <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="Meu Perfil">
-                    <img class="nav-avatar-mini" 
-                         src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}" 
+                <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="{{ __('messages.my_profile') }}">
+                    <img class="nav-avatar-mini"
+                         src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}"
                          alt="Avatar de {{ Auth::user()->name }}"
-                         onerror="this.src='https://via.placeholder.com/44/1F6D7E/FFDC74?text=GZ'">
+                         onerror="this.src='{{ asset('images/icone1.svg') }}'">
                 </a>
-                
-                <!-- <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-                    @csrf
-                    <button type="submit" class="btn-entrar">Sair</button>
-                </form> -->
             @else
-                <a href="{{ route('login') }}" class="btn-entrar">Entrar</a>
+                <a href="{{ route('login') }}" class="btn-entrar">{{ __('messages.enter') }}</a>
             @endauth
         </div>
     </header>
@@ -460,7 +185,7 @@
                         <div class="slide-platform">PS5</div>
                         <div class="slide-title">DEATH STRANDING 2</div>
                         <div class="slide-subtitle">ON THE BEACH</div>
-                        <div class="slide-badge">JÁ DISPONÍVEL</div>
+                        <div class="slide-badge">{{ __('messages.already_available') }}</div>
                     </div>
                 </div>
                 <div class="carousel-slide" style="background-image: url('{{ asset('images/sillenthillF.webp') }}');">
@@ -468,7 +193,7 @@
                         <div class="slide-platform">PS5 / PC</div>
                         <div class="slide-title">SILENT HILL</div>
                         <div class="slide-subtitle">RETORNO AO PESADELO</div>
-                        <div class="slide-badge">EM BREVE</div>
+                        <div class="slide-badge">{{ __('messages.coming_soon') }}</div>
                     </div>
                 </div>
                 <div class="carousel-slide" style="background-image: url('{{ asset('images/exped33.webp') }}');">
@@ -476,7 +201,7 @@
                         <div class="slide-platform">XBOX / PC</div>
                         <div class="slide-title">EXPEDIÇÃO</div>
                         <div class="slide-subtitle">A GRANDE AVENTURA</div>
-                        <div class="slide-badge">PRÉ-VENDA AGORA</div>
+                        <div class="slide-badge">{{ __('messages.pre_order_now') }}</div>
                     </div>
                 </div>
             </div>
@@ -488,98 +213,91 @@
         </div>
     </div>
 
+    @php
+    function badgeClass($plats) {
+        if (in_array('PlayStation 5', $plats) || in_array('PlayStation 4', $plats)) return 'bg-ps';
+        if (in_array('Nintendo Switch', $plats)) return 'bg-nintendo';
+        if (in_array('Xbox', $plats)) return 'bg-xbox';
+        return 'bg-steam';
+    }
+    function badgeLabel($plats) {
+        if (in_array('PlayStation 5', $plats) || in_array('PlayStation 4', $plats)) return 'PLAYSTATION STORE';
+        if (in_array('Nintendo Switch', $plats)) return 'NINTENDO ESHOP';
+        if (in_array('Xbox', $plats)) return 'XBOX STORE';
+        return 'STEAM';
+    }
+    @endphp
+
     <section>
         <div class="section-header">
-            <h2 class="section-title">Mais Procurados</h2>
-            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
+            <h2 class="section-title">{{ __('messages.most_wanted') }}</h2>
+            <a href="{{ route('catalogo') }}" class="ver-mais">{{ __('messages.see_more') }}</a>
         </div>
         <div class="grid-games">
-            <div class="card">
-                <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/deathstra.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/bf6.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/pokemon.webp') }}');"></div>
-            </div>
+            @foreach($maisprocurados as $jogo)
+            @php $plats = is_array($jogo->plataformas) ? $jogo->plataformas : []; @endphp
+            <a href="{{ route('produto.show', $jogo->slug) }}" class="card">
+                <div class="card-header {{ badgeClass($plats) }}">{{ badgeLabel($plats) }}</div>
+                <div class="card-img" style="background-image: url('{{ asset('images/' . $jogo->imagem_principal) }}');"></div>
+            </a>
+            @endforeach
         </div>
     </section>
 
     <section>
         <div class="section-header">
-            <h2 class="section-title">Jogos PlayStation</h2>
-            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
+            <h2 class="section-title">{{ __('messages.ps_games') }}</h2>
+            <a href="{{ route('catalogo', ['plataforma' => 'PlayStation 5']) }}" class="ver-mais">{{ __('messages.see_more') }}</a>
         </div>
         <div class="grid-games">
-            <div class="card">
+            @foreach($playstation as $jogo)
+            <a href="{{ route('produto.show', $jogo->slug) }}" class="card">
                 <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/ghost.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/resevil.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-ps">PLAYSTATION STORE</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/gow.webp') }}');"></div>
-            </div>
+                <div class="card-img" style="background-image: url('{{ asset('images/' . $jogo->imagem_principal) }}');"></div>
+            </a>
+            @endforeach
         </div>
     </section>
 
     <section>
         <div class="section-header">
-            <h2 class="section-title">Jogos Steam</h2>
-            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
+            <h2 class="section-title">{{ __('messages.steam_games') }}</h2>
+            <a href="{{ route('catalogo', ['plataforma' => 'PC']) }}" class="ver-mais">{{ __('messages.see_more') }}</a>
         </div>
         <div class="grid-games">
-            <div class="card">
+            @foreach($steam as $jogo)
+            <a href="{{ route('produto.show', $jogo->slug) }}" class="card">
                 <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/tlou.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/hunt.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-steam">STEAM</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/hogleg.webp') }}');"></div>
-            </div>
+                <div class="card-img" style="background-image: url('{{ asset('images/' . $jogo->imagem_principal) }}');"></div>
+            </a>
+            @endforeach
         </div>
     </section>
 
     <section>
         <div class="section-header">
-            <h2 class="section-title">Universo Nintendo</h2>
-            <a href="{{ route('catalogo') }}" class="ver-mais">Ver Mais →</a>
+            <h2 class="section-title">{{ __('messages.nintendo_universe') }}</h2>
+            <a href="{{ route('catalogo', ['plataforma' => 'Nintendo Switch']) }}" class="ver-mais">{{ __('messages.see_more') }}</a>
         </div>
         <div class="grid-games">
-            <div class="card">
+            @foreach($nintendo as $jogo)
+            <a href="{{ route('produto.show', $jogo->slug) }}" class="card">
                 <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/pokemon.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/mario.webp') }}');"></div>
-            </div>
-            <div class="card">
-                <div class="card-header bg-nintendo">NINTENDO ESHOP</div>
-                <div class="card-img" style="background-image: url('{{ asset('images/zelda.webp') }}');"></div>
-            </div>
+                <div class="card-img" style="background-image: url('{{ asset('images/' . $jogo->imagem_principal) }}');"></div>
+            </a>
+            @endforeach
         </div>
     </section>
+
 </div>
 
 <footer>
     <div class="footer-inner">
         <a href="/" class="footer-logo">
             <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone" onerror="this.style.display='none'">
-           </a>
+        </a>
         <div class="footer-bottom">
-            <span class="footer-copy">© {{ date('Y') }} GiftZone Todos direitos Reservados</span>
+            <span class="footer-copy">© {{ date('Y') }} GiftZone {{ __('messages.all_rights') }}</span>
             <div class="social-links">
                 <a href="#" aria-label="Instagram"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 1.366.062 2.633.336 3.608 1.311.975.975 1.249 2.242 1.311 3.608.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.062 1.366-.336 2.633-1.311 3.608-.975.975-2.242 1.249-3.608 1.311-1.266.058-1.646.07-4.85.07s-3.584-.012-4.85-.07c-1.366-.062-2.633-.336-3.608-1.311-.975-.975-1.249-2.242-1.311-3.608C2.175 15.584 2.163 15.204 2.163 12s.012-3.584.07-4.85c.062-1.366.336-2.633 1.311-3.608C4.519 2.567 5.786 2.293 7.152 2.231 8.418 2.175 8.796 2.163 12 2.163zm0-2.163C8.741 0 8.332.014 7.052.072 5.197.157 3.355.673 2.014 2.014.673 3.355.157 5.197.072 7.052.014 8.332 0 8.741 0 12c0 3.259.014 3.668.072 4.948.085 1.855.601 3.697 1.942 5.038 1.341 1.341 3.183 1.857 5.038 1.942C8.332 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 1.855-.085 3.697-.601 5.038-1.942 1.341-1.341 1.857-3.183 1.942-5.038C23.986 15.668 24 15.259 24 12c0-3.259-.014-3.668-.072-4.948-.085-1.855-.601-3.697-1.942-5.038C20.645.673 18.803.157 16.948.072 15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zm0 10.162a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
                 <a href="#" aria-label="Twitter"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg></a>
@@ -591,7 +309,6 @@
 </footer>
 
 <script>
-    // Menu Lateral
     const menuBtn = document.getElementById('menuBtn');
     const closeBtn = document.getElementById('closeBtn');
     const sidebar = document.getElementById('sidebar');
@@ -606,7 +323,6 @@
     closeBtn.addEventListener('click', toggleMenu);
     overlay.addEventListener('click', toggleMenu);
 
-    // Carrossel
     let currentIndex = 0;
     const slides = document.querySelectorAll('.carousel-slide');
     const thumbnails = document.querySelectorAll('.thumbnail');

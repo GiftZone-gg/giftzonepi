@@ -1,11 +1,96 @@
 # Sobre o projeto - GiftZone
+
+## Projeto Integrador — Sistemas para Internet (2026.1)
+
+E-commerce full stack para venda de chaves digitais de jogos.
+
+### Equipe
+- Junior Souza
+- Bruno Assis
+- Lissandra Esther
+
+### Stack Tecnológica
+| Camada | Tecnologia |
+|---|---|
+| **Frontend** | HTML, CSS, JavaScript (Blade Templates) |
+| **Backend** | Laravel 13 (PHP 8.5) |
+| **Banco de Dados** | Supabase (PostgreSQL) |
+| **Pagamento** | Stripe (sandbox) + PIX + Boleto |
+| **Hospedagem** | Render.com |
+| **E-mail** | Mailtrap (teste) / SMTP |
+
+### Funcionalidades
+- Cadastro com confirmação de e-mail real
+-  Login com proteção de rotas e sessão
+-  Recuperação de senha via e-mail
+- Catálogo com filtros (categoria, plataforma, preço)
+- Página de produto com galeria e produtos relacionados
+- Carrinho de compras com edição de quantidade
+- Checkout com múltiplos métodos de pagamento
+- Pagamento via PIX (QR Code), Boleto e Cartão
+- Integração com Stripe (sandbox)
+- Painel do usuário (perfil, pedidos, favoritos, pagamentos, notificações)
+-  Painel administrativo (dashboard, CRUD produtos, gestão pedidos)
+- Sistema de chaves digitais com revelação segura
+- Notificações em tempo real
+- Internacionalização (PT-BR / EN)
+- Design responsivo (mobile + desktop)
+-  Upload e crop de avatar
+
+### Como Rodar Localmente
+
+```bash
+# Clone o repositório
+git clone https://github.com/jrniorno/giftzonepi.git
+cd giftzonepi
+
+# Instale dependências
+composer install
+
+# Configure o ambiente
+cp .env.example .env
+php artisan key:generate
+
+# Configure o banco de dados no .env
+# DB_CONNECTION=pgsql (Supabase) ou sqlite (local)
+
+# Rode as migrations
+php artisan migrate
+
+# Inicie o servidor
+php artisan serve
+
+=====================
+**Junior - 31.05.2026**
+
+* Revisei os códigos com auxílio do claude e corrigi os erros nas páginas de produto, index, catálogo e nos models
+
+* Corrigi o erro do carrinho de compras na navbar, agora o mesmo mostra o número de produtos em conta
+
+* Finalizei a página de pedidos, agora o usuário tem acesso ao registro de comprar e consegue acessar suas chaves
+
+* Completei os métodos de pagamento
+
+* Corrigi a página de pagamentos, permitindo que o usuário adicione seu cartões. O método também identifica a bandeira do cartão.
+
+* Implementei o i18n de forma completa, com opções em inglês ou português
+
+* Implementei um sistema de verificação de emails na criação de contas usando mailtrap.io
+
+* Implementei o sistema de recuperação de senhas
+
+* Adicionei o sistema de produtos relacionados e notificações
+
+
+
+=============
 **Bruno (16/05/2026):** - Página de catálogo restruturada para se adequar ao design limpo e agradável do site, atualização das imagens para o mesmo formato de arquivo. 
 
 - Padronização de estilos nas páginas.
 
 to fix: Deixar os filtros do catálogo funcionais.
 
-
+================
 **Bruno (31/05/2026):**
 
 * Alterei o estilo da página de carrinho, para ser condizente com o figma da organização.
@@ -94,3 +179,4 @@ Faltam os models → ainda não criei os arquivos Order e OrderItem (por isso es
 * tela de pedidos com erro/faltando
 * adicionar os requisitos dos games
 * adicionar metodo de pagamento - usuario
+

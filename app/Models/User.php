@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use Notifiable;
 
@@ -14,6 +15,9 @@ class User extends Authenticatable
         'email',
         'password',
         'cpf',
+        'nickname',
+        'avatar',
+        'is_admin',
     ];
 
     protected $hidden = [
@@ -21,9 +25,28 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    // Use o nome da classe como string para evitar erros de namespace
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'is_admin'          => 'boolean',
+    ];
+
     public function carrinho()
     {
-        return $this->hasMany('App\Models\Carrinho');
+        return $this->hasMany(Carrinho::class);
+    }
+
+    public function paymentMethods()
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
+
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->is_admin === true;
     }
 }
