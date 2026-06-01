@@ -10,21 +10,24 @@ class ProdutoController extends Controller
 {
     public function home()
     {
-        $maisprocurados = Produto::where('ativo', true)->inRandomOrder()->take(3)->get();
+        $todos = Produto::where('ativo', true)->get();
 
-        $playstation = Produto::where('ativo', true)
-            ->where(function ($q) {
-                $q->whereJsonContains('plataformas', 'PlayStation 5')
-                  ->orWhereJsonContains('plataformas', 'PlayStation 4');
-            })->take(3)->get();
+        $maisprocurados = $todos->shuffle()->take(3);
 
-        $steam = Produto::where('ativo', true)
-            ->whereJsonContains('plataformas', 'PC')
-            ->take(3)->get();
+        $playstation = $todos->filter(function($p) {
+            $plats = is_array($p->plataformas) ? $p->plataformas : [];
+            return in_array('PlayStation 5', $plats) || in_array('PlayStation 4', $plats) || in_array('PS5', $plats) || in_array('PS4', $plats);
+        })->take(3)->values();
 
-        $nintendo = Produto::where('ativo', true)
-            ->whereJsonContains('plataformas', 'Nintendo Switch')
-            ->take(3)->get();
+        $steam = $todos->filter(function($p) {
+            $plats = is_array($p->plataformas) ? $p->plataformas : [];
+            return in_array('PC', $plats);
+        })->take(3)->values();
+
+        $nintendo = $todos->filter(function($p) {
+            $plats = is_array($p->plataformas) ? $p->plataformas : [];
+            return in_array('Nintendo Switch', $plats);
+        })->take(3)->values();
 
         return view('index', compact('maisprocurados', 'playstation', 'steam', 'nintendo'));
     }
@@ -40,31 +43,18 @@ class ProdutoController extends Controller
                 ->exists();
         }
 
-        // ─── Produtos Relacionados ───
-        $relacionados = Produto::where('ativo', true)
-            ->where('id', '!=', $produto->id)
-            ->where(function ($query) use ($produto) {
-                if ($produto->genero) {
-                    $query->where('genero', $produto->genero);
-                }
-                if (is_array($produto->plataformas)) {
-                    foreach ($produto->plataformas as $plat) {
-                        $query->orWhereJsonContains('plataformas', $plat);
-                    }
-                }
-            })
-            ->where('id', '!=', $produto->id)
-            ->inRandomOrder()
-            ->take(4)
-            ->get();
+        $todos = Produto::where('ativo', true)->where('id', '!=', $produto->id)->get();
+
+        $relacionados = $todos->filter(function($p) use ($produto) {
+            if ($produto->genero && $p->genero === $produto->genero) return true;
+            $plats = is_array($produto->plataformas) ? $produto->plataformas : [];
+            $pPlats = is_array($p->plataformas) ? $p->plataformas : [];
+            return count(array_intersect($plats, $pPlats)) > 0;
+        })->shuffle()->take(4);
 
         if ($relacionados->count() < 4) {
             $idsExcluir = $relacionados->pluck('id')->push($produto->id)->toArray();
-            $complemento = Produto::where('ativo', true)
-                ->whereNotIn('id', $idsExcluir)
-                ->inRandomOrder()
-                ->take(4 - $relacionados->count())
-                ->get();
+            $complemento = $todos->whereNotIn('id', $idsExcluir)->shuffle()->take(4 - $relacionados->count());
             $relacionados = $relacionados->merge($complemento);
         }
 
