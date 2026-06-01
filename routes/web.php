@@ -9,9 +9,7 @@ use App\Http\Controllers\ProdutoController;
 
 Route::get('/produto/{slug}', [ProdutoController::class, 'show'])->name('produto.show');
 
-Route::get('/', function () {
-    return view('index');
-})->name('home');
+Route::get('/', [ProdutoController::class, 'home'])->name('home');
 
 Route::get('/login', function () {
     return view('login');
