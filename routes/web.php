@@ -29,21 +29,7 @@ Route::get('/catalogo', function () {
 })->name('catalogo');
 Route::get('/produto/{slug}', [ProdutoController::class, 'show'])->name('produto.show');
 
-<<<<<<< HEAD
 // ─── Auth ───
-=======
-Route::get('/', [ProdutoController::class, 'home'])->name('home');
-
-Route::get('/login', function () {
-    return view('login');
-})->name('login');
-
-Route::get('/catalogo', function () {
-    $jogos = App\Models\Produto::where('ativo', true)->get();
-    return view('catalogo', compact('jogos'));
-})->name('catalogo');
-
->>>>>>> 8f8792f46e75329bf093354c25e627c14b85d5d7
 Route::post('/login-action', [AuthController::class, 'login'])->name('login.auth');
 Route::post('/register-action', [AuthController::class, 'register'])->name('register.auth');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -54,7 +40,7 @@ Route::post('/forgot-password', [AuthController::class, 'forgotPasswordSend'])->
 Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'resetPasswordUpdate'])->name('password.update');
 
-// ─── Verificação de E-mail (precisa estar logado, NÃO precisa estar verificado) ───
+// ─── Verificação de E-mail ───
 Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [AuthController::class, 'verificationNotice'])->name('verification.notice');
     Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
@@ -65,7 +51,7 @@ Route::middleware('auth')->group(function () {
         ->name('verification.resend');
 });
 
-// ─── Carrinho (session, funciona com e sem login) ───
+// ─── Carrinho ───
 Route::get('/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');
 Route::post('/carrinho/adicionar/{id}', [CarrinhoController::class, 'adicionar'])->name('carrinho.adicionar');
 Route::patch('/carrinho/atualizar/{id}', [CarrinhoController::class, 'atualizar'])->name('carrinho.atualizar');
@@ -98,15 +84,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // ─── Painel do Usuário ───
     Route::prefix('usuario')->name('usuario.')->group(function () {
-
-Route::get('/notificacoes', [UsuarioController::class, 'notificacoes'])->name('notificacoes');
-Route::delete('/notificacoes/{id}', [UsuarioController::class, 'notificacaoExcluir'])->name('notificacoes.excluir');
-
         Route::get('/perfil', [UsuarioController::class, 'perfil'])->name('perfil');
         Route::get('/pedidos', [UsuarioController::class, 'pedidos'])->name('pedidos');
         Route::get('/pagamentos', [UsuarioController::class, 'pagamentos'])->name('pagamentos');
         Route::get('/favoritos', [UsuarioController::class, 'favoritos'])->name('favoritos');
         Route::delete('/favoritos/{id}', [UsuarioController::class, 'removerFavorito'])->name('favoritos.remover');
+        Route::get('/notificacoes', [UsuarioController::class, 'notificacoes'])->name('notificacoes');
+        Route::delete('/notificacoes/{id}', [UsuarioController::class, 'notificacaoExcluir'])->name('notificacoes.excluir');
         Route::get('/editar', [UsuarioController::class, 'editar'])->name('editar');
         Route::put('/editar', [UsuarioController::class, 'editarSalvar'])->name('editar.salvar');
         Route::delete('/excluir-conta', [UsuarioController::class, 'excluirConta'])->name('excluir.conta');
