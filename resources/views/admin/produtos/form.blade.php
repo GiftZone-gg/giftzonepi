@@ -215,10 +215,14 @@
             <p class="form-section-title">Requisitos de Sistema (PC)</p>
             <div class="form-grid">
                 <div class="form-group full" style="margin-bottom: 4px;">
-                    <label class="form-label" style="color: #6bffb5;">Minimo</label>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">CPU</label>
+    <label class="form-label" style="color: #6bffb5;">Minimo</label>
+</div>
+<div class="form-group">
+    <label class="form-label">SO</label>
+    <input class="form-input" type="text" name="req_min_so" value="{{ old('req_min_so', $req['minimo']['so'] ?? '') }}" placeholder="Ex: Windows 10 64-bit">
+</div>
+<div class="form-group">
+    <label class="form-label">CPU</label>
                     <input class="form-input" type="text" name="req_min_cpu" value="{{ old('req_min_cpu', $req['minimo']['cpu'] ?? '') }}" placeholder="Ex: Intel Core i5-6600">
                 </div>
                 <div class="form-group">
@@ -235,10 +239,14 @@
                 </div>
 
                 <div class="form-group full" style="margin-bottom: 4px; margin-top: 8px;">
-                    <label class="form-label" style="color: #FDE9A2;">Recomendado</label>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">CPU</label>
+    <label class="form-label" style="color: #FDE9A2;">Recomendado</label>
+</div>
+<div class="form-group">
+    <label class="form-label">SO</label>
+    <input class="form-input" type="text" name="req_rec_so" value="{{ old('req_rec_so', $req['recomendado']['so'] ?? '') }}" placeholder="Ex: Windows 11 64-bit">
+</div>
+<div class="form-group">
+    <label class="form-label">CPU</label>
                     <input class="form-input" type="text" name="req_rec_cpu" value="{{ old('req_rec_cpu', $req['recomendado']['cpu'] ?? '') }}" placeholder="Ex: Intel Core i7-8700">
                 </div>
                 <div class="form-group">

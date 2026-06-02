@@ -87,14 +87,16 @@ class AdminController extends Controller
         }
 
         $minimo = array_filter([
-            'cpu'     => $request->req_min_cpu,
+    'so'      => $request->req_min_so,
+    'cpu'     => $request->req_min_cpu,
             'gpu'     => $request->req_min_gpu,
             'ram'     => $request->req_min_ram,
             'storage' => $request->req_min_storage,
         ]);
 
         $recomendado = array_filter([
-            'cpu'     => $request->req_rec_cpu,
+    'so'      => $request->req_rec_so,
+    'cpu'     => $request->req_rec_cpu,
             'gpu'     => $request->req_rec_gpu,
             'ram'     => $request->req_rec_ram,
             'storage' => $request->req_rec_storage,

@@ -213,8 +213,14 @@
             <div class="req-box">
                 <div class="req-title">{{ __('messages.system_requirements') }}</div>
                 <div class="req-cols">
-                    <div class="req-col"><h4>{{ __('messages.minimum') }}</h4><p>@foreach(($produto->requisitos['minimo'] ?? []) as $key => $val)<strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>@endforeach</p></div>
-                    <div class="req-col"><h4>{{ __('messages.recommended') }}</h4><p>@foreach(($produto->requisitos['recomendado'] ?? []) as $key => $val)<strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>@endforeach</p></div>
+                    <div class="req-col"><h4>{{ __('messages.minimum') }}</h4><p>@foreach(($produto->requisitos['minimo'] ?? []) as $key => $val)@php
+    $reqLabels = ['so' => 'SO', 'cpu' => 'Processador', 'gpu' => 'GPU', 'ram' => 'Memória', 'storage' => 'Armazenamento'];
+@endphp
+<strong>{{ $reqLabels[$key] ?? ucfirst($key) }}:</strong> {{ $val }}<br>@endforeach</p></div>
+                    <div class="req-col"><h4>{{ __('messages.recommended') }}</h4><p>@foreach(($produto->requisitos['recomendado'] ?? []) as $key => $val)@php
+    $reqLabels = ['so' => 'SO', 'cpu' => 'Processador', 'gpu' => 'GPU', 'ram' => 'Memória', 'storage' => 'Armazenamento'];
+@endphp
+<strong>{{ $reqLabels[$key] ?? ucfirst($key) }}:</strong> {{ $val }}<br>@endforeach</p></div>
                 </div>
             </div>
             @endif
