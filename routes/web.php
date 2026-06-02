@@ -41,18 +41,18 @@ Route::get('/reset-password/{token}', [AuthController::class, 'resetPasswordForm
 Route::post('/reset-password', [AuthController::class, 'resetPasswordUpdate'])->name('password.update');
 
 // ─── Verificação de E-mail ───
+/*
 Route::middleware('auth')->group(function () {
     Route::get('/email/verify', [AuthController::class, 'verificationNotice'])->name('verification.notice');
-    // Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
-    //     ->middleware('signed')
-    //     ->name('verification.verify');
-    Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
-    ->name('verification.verify');
+    Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])->name('verification.verify');
     Route::post('/email/resend', [AuthController::class, 'resendVerification'])
         ->middleware('throttle:6,1')
         ->name('verification.resend');
     Route::get('/email/check-verified', [AuthController::class, 'checkVerified'])->name('verification.check');
 });
+*/
+
+
 
 // ─── Carrinho ───
 Route::get('/carrinho', [CarrinhoController::class, 'index'])->name('carrinho.index');

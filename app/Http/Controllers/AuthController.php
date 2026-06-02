@@ -16,77 +16,61 @@ class AuthController extends Controller
     // ─── Registro ───
 
     public function register(Request $request)
-    {
-        // Limpa CPF antes de validar
-        $request->merge([
-            'cpf' => preg_replace('/\D/', '', $request->cpf),
-        ]);
+{
+    $request->merge([
+        'cpf' => preg_replace('/\D/', '', $request->cpf),
+    ]);
 
-        $request->validate([
-            'name'     => 'required|string|max:255',
-            'email'    => 'required|string|email|max:255|unique:users,email',
-            'cpf'      => ['required', 'string', 'size:11', 'unique:users,cpf', new CpfValido],
-            'password' => 'required|string|min:8',
-        ], [
-            'email.unique' => 'Este e-mail já está cadastrado.',
-            'cpf.unique'   => 'Este CPF já está cadastrado.',
-            'cpf.size'     => 'O CPF deve ter 11 dígitos.',
-        ]);
+    $request->validate([
+        'name'     => 'required|string|max:255',
+        'email'    => 'required|string|email|max:255|unique:users,email',
+        'cpf'      => ['required', 'string', 'size:11', 'unique:users,cpf', new CpfValido],
+        'password' => 'required|string|min:8',
+    ]);
 
-        $baseNick = Str::slug($request->name, '');
+    $baseNick = Str::slug($request->name, '');
+    $nickname = $baseNick . rand(100, 999);
+    while (User::where('nickname', $nickname)->exists()) {
         $nickname = $baseNick . rand(100, 999);
-        while (User::where('nickname', $nickname)->exists()) {
-            $nickname = $baseNick . rand(100, 999);
-        }
-
-        $user = User::create([
-            'name'     => $request->name,
-            'nickname' => $nickname,
-            'email'    => $request->email,
-            'cpf'      => $request->cpf,
-            'password' => Hash::make($request->password),
-        ]);
-
-        event(new Registered($user));
-
-        if (class_exists(\App\Models\UserNotification::class)) {
-            \App\Models\UserNotification::criarBoasVindas($user->id);
-        }
-
-        Auth::login($user);
-
-        return redirect()->route('verification.notice');
     }
+
+    $user = User::create([
+        'name'     => $request->name,
+        'nickname' => $nickname,
+        'email'    => $request->email,
+        'cpf'      => $request->cpf,
+        'password' => Hash::make($request->password),
+    ]);
+
+    Auth::login($user);
+
+    return redirect()->route('home'); // ✅ SEM VERIFICAÇÃO
+}
+
 
     // ─── Login ───
 
     public function login(Request $request)
-    {
-        $credentials = $request->validate([
-            'email'    => 'required|email',
-            'password' => 'required',
-        ]);
+{
+    $credentials = $request->validate([
+        'email'    => 'required|email',
+        'password' => 'required',
+    ]);
 
-        if (Auth::attempt($credentials, $request->has('remember'))) {
-            $request->session()->regenerate();
+    if (Auth::attempt($credentials, $request->has('remember'))) {
+        $request->session()->regenerate();
 
-            // Admin pula verificação
-            if (Auth::user()->is_admin) {
-                return redirect()->route('admin.dashboard');
-            }
-
-            // Usuário normal precisa verificar
-            if (!Auth::user()->hasVerifiedEmail()) {
-                return redirect()->route('verification.notice');
-            }
-
-            return redirect()->intended(route('home'));
+        if (Auth::user()->is_admin) {
+            return redirect()->route('admin.dashboard');
         }
 
-        return back()->withErrors([
-            'login_error' => 'E-mail ou senha incorretos.',
-        ])->withInput();
+        return redirect()->route('home'); // ✅ direto
     }
+
+    return back()->withErrors([
+        'login_error' => 'E-mail ou senha incorretos.',
+    ])->withInput();
+}
 
     // ─── Logout ───
 
