@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="{{ app()->getLocale() }}">
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>GiftZone | Home</title>
@@ -279,10 +280,10 @@
         <div class="footer-bottom">
             <span class="footer-copy">&copy; {{ date('Y') }} GiftZone {{ __('messages.all_rights') }}</span>
             <div class="social-links">
-                <a href="#" aria-label="Instagram">IG</a>
-                <a href="#" aria-label="Twitter">X</a>
-                <a href="#" aria-label="Facebook">FB</a>
-                <a href="#" aria-label="Discord">DC</a>
+                <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                <a href="#" aria-label="Discord"><i class="fa-brands fa-discord"></i></a>
             </div>
         </div>
     </div>
