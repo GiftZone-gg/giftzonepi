@@ -251,6 +251,11 @@
     }
 
     function renderizarJogos() {
+        const getImg = (img) => {
+            if (!img) return '';
+            return img.startsWith('http') ? img : `/images/${img}`;
+        };
+
         let lista = jogos.filter(j => {
             if (filtroBusca && !j.nome.toLowerCase().includes(filtroBusca.toLowerCase())) return false;
             if (filtroCategoria && j.genero !== filtroCategoria) return false;
@@ -280,7 +285,7 @@
             const plats = getPlataformas(j);
             return `<a href="/produto/${j.slug}" class="card">
                 <div class="card-header ${badgeClass(plats)}">${badgeLabel(plats)}</div>
-                <div class="card-img" style="background-image: url('/images/${j.imagem_principal}');"></div>
+                <div class="card-img" style="background-image: url('${getImg(j.imagem_principal)}');"></div>
             </a>`;
         }).join('');
     }

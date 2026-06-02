@@ -89,7 +89,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 });
 
 // ─── Rotas que exigem login + e-mail verificado ───
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     // Compra direta
     Route::post('/comprar-direto/{produto}', [CarrinhoController::class, 'comprarDireto'])->name('comprar.direto');
