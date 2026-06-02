@@ -17,11 +17,9 @@
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: #002830; color: white; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-
         .nav-right { display: flex; align-items: center; gap: 20px; }
         .nav-cart-link { position: relative; color: var(--accent); text-decoration: none; display: flex; align-items: center; }
         .cart-badge { position: absolute; top: -8px; right: -8px; background: var(--accent); color: var(--dark); font-size: 10px; font-weight: 900; width: 18px; height: 18px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-
         nav { display: flex; align-items: center; justify-content: space-between; padding: 14px 32px; background: rgba(0,40,48,0.85); backdrop-filter: blur(8px); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid rgba(253,233,162,0.12); }
         .nav-left { display: flex; align-items: center; gap: 16px; }
         .hamburger { background: none; border: none; cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
@@ -31,11 +29,9 @@
         .logo img { height: 36px; width: auto; }
         .btn-entrar { border: 1px solid rgba(255,255,255,0.3); padding: 12px 36px; border-radius: 8px; color: white; text-decoration: none; font-weight: 500; font-size: 18px; transition: all 0.3s ease; background: transparent; cursor: pointer; }
         .btn-entrar:hover { background: rgba(255,255,255,0.1); }
-
         .nav-avatar-container { display: inline-flex; align-items: center; justify-content: center; transition: transform 0.2s; text-decoration: none; }
         .nav-avatar-container:hover { transform: scale(1.08); }
         .nav-avatar-mini { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #FFDC74; object-fit: cover; background: #1F6D7E; box-shadow: 0 0 12px rgba(245, 200, 66, 0.3); }
-
         .hero { position: relative; overflow: hidden; padding: 48px 24px 40px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: linear-gradient(160deg, var(--dark) 0%, var(--mid) 60%, #003d4a 100%); }
         .hero::before { content: ''; position: absolute; width: 420px; height: 420px; border-radius: 50%; background: radial-gradient(circle, rgba(0,83,99,.55) 0%, transparent 70%); top: -120px; right: -100px; pointer-events: none; }
         .hero::after { content: ''; position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(253,233,162,.06) 0%, transparent 70%); bottom: -80px; left: -60px; pointer-events: none; }
@@ -43,37 +39,22 @@
         .hero-breadcrumb a { color: rgba(253,233,162,.5); text-decoration: none; transition: color .2s; }
         .hero-breadcrumb a:hover { color: var(--accent); }
         .hero-title { font-family: 'Gasoek One', sans-serif; font-size: clamp(1.8rem, 5vw, 3rem); font-weight: 400; color: var(--accent); letter-spacing: 4px; text-align: center; line-height: 1.1; animation: fadeDown .5s ease both; }
-
         main { max-width: 1100px; margin: 0 auto; padding: 40px 32px 80px; }
         .product-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: start; }
         @media (max-width: 760px) { .product-grid { grid-template-columns: 1fr; } }
-
         .platform-badge { display: inline-block; background: var(--cyan); color: #fff; font-size: .75rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 4px 14px; border-radius: 4px 4px 0 0; }
-
-        /* ─── MEDIA VIEWER (carrossel) ─── */
         .media-main { width: 100%; aspect-ratio: 16/9; border-radius: 0 12px 12px 12px; overflow: hidden; background: #000; position: relative; }
         .media-main img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .media-main iframe { width: 100%; height: 100%; border: none; display: block; }
-
         .media-thumbs { display: flex; gap: 8px; margin-top: 10px; overflow-x: auto; padding-bottom: 4px; }
-        .media-thumb {
-            width: 100px; height: 60px; border-radius: 8px; overflow: hidden;
-            cursor: pointer; border: 2px solid transparent; flex-shrink: 0;
-            transition: border-color .2s, transform .2s; position: relative; background: #001A20;
-        }
-        .media-thumb img { width: 100%; height: 100%; object-fit: cover; }
+        .media-thumb { width: 100px; height: 60px; border-radius: 8px; overflow: hidden; cursor: pointer; border: 2px solid transparent; flex-shrink: 0; transition: border-color .2s, transform .2s; position: relative; background: #001A20; }
+        .media-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
         .media-thumb.active, .media-thumb:hover { border-color: var(--accent); transform: scale(1.05); }
-
-        .media-thumb .play-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center;
-        }
-        .media-thumb .play-overlay svg { width: 28px; height: 28px; fill: #ff0000; }
-
+        .media-thumb .play-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; }
+        .media-thumb .play-overlay svg { width: 28px; height: 28px; }
         .desc-box { margin-top: 16px; background: rgba(0,83,99,.35); border: 1px solid rgba(253,233,162,.1); border-radius: 12px; padding: 18px 20px; animation: fadeUp .5s .1s ease both; }
         .desc-box h3 { font-size: .75rem; font-weight: 700; color: var(--accent); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px; }
         .desc-box p { font-size: .88rem; color: rgba(255,255,255,.65); line-height: 1.65; }
-
         .price-card { background: rgba(0,83,99,.4); border: 1px solid rgba(253,233,162,.18); border-radius: 16px; padding: 22px 24px; margin-bottom: 16px; animation: fadeUp .5s ease both; }
         .price-value { font-family: 'Inter', sans-serif; font-weight: 900; font-size: 2.2rem; color: var(--accent); letter-spacing: 1px; }
         .price-sub { font-size: .78rem; color: rgba(255,255,255,.45); margin-top: 3px; margin-bottom: 18px; }
@@ -105,7 +86,6 @@
         .req-col:first-child { border-right: 1px solid rgba(255,255,255,.06); }
         .req-col h4 { font-size: .72rem; font-weight: 700; color: var(--accent); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
         .req-col p { font-size: .78rem; color: rgba(255,255,255,.55); line-height: 1.75; }
-
         footer { background: #001e25; border-top: 1px solid rgba(253,233,162,.1); padding: 28px 32px; }
         .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
         .footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
@@ -115,10 +95,16 @@
         .social-links { display: flex; gap: 14px; }
         .social-links a { color: #6a9a94; text-decoration: none; transition: color .2s; }
         .social-links a:hover { color: var(--accent); }
-
         @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 600px) { nav { padding: 12px 16px; } main { padding: 28px 16px 60px; } footer { padding: 24px 16px; } .footer-bottom { flex-direction: column; align-items: flex-start; } .media-thumbs { gap: 6px; } .media-thumb { width: 80px; height: 48px; } }
+        @media (max-width: 600px) {
+            nav { padding: 12px 16px; }
+            main { padding: 28px 16px 60px; }
+            footer { padding: 24px 16px; }
+            .footer-bottom { flex-direction: column; align-items: flex-start; }
+            .media-thumbs { gap: 6px; }
+            .media-thumb { width: 80px; height: 48px; }
+        }
     </style>
 </head>
 <body>
@@ -165,26 +151,29 @@
         <div class="left-col">
             <span class="platform-badge" id="badge-platform">{{ is_array($produto->plataformas) ? ($produto->plataformas[0] ?? '') : '' }}</span>
 
-            {{-- ═══ MEDIA VIEWER ═══ --}}
             @php
-                $galeria = is_array($produto->galeria) ? $produto->galeria : [];
+                $galeriaRaw = is_array($produto->galeria) ? $produto->galeria : [];
+                $galeria = array_values(array_filter($galeriaRaw, function($img) {
+                    return !empty(trim($img));
+                }));
                 $trailerUrl = $produto->trailer_url ?? null;
                 $videoId = null;
                 if ($trailerUrl) {
                     preg_match('/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/', $trailerUrl, $tMatches);
                     $videoId = $tMatches[1] ?? null;
                 }
+                $hasTrailer = !empty($videoId);
+                $hasGallery = count($galeria) > 0;
+                $showThumbs = $hasTrailer || $hasGallery;
             @endphp
 
-            {{-- Main display --}}
             <div class="media-main" id="mediaMain">
                 <img id="mainImage" src="{{ asset('images/' . $produto->imagem_principal) }}" alt="{{ $produto->nome }}">
             </div>
 
-            {{-- Thumbnails --}}
+            @if($showThumbs)
             <div class="media-thumbs">
-                {{-- Trailer thumb --}}
-                @if($videoId)
+                @if($hasTrailer)
                 <div class="media-thumb" onclick="showTrailer('{{ $videoId }}')" id="thumb-trailer">
                     <img src="https://img.youtube.com/vi/{{ $videoId }}/mqdefault.jpg" alt="Trailer">
                     <div class="play-overlay">
@@ -193,18 +182,17 @@
                 </div>
                 @endif
 
-                {{-- Main image thumb --}}
                 <div class="media-thumb active" onclick="showImage(this, '{{ asset('images/' . $produto->imagem_principal) }}')" id="thumb-main">
                     <img src="{{ asset('images/' . $produto->imagem_principal) }}" alt="Principal">
                 </div>
 
-                {{-- Gallery thumbs --}}
                 @foreach($galeria as $idx => $img)
                 <div class="media-thumb" onclick="showImage(this, '{{ asset('images/' . $img) }}')">
-                    <img src="{{ asset('images/' . $img) }}" alt="Screenshot {{ $idx + 1 }}">
+                    <img src="{{ asset('images/' . $img) }}" alt="" onerror="this.parentElement.style.display='none'">
                 </div>
                 @endforeach
             </div>
+            @endif
 
             <div class="desc-box">
                 <h3>{{ __('messages.description') }}</h3>
@@ -298,8 +286,7 @@
             @endif
         </div>
     </div>
-
-    {{-- ═══ PRODUTOS RELACIONADOS ═══ --}}
+    {{-- PRODUTOS RELACIONADOS --}}
     @if($relacionados->count() > 0)
     <section style="max-width: 1100px; margin: 40px auto 0; padding: 0 0 60px;">
         <h2 style="font-family: 'Gasoek One', sans-serif; font-size: clamp(1.2rem, 3vw, 1.6rem); color: var(--accent); letter-spacing: 2px; margin-bottom: 24px; text-align: center;">
@@ -359,32 +346,31 @@
 </footer>
 
 <script>
-    // ─── Media Viewer ───
-    const mediaMain = document.getElementById('mediaMain');
-    const mainImage = document.getElementById('mainImage');
+    var mediaMain = document.getElementById('mediaMain');
 
     function clearActive() {
-        document.querySelectorAll('.media-thumb').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.media-thumb').forEach(function(t) { t.classList.remove('active'); });
     }
 
     function showImage(el, src) {
         clearActive();
         el.classList.add('active');
-        mediaMain.innerHTML = '<img id="mainImage" src="' + src + '" alt="Preview" style="width:100%;height:100%;object-fit:cover;">';
+        mediaMain.innerHTML = '<img src="' + src + '" alt="Preview" style="width:100%;height:100%;object-fit:cover;display:block;">';
     }
 
     function showTrailer(videoId) {
         clearActive();
-        const trailerThumb = document.getElementById('thumb-trailer');
+        var trailerThumb = document.getElementById('thumb-trailer');
         if (trailerThumb) trailerThumb.classList.add('active');
-        mediaMain.innerHTML = '<iframe src="https://www.youtube.com/embed/' + videoId + '" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>';
+        mediaMain.innerHTML = '<iframe src="https://www.youtube.com/embed/' + videoId + '" allowfullscreen style="width:100%;height:100%;border:none;display:block;"></iframe>';
     }
 
-    // ─── Platform & Edition ───
-    let plataformaSelecionada = document.querySelector('.pill.active')?.textContent.trim() || '';
+    var plataformaSelecionada = '';
+    var pillActive = document.querySelector('.pill.active');
+    if (pillActive) plataformaSelecionada = pillActive.textContent.trim();
 
     function selectPlataforma(el, plat) {
-        document.querySelectorAll('#platform-pills .pill').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('#platform-pills .pill').forEach(function(p) { p.classList.remove('active'); });
         el.classList.add('active');
         plataformaSelecionada = plat;
         document.getElementById('badge-platform').textContent = plat;
@@ -392,14 +378,14 @@
     }
 
     function selectEdicao(sel) {
-        const preco = parseFloat(sel.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+        var preco = parseFloat(sel.value).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
         document.getElementById('price-display').textContent = 'R$ ' + preco;
         atualizarLabel();
     }
 
     function atualizarLabel() {
-        const sel = document.getElementById('edition-select');
-        const nomeEd = sel.options[sel.selectedIndex]?.dataset.nome || '';
+        var sel = document.getElementById('edition-select');
+        var nomeEd = sel.options[sel.selectedIndex] ? sel.options[sel.selectedIndex].dataset.nome : '';
         document.getElementById('edition-label').textContent = nomeEd + ' \u2014 ' + plataformaSelecionada;
     }
 </script>
