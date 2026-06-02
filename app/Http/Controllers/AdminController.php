@@ -7,10 +7,18 @@ use Illuminate\Support\Str;
 use App\Models\Produto;
 use App\Models\Order;
 use App\Models\User;
+use App\Services\SupabaseStorage;
 
 class AdminController extends Controller
 {
-    // ─── Dashboard ───
+    protected SupabaseStorage $storage;
+
+    public function __construct()
+    {
+        $this->storage = new SupabaseStorage();
+    }
+
+    // --- Dashboard ---
 
     public function dashboard()
     {
@@ -36,7 +44,7 @@ class AdminController extends Controller
         ));
     }
 
-    // ─── Produtos ───
+    // --- Produtos ---
 
     public function produtos(Request $request)
     {
@@ -60,6 +68,18 @@ class AdminController extends Controller
         return view('admin.produtos.form', ['produto' => null]);
     }
 
+    private function uploadImagem($file, string $nome = ''): string
+    {
+        $url = $this->storage->upload($file, 'produtos');
+        if ($url) {
+            return $url;
+        }
+
+        $filename = time() . '_' . Str::slug($nome ?: Str::random(6)) . '.' . $file->getClientOriginalExtension();
+        $file->move(public_path('images'), $filename);
+        return $filename;
+    }
+
     public function produtoSalvar(Request $request)
     {
         $request->validate([
@@ -76,21 +96,15 @@ class AdminController extends Controller
             'trailer_url'      => 'nullable|url|max:500',
         ]);
 
-        // Upload da imagem principal
-        $imagemNome = time() . '_' . Str::slug($request->nome) . '.' . $request->file('imagem_principal')->getClientOriginalExtension();
-        $request->file('imagem_principal')->move(public_path('images'), $imagemNome);
+        $imagemNome = $this->uploadImagem($request->file('imagem_principal'), $request->nome);
 
-        // Upload da galeria
         $galeria = [];
         if ($request->hasFile('galeria')) {
             foreach ($request->file('galeria') as $img) {
-                $gNome = time() . '_' . Str::random(6) . '.' . $img->getClientOriginalExtension();
-                $img->move(public_path('images'), $gNome);
-                $galeria[] = $gNome;
+                $galeria[] = $this->uploadImagem($img);
             }
         }
 
-        // Montar edicoes
         $edicoes = [];
         if ($request->has('edicao_nome')) {
             foreach ($request->edicao_nome as $i => $nome) {
@@ -144,35 +158,35 @@ class AdminController extends Controller
             'trailer_url'      => 'nullable|url|max:500',
         ]);
 
-        // Imagem principal
         if ($request->hasFile('imagem_principal')) {
-            $imagemNome = time() . '_' . Str::slug($request->nome) . '.' . $request->file('imagem_principal')->getClientOriginalExtension();
-            $request->file('imagem_principal')->move(public_path('images'), $imagemNome);
-            $produto->imagem_principal = $imagemNome;
+            if (SupabaseStorage::isSupabaseUrl($produto->imagem_principal)) {
+                $this->storage->delete($produto->imagem_principal);
+            }
+            $produto->imagem_principal = $this->uploadImagem($request->file('imagem_principal'), $request->nome);
         }
 
-        // Galeria — adiciona novas imagens
         $galeria = is_array($produto->galeria) ? $produto->galeria : [];
+
         if ($request->hasFile('galeria')) {
             foreach ($request->file('galeria') as $img) {
-                $gNome = time() . '_' . Str::random(6) . '.' . $img->getClientOriginalExtension();
-                $img->move(public_path('images'), $gNome);
-                $galeria[] = $gNome;
+                $galeria[] = $this->uploadImagem($img);
             }
         }
 
-        // Remover imagens da galeria
         if ($request->has('remover_galeria')) {
             foreach ($request->remover_galeria as $remover) {
-                $path = public_path('images/' . $remover);
-                if (file_exists($path)) {
-                    @unlink($path);
+                if (SupabaseStorage::isSupabaseUrl($remover)) {
+                    $this->storage->delete($remover);
+                } else {
+                    $path = public_path('images/' . $remover);
+                    if (file_exists($path)) {
+                        @unlink($path);
+                    }
                 }
                 $galeria = array_values(array_diff($galeria, [$remover]));
             }
         }
 
-        // Edicoes
         $edicoes = [];
         if ($request->has('edicao_nome')) {
             foreach ($request->edicao_nome as $i => $nome) {
@@ -214,7 +228,7 @@ class AdminController extends Controller
         return back()->with('success', "Produto {$status}.");
     }
 
-    // ─── Pedidos ───
+    // --- Pedidos ---
 
     public function pedidos(Request $request)
     {
@@ -263,16 +277,18 @@ class AdminController extends Controller
 
         $order->update($statusMap[$request->order_status]);
 
-        if ($request->order_status === 'completed') {
-            \App\Models\UserNotification::criarPedidoConcluido($order->user_id, $order->order_number);
-        } elseif ($request->order_status === 'cancelled') {
-            \App\Models\UserNotification::criarPedidoCancelado($order->user_id, $order->order_number);
-        }
+        try {
+            if ($request->order_status === 'completed') {
+                \App\Models\UserNotification::criarPedidoConcluido($order->user_id, $order->order_number);
+            } elseif ($request->order_status === 'cancelled') {
+                \App\Models\UserNotification::criarPedidoCancelado($order->user_id, $order->order_number);
+            }
+        } catch (\Throwable $e) {}
 
         return back()->with('success', "Pedido {$order->order_number} atualizado.");
     }
 
-    // ─── Gestao de Usuarios ───
+    // --- Gestao de Usuarios ---
 
     public function usuarios(Request $request)
     {

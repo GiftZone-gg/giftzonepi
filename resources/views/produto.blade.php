@@ -6,15 +6,7 @@
     <title>{{ $produto->nome }} – GiftZone</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Gasoek+One&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --dark:   #002830;
-            --mid:    #005363;
-            --accent: #FDE9A2;
-            --white:  #ffffff;
-            --radius: 9999px;
-            --danger: #e85020;
-            --cyan:   #3ab8c8;
-        }
+        :root { --dark: #002830; --mid: #005363; --accent: #FDE9A2; --white: #ffffff; --radius: 9999px; --danger: #e85020; --cyan: #3ab8c8; }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background-color: #002830; color: white; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
         .nav-right { display: flex; align-items: center; gap: 20px; }
@@ -97,14 +89,7 @@
         .social-links a:hover { color: var(--accent); }
         @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-        @media (max-width: 600px) {
-            nav { padding: 12px 16px; }
-            main { padding: 28px 16px 60px; }
-            footer { padding: 24px 16px; }
-            .footer-bottom { flex-direction: column; align-items: flex-start; }
-            .media-thumbs { gap: 6px; }
-            .media-thumb { width: 80px; height: 48px; }
-        }
+        @media (max-width: 600px) { nav { padding: 12px 16px; } main { padding: 28px 16px 60px; } footer { padding: 24px 16px; } .footer-bottom { flex-direction: column; align-items: flex-start; } .media-thumbs { gap: 6px; } .media-thumb { width: 80px; height: 48px; } }
     </style>
 </head>
 <body>
@@ -112,26 +97,16 @@
 <nav>
     <div class="nav-left">
         <button class="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
-        <a href="/" class="logo">
-            <img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo">
-        </a>
+        <a href="/" class="logo"><img src="{{ asset('images/logo-tema-escuro.svg') }}" alt="GiftZone Logo"></a>
     </div>
     <div class="nav-right">
         <a href="{{ route('carrinho.index') }}" class="nav-cart-link">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle>
-                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
-            </svg>
-            @if($cartCount > 0)
-                <span class="cart-badge">{{ $cartCount }}</span>
-            @endif
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            @if($cartCount > 0)<span class="cart-badge">{{ $cartCount }}</span>@endif
         </a>
         @auth
             <a href="{{ route('usuario.perfil') }}" class="nav-avatar-container" title="{{ __('messages.my_profile') }}">
-                <img class="nav-avatar-mini"
-                     src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}"
-                     alt="Avatar de {{ Auth::user()->name }}"
-                     onerror="this.src='{{ asset('images/icone1.svg') }}'">
+                <img class="nav-avatar-mini" src="{{ Auth::user()->avatar === 'icone1.svg' || empty(Auth::user()->avatar) ? asset('images/icone1.svg') : asset('storage/' . Auth::user()->avatar) }}" alt="Avatar de {{ Auth::user()->name }}" onerror="this.src='{{ asset('images/icone1.svg') }}'">
             </a>
         @else
             <a href="{{ route('login') }}" class="btn-entrar">{{ __('messages.enter') }}</a>
@@ -140,9 +115,7 @@
 </nav>
 
 <section class="hero">
-    <div class="hero-breadcrumb">
-        <a href="{{ url('/catalogo') }}">{{ __('messages.catalog') }}</a> &rsaquo; {{ $produto->nome }}
-    </div>
+    <div class="hero-breadcrumb"><a href="{{ url('/catalogo') }}">{{ __('messages.catalog') }}</a> &rsaquo; {{ $produto->nome }}</div>
     <h1 class="hero-title">{{ strtoupper($produto->nome) }}</h1>
 </section>
 
@@ -152,6 +125,11 @@
             <span class="platform-badge" id="badge-platform">{{ is_array($produto->plataformas) ? ($produto->plataformas[0] ?? '') : '' }}</span>
 
             @php
+                function imgUrl($img) {
+                    if (empty($img)) return '';
+                    return str_starts_with($img, 'http') ? $img : asset('images/' . $img);
+                }
+
                 $galeriaRaw = is_array($produto->galeria) ? $produto->galeria : [];
                 $galeria = array_values(array_filter($galeriaRaw, function($img) {
                     return !empty(trim($img));
@@ -165,10 +143,11 @@
                 $hasTrailer = !empty($videoId);
                 $hasGallery = count($galeria) > 0;
                 $showThumbs = $hasTrailer || $hasGallery;
+                $mainImg = imgUrl($produto->imagem_principal);
             @endphp
 
             <div class="media-main" id="mediaMain">
-                <img id="mainImage" src="{{ asset('images/' . $produto->imagem_principal) }}" alt="{{ $produto->nome }}">
+                <img id="mainImage" src="{{ $mainImg }}" alt="{{ $produto->nome }}">
             </div>
 
             @if($showThumbs)
@@ -181,14 +160,13 @@
                     </div>
                 </div>
                 @endif
-
-                <div class="media-thumb active" onclick="showImage(this, '{{ asset('images/' . $produto->imagem_principal) }}')" id="thumb-main">
-                    <img src="{{ asset('images/' . $produto->imagem_principal) }}" alt="Principal">
+                <div class="media-thumb active" onclick="showImage(this, '{{ $mainImg }}')" id="thumb-main">
+                    <img src="{{ $mainImg }}" alt="Principal">
                 </div>
-
                 @foreach($galeria as $idx => $img)
-                <div class="media-thumb" onclick="showImage(this, '{{ asset('images/' . $img) }}')">
-                    <img src="{{ asset('images/' . $img) }}" alt="" onerror="this.parentElement.style.display='none'">
+                @php $gUrl = imgUrl($img); @endphp
+                <div class="media-thumb" onclick="showImage(this, '{{ $gUrl }}')">
+                    <img src="{{ $gUrl }}" alt="" onerror="this.parentElement.style.display='none'">
                 </div>
                 @endforeach
             </div>
@@ -202,85 +180,40 @@
 
         <div class="right-col">
             <div class="price-card">
-                <div class="price-value" id="price-display">
-                    R$ {{ number_format(is_array($produto->edicoes) ? ($produto->edicoes[0]['preco'] ?? 0) : 0, 2, ',', '.') }}
-                </div>
-                <div class="price-sub" id="edition-label">
-                    {{ is_array($produto->edicoes) ? ($produto->edicoes[0]['nome'] ?? '') : '' }} — {{ is_array($produto->plataformas) ? ($produto->plataformas[0] ?? '') : '' }}
-                </div>
-
+                <div class="price-value" id="price-display">R$ {{ number_format(is_array($produto->edicoes) ? ($produto->edicoes[0]['preco'] ?? 0) : 0, 2, ',', '.') }}</div>
+                <div class="price-sub" id="edition-label">{{ is_array($produto->edicoes) ? ($produto->edicoes[0]['nome'] ?? '') : '' }} — {{ is_array($produto->plataformas) ? ($produto->plataformas[0] ?? '') : '' }}</div>
                 <div class="selector-label">{{ __('messages.platform') }}</div>
                 <div class="selector-pills" id="platform-pills">
                     @foreach(is_array($produto->plataformas) ? $produto->plataformas : [] as $i => $plat)
                     <button class="pill {{ $i === 0 ? 'active' : '' }}" onclick="selectPlataforma(this, '{{ $plat }}')">{{ $plat }}</button>
                     @endforeach
                 </div>
-
                 <div class="selector-label">{{ __('messages.edition') }}</div>
                 <select class="edition-select" id="edition-select" onchange="selectEdicao(this)">
                     @foreach(is_array($produto->edicoes) ? $produto->edicoes : [] as $ed)
-                    <option value="{{ $ed['preco'] }}" data-nome="{{ $ed['nome'] }}">
-                        {{ $ed['nome'] }} — R$ {{ number_format($ed['preco'], 2, ',', '.') }}
-                    </option>
+                    <option value="{{ $ed['preco'] }}" data-nome="{{ $ed['nome'] }}">{{ $ed['nome'] }} — R$ {{ number_format($ed['preco'], 2, ',', '.') }}</option>
                     @endforeach
                 </select>
-
                 <div class="actions">
                     @if(auth()->check())
-                        <form action="{{ route('favoritos.adicionar', $produto->id) }}" method="POST">
-                            @csrf
-                            <button type="submit" class="btn-fav">
-                                {{ $isFavorited ? __('messages.favorited') : __('messages.favorite') }}
-                            </button>
-                        </form>
+                        <form action="{{ route('favoritos.adicionar', $produto->id) }}" method="POST">@csrf<button type="submit" class="btn-fav">{{ $isFavorited ? __('messages.favorited') : __('messages.favorite') }}</button></form>
                     @else
-                        <a href="{{ route('login') }}">
-                            <button class="btn-fav" type="button">{{ __('messages.favorite') }}</button>
-                        </a>
+                        <a href="{{ route('login') }}"><button class="btn-fav" type="button">{{ __('messages.favorite') }}</button></a>
                     @endif
-
-                    <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn-cart">{{ __('messages.cart') }}</button>
-                    </form>
-
-                    <form action="{{ route('comprar.direto', $produto->id) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn-buy">{{ __('messages.buy') }}</button>
-                    </form>
+                    <form action="{{ route('carrinho.adicionar', $produto->id) }}" method="POST">@csrf<button type="submit" class="btn-cart">{{ __('messages.cart') }}</button></form>
+                    <form action="{{ route('comprar.direto', $produto->id) }}" method="POST">@csrf<button type="submit" class="btn-buy">{{ __('messages.buy') }}</button></form>
                 </div>
-
-                @if(session('success'))
-                    <div class="flash-message flash-success">{{ session('success') }}</div>
-                @endif
-                @if(session('error'))
-                    <div class="flash-message flash-error">{{ session('error') }}</div>
-                @endif
-                @if(session('info'))
-                    <div class="flash-message flash-info">{{ session('info') }}</div>
-                @endif
+                @if(session('success'))<div class="flash-message flash-success">{{ session('success') }}</div>@endif
+                @if(session('error'))<div class="flash-message flash-error">{{ session('error') }}</div>@endif
+                @if(session('info'))<div class="flash-message flash-info">{{ session('info') }}</div>@endif
             </div>
 
             @if($produto->requisitos && is_array($produto->requisitos))
             <div class="req-box">
                 <div class="req-title">{{ __('messages.system_requirements') }}</div>
                 <div class="req-cols">
-                    <div class="req-col">
-                        <h4>{{ __('messages.minimum') }}</h4>
-                        <p>
-                            @foreach(($produto->requisitos['minimo'] ?? []) as $key => $val)
-                                <strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>
-                            @endforeach
-                        </p>
-                    </div>
-                    <div class="req-col">
-                        <h4>{{ __('messages.recommended') }}</h4>
-                        <p>
-                            @foreach(($produto->requisitos['recomendado'] ?? []) as $key => $val)
-                                <strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>
-                            @endforeach
-                        </p>
-                    </div>
+                    <div class="req-col"><h4>{{ __('messages.minimum') }}</h4><p>@foreach(($produto->requisitos['minimo'] ?? []) as $key => $val)<strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>@endforeach</p></div>
+                    <div class="req-col"><h4>{{ __('messages.recommended') }}</h4><p>@foreach(($produto->requisitos['recomendado'] ?? []) as $key => $val)<strong>{{ ucfirst($key) }}:</strong> {{ $val }}<br>@endforeach</p></div>
                 </div>
             </div>
             @endif
@@ -297,13 +230,14 @@
             @php
                 $relEdicoes = is_array($rel->edicoes) ? $rel->edicoes : [];
                 $relPreco = !empty($relEdicoes) ? collect($relEdicoes)->min('preco') : 0;
+                $relImg = imgUrl($rel->imagem_principal);
             @endphp
             <a href="{{ route('produto.show', $rel->slug) }}" style="text-decoration: none; display: block;">
                 <div style="background: rgba(0,83,99,0.35); border: 1px solid rgba(253,233,162,0.1); border-radius: 14px; overflow: hidden; transition: transform 0.25s, border-color 0.25s; cursor: pointer;"
                      onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='rgba(253,233,162,0.4)';"
                      onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(253,233,162,0.1)';">
                     <div style="width: 100%; height: 130px; overflow: hidden; background: #1F6D7E;">
-                        <img src="{{ asset('images/' . $rel->imagem_principal) }}" alt="{{ $rel->nome }}"
+                        <img src="{{ $relImg }}" alt="{{ $rel->nome }}"
                              style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.3s;"
                              onmouseover="this.style.transform='scale(1.05)'"
                              onmouseout="this.style.transform='scale(1)'"
