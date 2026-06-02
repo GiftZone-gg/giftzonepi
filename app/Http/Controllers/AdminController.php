@@ -80,6 +80,36 @@ class AdminController extends Controller
         return $filename;
     }
 
+    private function buildRequisitos(Request $request): ?array
+    {
+        if (!in_array('PC', $request->plataformas ?? [])) {
+            return null;
+        }
+
+        $minimo = array_filter([
+            'cpu'     => $request->req_min_cpu,
+            'gpu'     => $request->req_min_gpu,
+            'ram'     => $request->req_min_ram,
+            'storage' => $request->req_min_storage,
+        ]);
+
+        $recomendado = array_filter([
+            'cpu'     => $request->req_rec_cpu,
+            'gpu'     => $request->req_rec_gpu,
+            'ram'     => $request->req_rec_ram,
+            'storage' => $request->req_rec_storage,
+        ]);
+
+        if (empty($minimo) && empty($recomendado)) {
+            return null;
+        }
+
+        return [
+            'minimo'      => $minimo,
+            'recomendado' => $recomendado,
+        ];
+    }
+
     public function produtoSalvar(Request $request)
     {
         $request->validate([
@@ -126,7 +156,7 @@ class AdminController extends Controller
             'galeria'          => $galeria,
             'plataformas'      => $request->plataformas,
             'edicoes'          => $edicoes,
-            'requisitos'       => null,
+            'requisitos'       => $this->buildRequisitos($request),
             'trailer_url'      => $request->trailer_url,
             'ativo'            => $request->has('ativo'),
         ]);
@@ -206,6 +236,7 @@ class AdminController extends Controller
             'plataformas'   => $request->plataformas,
             'edicoes'       => $edicoes,
             'galeria'       => $galeria,
+            'requisitos'    => $this->buildRequisitos($request),
             'trailer_url'   => $request->trailer_url,
             'ativo'         => $request->has('ativo'),
         ]);

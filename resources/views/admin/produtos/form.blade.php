@@ -97,6 +97,8 @@
     .gallery-item input { display: none; }
     .trailer-preview { margin-top: 10px; aspect-ratio: 16/9; max-width: 320px; border-radius: 8px; overflow: hidden; background: #000; }
     .trailer-preview iframe { width: 100%; height: 100%; border: none; }
+    #requisitosSection { display: none; }
+    #requisitosSection.visible { display: block; }
     @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } .edition-row { flex-wrap: wrap; } }
 </style>
 @endsection
@@ -141,7 +143,7 @@
                 <span class="form-hint">Formatos: JPG, JPEG, WEBP (max 4MB)</span>
                 @if($produto && $produto->imagem_principal)
                     <div class="current-image">
-                        <img src="{{ asset('images/' . $produto->imagem_principal) }}" alt="Atual">
+                        <img src="{{ str_starts_with($produto->imagem_principal, 'http') ? $produto->imagem_principal : asset('images/' . $produto->imagem_principal) }}" alt="Atual">
                     </div>
                 @endif
                 @error('imagem_principal') <span style="color: #ff6b6b; font-size: 12px;">{{ $message }}</span> @enderror
@@ -161,7 +163,7 @@
                 <div class="gallery-preview">
                     @foreach($produto->galeria as $gImg)
                     <div class="gallery-item">
-                        <img src="{{ asset('images/' . $gImg) }}" alt="Galeria" onerror="this.parentElement.style.display='none'">
+                        <img src="{{ str_starts_with($gImg, 'http') ? $gImg : asset('images/' . $gImg) }}" alt="Galeria" onerror="this.parentElement.style.display='none'">
                         <label title="Remover esta imagem">
                             <input type="checkbox" name="remover_galeria[]" value="{{ $gImg }}">
                             X
@@ -195,15 +197,64 @@
             $allPlats = ['PlayStation 5', 'PlayStation 4', 'Xbox', 'Nintendo Switch', 'PC'];
             $selectedPlats = old('plataformas', $produto->plataformas ?? []);
         @endphp
-        <div class="plat-checks" style="margin-bottom: 24px;">
+        <div class="plat-checks" id="platChecks" style="margin-bottom: 24px;">
             @foreach($allPlats as $plat)
-            <label class="plat-check {{ in_array($plat, $selectedPlats) ? 'checked' : '' }}" onclick="this.classList.toggle('checked')">
+            <label class="plat-check {{ in_array($plat, $selectedPlats) ? 'checked' : '' }}" onclick="this.classList.toggle('checked'); toggleRequisitos();">
                 <input type="checkbox" name="plataformas[]" value="{{ $plat }}" {{ in_array($plat, $selectedPlats) ? 'checked' : '' }}>
                 {{ $plat }}
             </label>
             @endforeach
         </div>
         @error('plataformas') <span style="color: #ff6b6b; font-size: 12px;">{{ $message }}</span> @enderror
+
+        {{-- Requisitos de Sistema (PC) --}}
+        @php
+            $req = old('req_min_cpu') ? null : ($produto->requisitos ?? null);
+        @endphp
+        <div id="requisitosSection" class="{{ in_array('PC', $selectedPlats) ? 'visible' : '' }}">
+            <p class="form-section-title">Requisitos de Sistema (PC)</p>
+            <div class="form-grid">
+                <div class="form-group full" style="margin-bottom: 4px;">
+                    <label class="form-label" style="color: #6bffb5;">Minimo</label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CPU</label>
+                    <input class="form-input" type="text" name="req_min_cpu" value="{{ old('req_min_cpu', $req['minimo']['cpu'] ?? '') }}" placeholder="Ex: Intel Core i5-6600">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">GPU</label>
+                    <input class="form-input" type="text" name="req_min_gpu" value="{{ old('req_min_gpu', $req['minimo']['gpu'] ?? '') }}" placeholder="Ex: GTX 1060 6GB">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">RAM</label>
+                    <input class="form-input" type="text" name="req_min_ram" value="{{ old('req_min_ram', $req['minimo']['ram'] ?? '') }}" placeholder="Ex: 8 GB">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Armazenamento</label>
+                    <input class="form-input" type="text" name="req_min_storage" value="{{ old('req_min_storage', $req['minimo']['storage'] ?? '') }}" placeholder="Ex: 50 GB SSD">
+                </div>
+
+                <div class="form-group full" style="margin-bottom: 4px; margin-top: 8px;">
+                    <label class="form-label" style="color: #FDE9A2;">Recomendado</label>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">CPU</label>
+                    <input class="form-input" type="text" name="req_rec_cpu" value="{{ old('req_rec_cpu', $req['recomendado']['cpu'] ?? '') }}" placeholder="Ex: Intel Core i7-8700">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">GPU</label>
+                    <input class="form-input" type="text" name="req_rec_gpu" value="{{ old('req_rec_gpu', $req['recomendado']['gpu'] ?? '') }}" placeholder="Ex: RTX 3070">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">RAM</label>
+                    <input class="form-input" type="text" name="req_rec_ram" value="{{ old('req_rec_ram', $req['recomendado']['ram'] ?? '') }}" placeholder="Ex: 16 GB">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Armazenamento</label>
+                    <input class="form-input" type="text" name="req_rec_storage" value="{{ old('req_rec_storage', $req['recomendado']['storage'] ?? '') }}" placeholder="Ex: 100 GB SSD">
+                </div>
+            </div>
+        </div>
 
         {{-- Edicoes --}}
         <p class="form-section-title">{{ __('messages.admin_product_editions') }}</p>
@@ -259,9 +310,24 @@ function previewTrailer(url) {
     }
 }
 
+function toggleRequisitos() {
+    var checks = document.querySelectorAll('#platChecks input[type="checkbox"]');
+    var pcChecked = false;
+    checks.forEach(function(c) {
+        if (c.value === 'PC' && c.checked) pcChecked = true;
+    });
+    var section = document.getElementById('requisitosSection');
+    if (pcChecked) {
+        section.classList.add('visible');
+    } else {
+        section.classList.remove('visible');
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     var input = document.getElementById('trailerInput');
     if (input && input.value) previewTrailer(input.value);
+    toggleRequisitos();
 });
 </script>
 
